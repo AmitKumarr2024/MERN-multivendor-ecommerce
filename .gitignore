@@ -1,7 +1,5 @@
-# Dependencies
-node_modules/
-
-# Environment variables
-.env
-.env.*
-!.env.example
+# Root .gitignore
+**/node_modules
+**/.env
+**/.next
+**/build
