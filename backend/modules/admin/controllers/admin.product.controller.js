@@ -33,7 +33,12 @@ export const getAllProductsAdmin = async (req, res, next) => {
 
     const total = await Product.countDocuments(query);
 
-    res.json({ products, total, page: Number(page), pages: Math.ceil(total / safeLimit) });
+    res.json({
+      products,
+      total,
+      page: Number(page),
+      pages: Math.ceil(total / safeLimit),
+    });
   } catch (error) {
     next(error);
   }

@@ -1,12 +1,25 @@
 import express from "express";
-import { getAllUsers, getUserById, updateUserRole, toggleUserBan } from "../controllers/admin.user.controller.js";
-import { getAllShopsAdmin, verifyShop, forceToggleShop } from "../controllers/admin.shop.controller.js";
+import {
+  getAllUsers,
+  getUserById,
+  updateUserRole,
+  toggleUserBan,
+} from "../controllers/admin.user.controller.js";
+import {
+  getAllShopsAdmin,
+  verifyShop,
+  forceToggleShop,
+} from "../controllers/admin.shop.controller.js";
 import {
   getAllProductsAdmin,
   forceToggleProduct,
   forceDeleteProduct,
 } from "../controllers/admin.product.controller.js";
 import { getDashboardStats } from "../controllers/admin.dashboard.controller.js";
+import {
+  getAllOrdersAdmin,
+  forceDeleteOrder,
+} from "../controllers/admin.order.controller.js";
 import { protect, authorizeRoles } from "../../../middleware/authMiddleware.js";
 import { ROLES } from "../../../constants/roles.js";
 
@@ -33,5 +46,9 @@ router.patch("/shops/:id/toggle-active", forceToggleShop);
 router.get("/products", getAllProductsAdmin);
 router.patch("/products/:id/toggle-active", forceToggleProduct);
 router.delete("/products/:id", forceDeleteProduct);
+
+// Orders
+router.get("/orders", getAllOrdersAdmin);
+router.delete("/orders/:id", forceDeleteOrder);
 
 export default router;
