@@ -11,7 +11,7 @@ import { ROLES } from "../../../constants/roles.js";
 const router = express.Router();
 
 router.get("/", getAllCategories);
-router.post("/", protect, authorizeRoles(ROLES.ADMIN), createCategory);
+router.post("/create", protect, authorizeRoles(ROLES.ADMIN), createCategory);
 router.put("/:id", protect, authorizeRoles(ROLES.ADMIN), updateCategory);
 router.delete("/:id", protect, authorizeRoles(ROLES.ADMIN), deleteCategory);
 

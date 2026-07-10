@@ -12,8 +12,7 @@ import {
   toggleProductActive,
 } from "../controllers/product.update.controller.js";
 import { deleteProduct } from "../controllers/product.delete.controller.js";
-import { protect, authorizeRoles } from "../../../middleware/authMiddleware.js";
-import { ROLES } from "../../../constants/roles.js";
+import { protect } from "../../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -21,7 +20,7 @@ const router = express.Router();
 router.get("/", getAllProducts);
 
 // Private - seller's own products (dashboard) - must come before '/:id'
-router.get("/me", protect, authorizeRoles(ROLES.SELLER), getMyProducts);
+router.get("/me", protect, getMyProducts);
 
 // Public - products of one specific dukan
 router.get("/shop/:slug", getProductsByShopSlug);
@@ -29,11 +28,16 @@ router.get("/shop/:slug", getProductsByShopSlug);
 // Public - single product detail
 router.get("/:id", getProductById);
 
-// Private - seller only
-router.post("/", protect, authorizeRoles(ROLES.SELLER), createProduct);
-router.put("/:id", protect, authorizeRoles(ROLES.SELLER), updateProduct);
-router.patch("/:id/stock", protect, authorizeRoles(ROLES.SELLER), updateProductStock);
-router.patch("/:id/toggle-active", protect, authorizeRoles(ROLES.SELLER), toggleProductActive);
-router.delete("/:id", protect, authorizeRoles(ROLES.SELLER), deleteProduct);
+// Private - ownership check inside each controller (Shop.findOne({owner})) is
+// the real gatekeeper here. No role check needed: "seller" role is only ever
+// granted when a shop is created, so a user without a shop can never own a
+// product anyway. Removing the role gate lets a buyer who tries this before
+// creating a shop see the helpful "create your shop first" message instead
+// of a generic 403.
+router.post("/", protect, createProduct);
+router.put("/:id", protect, updateProduct);
+router.patch("/:id/stock", protect, updateProductStock);
+router.patch("/:id/toggle-active", protect, toggleProductActive);
+router.delete("/:id", protect, deleteProduct);
 
 export default router;

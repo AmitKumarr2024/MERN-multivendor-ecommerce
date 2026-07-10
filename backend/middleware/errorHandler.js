@@ -1,5 +1,5 @@
 import { ApiError } from "../exceptions/ApiError.js";
-import logger from "../config/logger.js";
+import logger from "../logs/logger.js";
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler = (err, req, res, next) => {

@@ -1,7 +1,15 @@
 import Broadcast from "../models/broadcast.model.js";
 import Shop from "../../shop/models/shop.model.js";
 import { ROLES } from "../../../constants/roles.js";
-import { BadRequestError, NotFoundError, ForbiddenError } from "../../../exceptions/ApiError.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+} from "../../../exceptions/ApiError.js";
+import {
+  emitShopBroadcast,
+  emitPlatformBroadcast,
+} from "../../../sockets/emit.js";
 
 /**
  * BROADCAST CONTROLLER
@@ -32,7 +40,9 @@ export const createShopBroadcast = async (req, res, next) => {
 
     const shop = await Shop.findOne({ owner: req.user._id });
     if (!shop) {
-      throw new BadRequestError("Please create your shop before posting a broadcast");
+      throw new BadRequestError(
+        "Please create your shop before posting a broadcast",
+      );
     }
 
     const broadcast = await Broadcast.create({
@@ -43,6 +53,8 @@ export const createShopBroadcast = async (req, res, next) => {
       type,
       expiresAt: expiresAt || null,
     });
+
+    emitShopBroadcast(shop.slug, broadcast);
 
     res.status(201).json(broadcast);
   } catch (error) {
@@ -69,6 +81,8 @@ export const createPlatformBroadcast = async (req, res, next) => {
       expiresAt: expiresAt || null,
     });
 
+    emitPlatformBroadcast(broadcast);
+
     res.status(201).json(broadcast);
   } catch (error) {
     next(error);
@@ -85,7 +99,11 @@ export const getShopBroadcasts = async (req, res, next) => {
       throw new NotFoundError("Shop not found");
     }
 
-    const broadcasts = await Broadcast.find({ scope: "shop", shop: shop._id, ...activeQuery() }).sort({
+    const broadcasts = await Broadcast.find({
+      scope: "shop",
+      shop: shop._id,
+      ...activeQuery(),
+    }).sort({
       createdAt: -1,
     });
 
@@ -100,7 +118,10 @@ export const getShopBroadcasts = async (req, res, next) => {
 // @access  Public
 export const getPlatformBroadcasts = async (req, res, next) => {
   try {
-    const broadcasts = await Broadcast.find({ scope: "platform", ...activeQuery() }).sort({ createdAt: -1 });
+    const broadcasts = await Broadcast.find({
+      scope: "platform",
+      ...activeQuery(),
+    }).sort({ createdAt: -1 });
     res.json(broadcasts);
   } catch (error) {
     next(error);
@@ -120,9 +141,14 @@ export const deactivateBroadcast = async (req, res, next) => {
     if (req.user.role === ROLES.ADMIN) {
       // admins can deactivate anything
     } else if (broadcast.scope === "shop") {
-      const shop = await Shop.findOne({ _id: broadcast.shop, owner: req.user._id });
+      const shop = await Shop.findOne({
+        _id: broadcast.shop,
+        owner: req.user._id,
+      });
       if (!shop) {
-        throw new ForbiddenError("You are not allowed to manage this broadcast");
+        throw new ForbiddenError(
+          "You are not allowed to manage this broadcast",
+        );
       }
     } else {
       throw new ForbiddenError("Only an admin can manage platform broadcasts");

@@ -4,6 +4,7 @@ import {
   getUserById,
   updateUserRole,
   toggleUserBan,
+  adminResetPassword,
 } from "../controllers/admin.user.controller.js";
 import {
   getAllShopsAdmin,
@@ -36,6 +37,7 @@ router.get("/users", getAllUsers);
 router.get("/users/:id", getUserById);
 router.put("/users/:id/role", updateUserRole);
 router.patch("/users/:id/ban", toggleUserBan);
+router.patch("/users/:id/reset-password", adminResetPassword);
 
 // Shops
 router.get("/shops", getAllShopsAdmin);

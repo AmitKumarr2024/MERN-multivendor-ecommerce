@@ -1,12 +1,14 @@
 import express from "express";
+import http from "http";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
 import connectDB from "./config/db.js";
-import logger from "./config/logger.js";
+import logger from "./logs/logger.js";
 import httpLogger from "./middleware/httpLogger.js";
 import errorHandler from "./middleware/errorHandler.js";
+import initSocket from "./sockets/index.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import shopRoutes from "./modules/shop/routes/shop.routes.js";
 import productRoutes from "./modules/product/routes/product.routes.js";
@@ -28,8 +30,7 @@ logger.info(`Starting server on port ${PORT}...`);
 connectDB();
 
 // Middleware
-app.use(httpLogger); // logs every incoming request (method, path, status, response time)
-// credentials: true + explicit origin (not "*") is required for cookies to work cross-origin
+app.use(httpLogger);
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:3000",
@@ -63,8 +64,13 @@ app.use((req, res) => {
 // Global error handler - must be last
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  logger.info(`Server running on port ${PORT}`);
+// Socket.io needs a raw HTTP server (not just the Express app) to attach to,
+// so we wrap app in http.createServer and listen on that instead of app.listen()
+const httpServer = http.createServer(app);
+initSocket(httpServer);
+
+httpServer.listen(PORT, () => {
+  logger.info(`Server running on port ${PORT} (HTTP + WebSocket)`);
 });
 
 // Catch errors that happen outside the request/response cycle

@@ -40,6 +40,13 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    // Set to true when an admin resets this user's password on their behalf.
+    // Frontend should check this on login and force the user to set a new
+    // password before letting them use the app normally.
+    mustChangePassword: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -59,7 +66,7 @@ userSchema.pre("save", async function () {
 
 // Compare entered password with hashed password
 userSchema.methods.comparePassword = async function (candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
+  return bcrypt.compare(candidatePassword, this.password);
 };
 
 const User = mongoose.model("User", userSchema);

@@ -82,20 +82,25 @@ const shopSchema = new mongoose.Schema(
 );
 
 // Auto-generate slug from shopName if not provided, and ensure uniqueness
-shopSchema.pre("validate", async function (next) {
+shopSchema.pre("validate", async function () {
   if (!this.slug && this.shopName) {
-    const baseSlug = slugify(this.shopName, { lower: true, strict: true });
+    const baseSlug = slugify(this.shopName, {
+      lower: true,
+      strict: true,
+    });
+
     let slug = baseSlug;
     let count = 1;
 
     const Shop = mongoose.model("Shop");
+
     while (await Shop.findOne({ slug, _id: { $ne: this._id } })) {
       slug = `${baseSlug}-${count}`;
-      count += 1;
+      count++;
     }
+
     this.slug = slug;
   }
-  next();
 });
 
 const DAY_NAMES = [

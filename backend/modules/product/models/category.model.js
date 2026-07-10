@@ -24,14 +24,16 @@ const categorySchema = new mongoose.Schema(
     image: { type: String, default: "" },
     isActive: { type: Boolean, default: true },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-categorySchema.pre("validate", function (next) {
+categorySchema.pre("validate", function () {
   if (this.name && !this.slug) {
-    this.slug = slugify(this.name, { lower: true, strict: true });
+    this.slug = slugify(this.name, {
+      lower: true,
+      strict: true,
+    });
   }
-  next();
 });
 
 const Category = mongoose.model("Category", categorySchema);

@@ -1,4 +1,4 @@
-import { BadRequestError } from "../../../exceptions/ApiError.js";
+import { BadRequestError } from "../../backend/exceptions/ApiError.js";
 
 /**
  * SHOP HOURS SERVICE

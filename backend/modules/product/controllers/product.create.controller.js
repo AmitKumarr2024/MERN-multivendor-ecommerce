@@ -10,16 +10,29 @@ export const createProduct = async (req, res, next) => {
   try {
     const shop = await Shop.findOne({ owner: req.user._id });
     if (!shop) {
-      throw new BadRequestError("Please create your shop before adding products");
+      throw new BadRequestError(
+        "Please create your shop before adding products",
+      );
     }
 
-    const { name, description, price, discountPrice, images, category, stock, weightKg } = req.body;
+    const {
+      name,
+      description,
+      price,
+      discountPrice,
+      images,
+      category,
+      stock,
+      weightKg,
+    } = req.body;
 
     if (!name || price === undefined || !category) {
       throw new BadRequestError("Name, price and category are required");
     }
 
-    const categoryExists = await Category.findById(category);
+    const categoryExists = await Category.findOne({
+      slug: category.toLowerCase(),
+    });
     if (!categoryExists) {
       throw new BadRequestError("Invalid category");
     }
@@ -31,7 +44,7 @@ export const createProduct = async (req, res, next) => {
       price,
       discountPrice,
       images,
-      category,
+      category: categoryExists._id,
       stock,
       weightKg,
     });

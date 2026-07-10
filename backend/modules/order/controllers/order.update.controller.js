@@ -1,9 +1,20 @@
 import Order from "../models/order.model.js";
 import Shop from "../../shop/models/shop.model.js";
-import { NotFoundError, ForbiddenError, BadRequestError } from "../../../exceptions/ApiError.js";
+import {
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} from "../../../exceptions/ApiError.js";
 import { cancelOrder as cancelOrderService } from "../../../services/order.service.js";
+import { emitOrderStatusUpdate } from "../../../sockets/emit.js";
 
-const VALID_STATUSES = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
+const VALID_STATUSES = [
+  "pending",
+  "confirmed",
+  "shipped",
+  "delivered",
+  "cancelled",
+];
 
 // @desc    Seller updates order status (confirm, ship, deliver)
 // @route   PATCH /api/orders/:id/status
@@ -12,7 +23,9 @@ export const updateOrderStatus = async (req, res, next) => {
   try {
     const { status } = req.body;
     if (!VALID_STATUSES.includes(status)) {
-      throw new BadRequestError(`Status must be one of: ${VALID_STATUSES.join(", ")}`);
+      throw new BadRequestError(
+        `Status must be one of: ${VALID_STATUSES.join(", ")}`,
+      );
     }
 
     const order = await Order.findById(req.params.id);
@@ -27,6 +40,13 @@ export const updateOrderStatus = async (req, res, next) => {
 
     order.orderStatus = status;
     await order.save();
+
+    // Push the update to the buyer live - e.g. "Your order has been shipped!"
+    emitOrderStatusUpdate(order.buyer, {
+      orderId: order._id,
+      orderStatus: order.orderStatus,
+      shopName: shop.shopName,
+    });
 
     res.json({ _id: order._id, orderStatus: order.orderStatus });
   } catch (error) {

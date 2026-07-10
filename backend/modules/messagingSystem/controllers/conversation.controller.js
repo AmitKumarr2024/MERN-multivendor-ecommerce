@@ -1,7 +1,12 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
 import Shop from "../../shop/models/shop.model.js";
-import { BadRequestError, NotFoundError, ForbiddenError } from "../../../exceptions/ApiError.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+} from "../../../exceptions/ApiError.js";
+import { emitNewMessage } from "../../../sockets/emit.js";
 
 /**
  * CONVERSATION CONTROLLER
@@ -42,9 +47,15 @@ export const startOrGetConversation = async (req, res, next) => {
       throw new NotFoundError("Shop not found");
     }
 
-    let conversation = await Conversation.findOne({ buyer: req.user._id, shop: shopId });
+    let conversation = await Conversation.findOne({
+      buyer: req.user._id,
+      shop: shopId,
+    });
     if (!conversation) {
-      conversation = await Conversation.create({ buyer: req.user._id, shop: shopId });
+      conversation = await Conversation.create({
+        buyer: req.user._id,
+        shop: shopId,
+      });
     }
 
     res.status(201).json(conversation);
@@ -105,8 +116,12 @@ export const getMessages = async (req, res, next) => {
 
     // Mark messages sent by the other party as read
     await Message.updateMany(
-      { conversation: conversation._id, sender: { $ne: req.user._id }, readAt: null },
-      { readAt: new Date() }
+      {
+        conversation: conversation._id,
+        sender: { $ne: req.user._id },
+        readAt: null,
+      },
+      { readAt: new Date() },
     );
 
     if (role === "buyer") {
@@ -145,14 +160,31 @@ export const sendMessage = async (req, res, next) => {
       text: text.trim(),
     });
 
-    conversation.lastMessage = { text: message.text, sentBy: req.user._id, sentAt: message.createdAt };
-    // Increment the unread count for whichever side didn't send this message
+    conversation.lastMessage = {
+      text: message.text,
+      sentBy: req.user._id,
+      sentAt: message.createdAt,
+    };
+
+    // Increment the unread count for whichever side didn't send this message,
+    // and figure out who the recipient is so we can push them the message live.
+    let recipientUserId;
     if (role === "buyer") {
       conversation.unreadCountForSeller += 1;
+      const shop = await Shop.findById(conversation.shop).select("owner");
+      recipientUserId = shop?.owner;
     } else {
       conversation.unreadCountForBuyer += 1;
+      recipientUserId = conversation.buyer;
     }
     await conversation.save();
+
+    if (recipientUserId) {
+      emitNewMessage(recipientUserId, {
+        ...message.toObject(),
+        conversationId: conversation._id,
+      });
+    }
 
     res.status(201).json(message);
   } catch (error) {

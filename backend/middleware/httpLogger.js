@@ -1,5 +1,5 @@
 import morgan from "morgan";
-import logger from "../config/logger.js";
+import logger from "../logs/logger.js";
 
 // Pipes Morgan's HTTP access logs through Winston, so both request logs and
 // application logs (errors, info) end up in the same files/console with
