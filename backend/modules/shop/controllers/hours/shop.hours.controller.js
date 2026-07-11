@@ -3,7 +3,7 @@ import { NotFoundError } from "../../../../exceptions/ApiError.js";
 import {
   applyBusinessHoursUpdate,
   applyHolidayDateChange,
-} from "../../services/shopHours.service.js";
+} from "../../../../services/shopHours.service.js";
 
 // @desc    Update business hours for one or more days
 //          Body shape: { monday: { open: "09:00", close: "21:00", isClosed: false }, ... }

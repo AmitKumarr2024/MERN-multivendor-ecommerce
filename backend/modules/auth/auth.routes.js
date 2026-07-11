@@ -9,18 +9,33 @@ import {
   updateMyRole,
 } from "./auth.controller.js";
 import { protect } from "../../middleware/authMiddleware.js";
+import { authLimiter } from "../../middleware/rateLimiter.js";
+import validate from "../../middleware/validate.js";
+import {
+  registerSchema,
+  loginSchema,
+  updateMeSchema,
+  changePasswordSchema,
+  updateRoleSchema,
+} from "./auth.validation.js";
 
 const router = express.Router();
 
-// Public
-router.post("/register", registerUser);
-router.post("/login", loginUser);
+// Public - authLimiter guards against brute-force/credential-stuffing
+router.post("/register", authLimiter, validate(registerSchema), registerUser);
+router.post("/login", authLimiter, validate(loginSchema), loginUser);
 
 // Private
 router.post("/logout", protect, logoutUser);
 router.get("/me", protect, getMe);
-router.put("/me", protect, updateMe);
-router.put("/change-password", protect, changePassword);
-router.put("/role", protect, updateMyRole);
+router.put("/me", protect, validate(updateMeSchema), updateMe);
+router.put(
+  "/change-password",
+  protect,
+  authLimiter,
+  validate(changePasswordSchema),
+  changePassword,
+);
+router.put("/role", protect, validate(updateRoleSchema), updateMyRole);
 
 export default router;

@@ -8,6 +8,7 @@ import connectDB from "./config/db.js";
 import logger from "./logs/logger.js";
 import httpLogger from "./middleware/httpLogger.js";
 import errorHandler from "./middleware/errorHandler.js";
+import { apiLimiter } from "./middleware/rateLimiter.js";
 import initSocket from "./sockets/index.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import shopRoutes from "./modules/shop/routes/shop.routes.js";
@@ -30,7 +31,7 @@ logger.info(`Starting server on port ${PORT}...`);
 connectDB();
 
 // Middleware
-app.use(httpLogger);
+app.use(httpLogger); // logs every incoming request (method, path, status, response time)
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:3000",
@@ -40,6 +41,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Global rate limiter - applies to every /api route. Individual routes (like
+// auth login/register) additionally stack a stricter authLimiter on top.
+// Automatically disabled during tests (NODE_ENV === "test").
+app.use("/api", apiLimiter);
 
 // Routes
 app.use("/api/auth", authRoutes);
