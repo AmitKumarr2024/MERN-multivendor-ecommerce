@@ -1,79 +1,80 @@
 import {
   uploadImageBuffer,
   uploadMultipleImageBuffers,
-  deleteImage,
+  deleteImageIfOwner,
 } from "../../../services/upload.service.js";
 import { BadRequestError } from "../../../exceptions/ApiError.js";
 
 /**
  * UPLOAD CONTROLLER
  * ------------------------------------------------------------------
- *   1. uploadSingleImage -> POST   /api/upload/image     (field name: "image")
- *   2. uploadImages       -> POST   /api/upload/images    (field name: "images", up to 5)
- *   3. removeImage        -> DELETE /api/upload/image
+ *   1. uploadShopLogo     -> POST   /api/upload/shop-logo       (field: "image")
+ *   2. uploadShopBanner   -> POST   /api/upload/shop-banner     (field: "image")
+ *   3. uploadAvatar       -> POST   /api/upload/avatar          (field: "image")
+ *   4. uploadProductImages -> POST   /api/upload/product-images  (field: "images", up to 5)
+ *   5. removeImage        -> DELETE /api/upload/image
  *
- * This is a generic, standalone upload endpoint - it doesn't know or care
- * whether the image is for a shop logo, banner, or product photo. The
- * frontend uploads first, gets back a URL, then includes that URL in the
- * normal JSON body when creating/updating a shop or product. This keeps
- * the existing shop/product endpoints as plain JSON (no multipart there),
- * so nothing about their request shape changes.
+ * Each endpoint hardcodes its own Cloudinary folder server-side - the
+ * client never gets to choose the folder (earlier version accepted a
+ * `?folder=` query param, which let any caller write into any folder).
+ * This keeps storage organized and prevents that abuse.
+ *
+ * Frontend flow: upload here first, get back a URL, then include that URL
+ * in the normal JSON body when creating/updating a shop or product. The
+ * shop/product endpoints themselves stay plain JSON - only these upload
+ * routes deal with multipart/form-data.
  * ------------------------------------------------------------------
  */
 
-const ALLOWED_FOLDERS = [
-  "shop-logos",
-  "shop-banners",
-  "product-images",
-  "avatars",
-];
-
-const resolveFolder = (folder) =>
-  ALLOWED_FOLDERS.includes(folder) ? folder : "misc";
-
-// 1. Upload a single image (shop logo, banner, avatar, etc.)
-// @route   POST /api/upload/image?folder=shop-logos
-// @access  Private
-export const uploadSingleImage = async (req, res, next) => {
+// Factory for the single-image endpoints (logo/banner/avatar) - identical
+// shape, only the target folder differs.
+const handleSingleUpload = (folder) => async (req, res, next) => {
   try {
     if (!req.file) {
       throw new BadRequestError(
         "No image file provided (expected field name 'image')",
       );
     }
-
-    const folder = resolveFolder(req.query.folder);
-    const result = await uploadImageBuffer(req.file.buffer, folder);
-
+    const result = await uploadImageBuffer(
+      req.file.buffer,
+      folder,
+      req.user._id,
+    );
     res.status(201).json(result);
   } catch (error) {
     next(error);
   }
 };
 
-// 2. Upload multiple images at once (product gallery)
-// @route   POST /api/upload/images?folder=product-images
-// @access  Private
-export const uploadImages = async (req, res, next) => {
+// 1. Shop logo - square crop, auto-focused
+export const uploadShopLogo = handleSingleUpload("shop-logos");
+
+// 2. Shop banner - wide crop
+export const uploadShopBanner = handleSingleUpload("shop-banners");
+
+// 3. User avatar - square crop, face-focused
+export const uploadAvatar = handleSingleUpload("avatars");
+
+// 4. Product gallery - up to 5 images, no forced aspect ratio (just capped max size)
+export const uploadProductImages = async (req, res, next) => {
   try {
     if (!req.files || req.files.length === 0) {
       throw new BadRequestError(
         "No image files provided (expected field name 'images')",
       );
     }
-
-    const folder = resolveFolder(req.query.folder);
-    const results = await uploadMultipleImageBuffers(req.files, folder);
-
+    const results = await uploadMultipleImageBuffers(
+      req.files,
+      "product-images",
+      req.user._id,
+    );
     res.status(201).json(results);
   } catch (error) {
     next(error);
   }
 };
 
-// 3. Delete an uploaded image (called when a seller removes/replaces an image)
-// @route   DELETE /api/upload/image
-// @access  Private
+// 5. Delete an uploaded image - only the uploader or an admin can do this
 export const removeImage = async (req, res, next) => {
   try {
     const { publicId } = req.body;
@@ -81,7 +82,7 @@ export const removeImage = async (req, res, next) => {
       throw new BadRequestError("publicId is required");
     }
 
-    await deleteImage(publicId);
+    await deleteImageIfOwner(publicId, req.user);
     res.json({ message: "Image deleted successfully" });
   } catch (error) {
     next(error);

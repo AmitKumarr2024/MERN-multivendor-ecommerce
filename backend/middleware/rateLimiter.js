@@ -32,3 +32,17 @@ export const apiLimiter = rateLimit({
     message: "Too many requests. Please slow down and try again shortly.",
   },
 });
+
+// Uploads are heavier (network + Cloudinary processing cost) than a typical
+// API call, so they get their own tighter limit rather than sharing apiLimiter's
+// generous allowance.
+export const uploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: isTestEnv,
+  message: {
+    message: "Too many uploads. Please slow down and try again shortly.",
+  },
+});

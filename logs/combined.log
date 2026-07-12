@@ -450,3 +450,48 @@
 {"level":"warn","message":"GET /api/products/6a531faa381963e9abf40b8e -> 404 Product not found","timestamp":"2026-07-12T05:01:30.829Z"}
 {"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-07-12T05:01:31.097Z"}
 {"level":"warn","message":"PATCH /api/orders/6a531fab014334a7ad84f545/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-07-12T05:01:31.555Z"}
+{"level":"warn","message":"Cloudinary credentials are missing from .env (CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET). Image upload endpoints will fail until these are set.","timestamp":"2026-07-12T11:51:49.642Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-07-12T11:51:49.659Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-07-12T11:51:49.675Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-07-12T11:51:49.680Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-07-12T11:51:49.734Z"}
+{"level":"warn","message":"Cloudinary credentials are missing from .env (CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET). Image upload endpoints will fail until these are set.","timestamp":"2026-07-12T11:52:32.570Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-07-12T11:52:32.578Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-07-12T11:52:32.595Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-07-12T11:52:32.602Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-07-12T11:52:32.623Z"}
+{"level":"warn","message":"Cloudinary credentials are missing from .env (CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET). Image upload endpoints will fail until these are set.","timestamp":"2026-07-12T11:53:06.714Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-07-12T11:53:06.722Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-07-12T11:53:06.738Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-07-12T11:53:06.745Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-07-12T11:53:06.764Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-07-12T11:53:45.838Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-07-12T11:53:45.856Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-07-12T11:53:45.862Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-07-12T11:53:45.880Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 401 Not authorized, no token provided","timestamp":"2026-07-12T11:54:26.924Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 User with this email already exists","timestamp":"2026-07-12T11:54:27.508Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 password: Password must be at least 6 characters","timestamp":"2026-07-12T11:54:27.517Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 Only JPEG, PNG, WEBP, or GIF images are allowed","timestamp":"2026-07-12T11:54:27.518Z"}
+{"level":"warn","message":"POST /api/products -> 400 Please create your shop before adding products","timestamp":"2026-07-12T11:54:27.597Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 No image file provided (expected field name 'image')","timestamp":"2026-07-12T11:54:27.634Z"}
+{"level":"warn","message":"POST /api/products -> 400 Invalid category","timestamp":"2026-07-12T11:54:27.730Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 File is too large. Maximum size is 5MB.","timestamp":"2026-07-12T11:54:27.774Z"}
+{"level":"warn","message":"POST /api/shops -> 400 You already have a shop","timestamp":"2026-07-12T11:54:27.828Z"}
+{"level":"warn","message":"POST /api/shops -> 401 Not authorized, no token provided","timestamp":"2026-07-12T11:54:27.842Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-07-12T11:54:27.905Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-07-12T11:54:27.914Z"}
+{"level":"warn","message":"GET /api/auth/me -> 401 Not authorized, no token provided","timestamp":"2026-07-12T11:54:27.922Z"}
+{"level":"warn","message":"GET /api/shops/does-not-exist -> 404 Shop not found","timestamp":"2026-07-12T11:54:27.989Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 Upload error: Unexpected field","timestamp":"2026-07-12T11:54:28.215Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Your cart is empty","timestamp":"2026-07-12T11:54:28.265Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 No image files provided (expected field name 'images')","timestamp":"2026-07-12T11:54:28.319Z"}
+{"level":"warn","message":"PUT /api/products/6a538074f5e3361ba43808bb -> 403 You are not allowed to modify this product","timestamp":"2026-07-12T11:54:28.359Z"}
+{"level":"warn","message":"PUT /api/shops/me/slug -> 400 This shop URL is already taken","timestamp":"2026-07-12T11:54:28.403Z"}
+{"level":"warn","message":"GET /api/products/6a538074f5e3361ba43808c1 -> 404 Product not found","timestamp":"2026-07-12T11:54:28.523Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 shippingAddress.street: Invalid input: expected string, received undefined; shippingAddress.city: Invalid input: expected string, received undefined","timestamp":"2026-07-12T11:54:28.525Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 400 publicId is required","timestamp":"2026-07-12T11:54:28.526Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 401 Not authorized, no token provided","timestamp":"2026-07-12T11:54:28.534Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 403 You are not allowed to delete this image","timestamp":"2026-07-12T11:54:28.653Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-07-12T11:54:28.917Z"}
+{"level":"warn","message":"PATCH /api/orders/6a538075fc53ab920955b2b7/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-07-12T11:54:29.466Z"}
