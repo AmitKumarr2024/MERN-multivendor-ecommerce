@@ -19,6 +19,7 @@ import cartRoutes from "./modules/cart/routes/cart.routes.js";
 import orderRoutes from "./modules/order/routes/order.routes.js";
 import conversationRoutes from "./modules/messagingSystem/routes/conversation.routes.js";
 import broadcastRoutes from "./modules/messagingSystem/routes/broadcast.routes.js";
+import uploadRoutes from "./modules/upload/routes/upload.routes.js";
 
 dotenv.config();
 
@@ -57,6 +58,7 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/messages/broadcasts", broadcastRoutes);
 app.use("/api/messages", conversationRoutes);
+app.use("/api/upload", uploadRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
