@@ -10,7 +10,7 @@ import httpLogger from "./middleware/httpLogger.js";
 import errorHandler from "./middleware/errorHandler.js";
 import { apiLimiter } from "./middleware/rateLimiter.js";
 import initSocket from "./sockets/index.js";
-import authRoutes from "./modules/auth/auth.routes.js";
+import authRoutes from "./modules/auth/routes/auth.routes.js";
 import shopRoutes from "./modules/shop/routes/shop.routes.js";
 import productRoutes from "./modules/product/routes/product.routes.js";
 import categoryRoutes from "./modules/product/routes/category.routes.js";

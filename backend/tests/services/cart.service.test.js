@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeAll, afterAll, afterEach } from "@jest/globals";
 import { connectTestDB, closeTestDB, clearTestDB } from "../setup/db.js";
-import User from "../../modules/auth/auth.model.js";
+import User from "../../modules/auth/models/auth.model.js";
 import Shop from "../../modules/shop/models/shop.model.js";
 import Category from "../../modules/product/models/category.model.js";
 import Product from "../../modules/product/models/product.model.js";

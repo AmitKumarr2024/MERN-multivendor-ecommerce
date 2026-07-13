@@ -1,4 +1,4 @@
-import User from "../../auth/auth.model.js";
+import User from "../../auth/models/auth.model.js";
 import Shop from "../../shop/models/shop.model.js";
 import Product from "../../product/models/product.model.js";
 import Order from "../../order/models/order.model.js";

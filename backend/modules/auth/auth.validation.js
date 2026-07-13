@@ -27,3 +27,12 @@ export const changePasswordSchema = z.object({
 export const updateRoleSchema = z.object({
   role: z.enum([ROLES.BUYER, ROLES.SELLER]),
 });
+
+export const forgotPasswordSchema = z.object({
+  email: z.string().trim().email("A valid email is required"),
+});
+
+export const resetPasswordSchema = z.object({
+  token: z.string().min(1, "Reset token is required"),
+  newPassword: z.string().min(6, "New password must be at least 6 characters"),
+});

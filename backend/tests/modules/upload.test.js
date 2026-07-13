@@ -11,7 +11,7 @@ import request from "supertest";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { connectTestDB, closeTestDB, clearTestDB } from "../setup/db.js";
-import authRoutes from "../../modules/auth/auth.routes.js";
+import authRoutes from "../../modules/auth/routes/auth.routes.js";
 import errorHandler from "../../middleware/errorHandler.js";
 
 /**

@@ -10,7 +10,7 @@ import request from "supertest";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { connectTestDB, closeTestDB, clearTestDB } from "../setup/db.js";
-import authRoutes from "../../modules/auth/auth.routes.js";
+import authRoutes from "../../modules/auth/routes/auth.routes.js";
 import shopRoutes from "../../modules/shop/routes/shop.routes.js";
 import productRoutes from "../../modules/product/routes/product.routes.js";
 import cartRoutes from "../../modules/cart/routes/cart.routes.js";

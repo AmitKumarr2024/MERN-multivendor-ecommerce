@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 import jwt from "jsonwebtoken";
 import cookie from "cookie";
-import User from "../modules/auth/auth.model.js";
+import User from "../modules/auth/models/auth.model.js";
 import Conversation from "../modules/messagingSystem/models/conversation.model.js";
 import Shop from "../modules/shop/models/shop.model.js";
 import { setIO } from "./io.js";

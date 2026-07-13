@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import User from "../modules/auth/auth.model.js";
+import User from "../modules/auth/models/auth.model.js";
 import { UnauthorizedError, ForbiddenError } from "../exceptions/ApiError.js";
 
 export const protect = async (req, res, next) => {

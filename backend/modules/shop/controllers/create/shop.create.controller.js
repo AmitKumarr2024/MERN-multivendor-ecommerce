@@ -1,5 +1,5 @@
 import Shop from "../../models/shop.model.js";
-import User from "../../../auth/auth.model.js";
+import User from "../../../auth/models/auth.model.js";
 import { ROLES } from "../../../../constants/roles.js";
 import { BadRequestError } from "../../../../exceptions/ApiError.js";
 
