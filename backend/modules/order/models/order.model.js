@@ -72,10 +72,28 @@ const orderSchema = new mongoose.Schema(
     },
 
     // Placeholder for future Shiprocket integration - seller will pick a courier here
+    // Populated automatically by the logistics module once the seller marks
+    // the order ready to ship - the seller never picks a courier themselves,
+    // services/logistics/logistics.service.js auto-selects one.
     shipment: {
-      courierName: { type: String, default: null },
-      trackingId: { type: String, default: null },
-      status: { type: String, default: null },
+      provider: { type: String, default: null }, // "shiprocket", "nimbuspost", etc.
+      courierName: { type: String, default: null }, // e.g. "Delhivery Surface" - the actual carrier, resolved via the provider
+      shipmentId: { type: String, default: null }, // provider's internal shipment/order id
+      awbCode: { type: String, default: null }, // airway bill number - what the courier + customer use to track
+      trackingId: { type: String, default: null }, // kept for backward compatibility, mirrors awbCode
+      rate: { type: Number, default: null }, // what the platform paid the courier for this shipment
+      estimatedDeliveryDays: { type: Number, default: null },
+      status: { type: String, default: null }, // "pickup_scheduled" | "in_transit" | "out_for_delivery" | "delivered" | "returned" | etc.
+      trackingUrl: { type: String, default: null },
+      lastWebhookAt: { type: Date, default: null },
+      history: [
+        {
+          _id: false,
+          status: String,
+          message: String,
+          occurredAt: Date,
+        },
+      ],
     },
 
     cancelReason: { type: String, default: null },

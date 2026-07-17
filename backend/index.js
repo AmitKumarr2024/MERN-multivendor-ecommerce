@@ -20,6 +20,7 @@ import orderRoutes from "./modules/order/routes/order.routes.js";
 import conversationRoutes from "./modules/messagingSystem/routes/conversation.routes.js";
 import broadcastRoutes from "./modules/messagingSystem/routes/broadcast.routes.js";
 import uploadRoutes from "./modules/upload/routes/upload.routes.js";
+import logisticsRoutes from "./modules/logistics/routes/logistics.routes.js";
 
 dotenv.config();
 
@@ -59,6 +60,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/messages/broadcasts", broadcastRoutes);
 app.use("/api/messages", conversationRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/logistics", logisticsRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");

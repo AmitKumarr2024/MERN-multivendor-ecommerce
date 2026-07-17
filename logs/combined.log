@@ -559,3 +559,71 @@
 {"level":"warn","message":"DELETE /api/upload/image -> 403 You are not allowed to delete this image","timestamp":"2026-07-13T07:00:14.097Z"}
 {"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-07-13T07:00:14.301Z"}
 {"level":"warn","message":"PATCH /api/orders/6a548cfe177de3fa64dfe086/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-07-13T07:00:14.763Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-07-14T11:04:46.148Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-07-14T11:04:46.163Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-07-14T11:04:46.167Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-07-14T11:04:46.218Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 401 Not authorized, no token provided","timestamp":"2026-07-14T11:05:39.414Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 Only JPEG, PNG, WEBP, or GIF images are allowed","timestamp":"2026-07-14T11:05:39.962Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 User with this email already exists","timestamp":"2026-07-14T11:05:39.977Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 password: Password must be at least 6 characters","timestamp":"2026-07-14T11:05:39.985Z"}
+{"level":"warn","message":"POST /api/products -> 400 Please create your shop before adding products","timestamp":"2026-07-14T11:05:40.069Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 No image file provided (expected field name 'image')","timestamp":"2026-07-14T11:05:40.086Z"}
+{"level":"warn","message":"POST /api/products -> 400 Invalid category","timestamp":"2026-07-14T11:05:40.203Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 File is too large. Maximum size is 5MB.","timestamp":"2026-07-14T11:05:40.212Z"}
+{"level":"warn","message":"POST /api/shops -> 400 You already have a shop","timestamp":"2026-07-14T11:05:40.285Z"}
+{"level":"warn","message":"POST /api/shops -> 401 Not authorized, no token provided","timestamp":"2026-07-14T11:05:40.295Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-07-14T11:05:40.406Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-07-14T11:05:40.416Z"}
+{"level":"warn","message":"GET /api/auth/me -> 401 Not authorized, no token provided","timestamp":"2026-07-14T11:05:40.423Z"}
+{"level":"warn","message":"GET /api/shops/does-not-exist -> 404 Shop not found","timestamp":"2026-07-14T11:05:40.448Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 Upload error: Unexpected field","timestamp":"2026-07-14T11:05:40.651Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Your cart is empty","timestamp":"2026-07-14T11:05:40.691Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 No image files provided (expected field name 'images')","timestamp":"2026-07-14T11:05:40.756Z"}
+{"level":"warn","message":"PUT /api/products/6a561804678251250bfc4d3e -> 403 You are not allowed to modify this product","timestamp":"2026-07-14T11:05:40.776Z"}
+{"level":"warn","message":"PUT /api/shops/me/slug -> 400 This shop URL is already taken","timestamp":"2026-07-14T11:05:40.834Z"}
+{"level":"warn","message":"GET /api/products/6a561804678251250bfc4d44 -> 404 Product not found","timestamp":"2026-07-14T11:05:40.927Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 shippingAddress.street: Invalid input: expected string, received undefined; shippingAddress.city: Invalid input: expected string, received undefined","timestamp":"2026-07-14T11:05:40.950Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 400 publicId is required","timestamp":"2026-07-14T11:05:40.974Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 401 Not authorized, no token provided","timestamp":"2026-07-14T11:05:40.980Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 403 You are not allowed to delete this image","timestamp":"2026-07-14T11:05:41.082Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-07-14T11:05:41.372Z"}
+{"level":"warn","message":"PATCH /api/orders/6a561805b6da62a6793e1256/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-07-14T11:05:41.948Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-07-14T11:10:30.749Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-07-14T11:10:30.762Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-07-14T11:10:30.766Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-07-14T11:10:30.787Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-07-14T11:26:54.748Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-07-14T11:26:54.767Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-07-14T11:26:54.771Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-07-14T11:26:54.792Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-07-16T04:42:43.652Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-07-16T04:42:43.671Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-07-16T04:42:43.680Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-07-16T04:42:43.724Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 401 Not authorized, no token provided","timestamp":"2026-07-16T04:43:16.754Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 User with this email already exists","timestamp":"2026-07-16T04:43:17.400Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 password: Password must be at least 6 characters","timestamp":"2026-07-16T04:43:17.414Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 Only JPEG, PNG, WEBP, or GIF images are allowed","timestamp":"2026-07-16T04:43:17.427Z"}
+{"level":"warn","message":"POST /api/products -> 400 Please create your shop before adding products","timestamp":"2026-07-16T04:43:17.489Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 No image file provided (expected field name 'image')","timestamp":"2026-07-16T04:43:17.561Z"}
+{"level":"warn","message":"POST /api/products -> 400 Invalid category","timestamp":"2026-07-16T04:43:17.646Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 File is too large. Maximum size is 5MB.","timestamp":"2026-07-16T04:43:17.717Z"}
+{"level":"warn","message":"POST /api/shops -> 400 You already have a shop","timestamp":"2026-07-16T04:43:17.775Z"}
+{"level":"warn","message":"POST /api/shops -> 401 Not authorized, no token provided","timestamp":"2026-07-16T04:43:17.792Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-07-16T04:43:17.871Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-07-16T04:43:17.881Z"}
+{"level":"warn","message":"GET /api/auth/me -> 401 Not authorized, no token provided","timestamp":"2026-07-16T04:43:17.888Z"}
+{"level":"warn","message":"GET /api/shops/does-not-exist -> 404 Shop not found","timestamp":"2026-07-16T04:43:17.962Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 Upload error: Unexpected field","timestamp":"2026-07-16T04:43:18.236Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Your cart is empty","timestamp":"2026-07-16T04:43:18.252Z"}
+{"level":"warn","message":"PUT /api/products/6a586166ce195c52a0aa0766 -> 403 You are not allowed to modify this product","timestamp":"2026-07-16T04:43:18.335Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 No image files provided (expected field name 'images')","timestamp":"2026-07-16T04:43:18.354Z"}
+{"level":"warn","message":"PUT /api/shops/me/slug -> 400 This shop URL is already taken","timestamp":"2026-07-16T04:43:18.405Z"}
+{"level":"warn","message":"GET /api/products/6a586166ce195c52a0aa076c -> 404 Product not found","timestamp":"2026-07-16T04:43:18.501Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 shippingAddress.street: Invalid input: expected string, received undefined; shippingAddress.city: Invalid input: expected string, received undefined","timestamp":"2026-07-16T04:43:18.545Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 400 publicId is required","timestamp":"2026-07-16T04:43:18.596Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 401 Not authorized, no token provided","timestamp":"2026-07-16T04:43:18.607Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 403 You are not allowed to delete this image","timestamp":"2026-07-16T04:43:18.740Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-07-16T04:43:19.043Z"}
+{"level":"warn","message":"PATCH /api/orders/6a58616788494fd36f3d650e/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-07-16T04:43:19.680Z"}

@@ -9,6 +9,10 @@ import {
   updateOrderStatus,
   cancelMyOrder,
 } from "../controllers/order.update.controller.js";
+import {
+  shipOrder,
+  getTracking,
+} from "../../logistics/controllers/logistics.controller.js";
 import { protect } from "../../../middleware/authMiddleware.js";
 import validate from "../../../middleware/validate.js";
 import {
@@ -31,9 +35,12 @@ router.patch("/:id/cancel", validate(cancelOrderSchema), cancelMyOrder);
 // the real gatekeeper, same reasoning as product routes.
 router.get("/shop", getShopOrders);
 router.patch("/:id/status", validate(updateStatusSchema), updateOrderStatus);
+// "Ship this order" - the seller's entire shipping experience. Courier
+// selection happens automatically inside logistics.service.js.
+router.post("/:id/ship", shipOrder);
 
 // Shared (buyer, owning seller, or admin - checked inside the controller)
 router.get("/:id", getOrderById);
+router.get("/:id/tracking", getTracking);
 
 export default router;
-    
