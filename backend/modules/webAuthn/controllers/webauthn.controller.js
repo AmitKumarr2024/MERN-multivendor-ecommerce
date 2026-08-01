@@ -1,7 +1,11 @@
-import User from "./../../auth/models/auth.model.js";
+import User from "../../auth/models/auth.model.js";
 import generateToken from "../../../utils/generateToken.js";
 import { COOKIE_NAME, getCookieOptions } from "../../../utils/cookieOptions.js";
-import { BadRequestError, UnauthorizedError, NotFoundError } from "../../../exceptions/ApiError.js";
+import {
+  BadRequestError,
+  UnauthorizedError,
+  NotFoundError,
+} from "../../../exceptions/ApiError.js";
 import {
   buildRegistrationOptions,
   verifyAndSaveRegistration,
@@ -46,10 +50,16 @@ export const verifyRegistration = async (req, res, next) => {
     const { response, nickname } = req.body;
     if (!response) throw new BadRequestError("response is required");
 
-    const user = await User.findById(req.user._id).select("+currentChallenge +currentChallengeExpires");
+    const user = await User.findById(req.user._id).select(
+      "+currentChallenge +currentChallengeExpires",
+    );
     if (!user) throw new NotFoundError("User not found");
 
-    const savedPasskey = await verifyAndSaveRegistration(user, response, nickname);
+    const savedPasskey = await verifyAndSaveRegistration(
+      user,
+      response,
+      nickname,
+    );
 
     res.status(201).json({
       message: "Passkey registered successfully",
@@ -93,16 +103,19 @@ export const getLoginOptions = async (req, res, next) => {
 export const verifyLogin = async (req, res, next) => {
   try {
     const { email, response } = req.body;
-    if (!email || !response) throw new BadRequestError("Email and response are required");
+    if (!email || !response)
+      throw new BadRequestError("Email and response are required");
 
     const user = await User.findOne({ email: email.toLowerCase() }).select(
-      "+currentChallenge +currentChallengeExpires"
+      "+currentChallenge +currentChallengeExpires",
     );
     if (!user) {
       throw new BadRequestError("Passkey authentication failed");
     }
     if (!user.isActive) {
-      throw new UnauthorizedError("Your account has been suspended. Please contact support.");
+      throw new UnauthorizedError(
+        "Your account has been suspended. Please contact support.",
+      );
     }
 
     await verifyAuthentication(user, response);
@@ -149,7 +162,9 @@ export const deletePasskey = async (req, res, next) => {
     if (!user) throw new NotFoundError("User not found");
 
     const beforeCount = user.passkeys.length;
-    user.passkeys = user.passkeys.filter((pk) => pk.credentialId !== req.params.credentialId);
+    user.passkeys = user.passkeys.filter(
+      (pk) => pk.credentialId !== req.params.credentialId,
+    );
 
     if (user.passkeys.length === beforeCount) {
       throw new NotFoundError("Passkey not found");

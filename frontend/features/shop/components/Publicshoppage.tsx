@@ -1,0 +1,157 @@
+"use client";
+
+import { useEffect } from "react";
+import Image from "next/image";
+
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { fetchShopBySlug, clearViewedShop } from "../store/shopSlice";
+import { selectViewedShop, selectViewedShopLoading, selectShopError } from "../store/shopSelectors";
+import type { DayName } from "../types/shop.types";
+
+import { fetchProductsByShopSlug, ProductGrid, selectShopProducts, selectShopProductsLoading } from "@/features/products";
+
+interface PublicShopPageProps {
+    slug: string;
+}
+
+const DAY_ORDER: DayName[] = [
+    "monday",
+    "tuesday",
+    "wednesday",
+    "thursday",
+    "friday",
+    "saturday",
+    "sunday",
+];
+
+export default function PublicShopPage({ slug }: PublicShopPageProps) {
+    const dispatch = useAppDispatch();
+
+    const shop = useAppSelector(selectViewedShop);
+    const loading = useAppSelector(selectViewedShopLoading);
+    const error = useAppSelector(selectShopError);
+
+    const products = useAppSelector(selectShopProducts);
+    const productsLoading = useAppSelector(selectShopProductsLoading);
+
+    useEffect(() => {
+        dispatch(fetchShopBySlug(slug));
+        dispatch(fetchProductsByShopSlug(slug));
+        return () => {
+            dispatch(clearViewedShop());
+        };
+    }, [dispatch, slug]);
+
+    if (loading) {
+        return (
+            <div className="mx-auto max-w-5xl animate-pulse p-4 sm:p-6">
+                <div className="h-32 rounded-2xl bg-gray-100" />
+            </div>
+        );
+    }
+
+    if (error || !shop) {
+        return (
+            <div className="mx-auto max-w-5xl p-4 sm:p-6">
+                <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center text-sm text-gray-500">
+                    {error || "Shop not found."}
+                </div>
+            </div>
+        );
+    }
+
+    const todayIndex = (new Date().getDay() + 6) % 7; // Mon=0..Sun=6
+
+    return (
+        <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
+            {/* Shop header */}
+            <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                {shop.banner ? (
+                    <div className="relative h-32 w-full sm:h-40">
+                        <Image src={shop.banner} alt="" fill className="object-cover" />
+                    </div>
+                ) : (
+                    <div className="h-20 bg-linear-to-r from-gray-100 to-gray-50" />
+                )}
+
+                <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-end sm:p-6">
+                    <div className="relative -mt-10 h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-4 border-white bg-gray-100 shadow-sm sm:h-24 sm:w-24">
+                        {shop.logo ? (
+                            <Image src={shop.logo} alt={shop.shopName} fill className="object-cover" />
+                        ) : (
+                            <div className="flex h-full items-center justify-center text-2xl font-bold text-gray-300">
+                                {shop.shopName.charAt(0).toUpperCase()}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-2">
+                            <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
+                                {shop.shopName}
+                            </h1>
+                            {shop.isVerified && (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700">
+                                    ✓ Verified
+                                </span>
+                            )}
+                            <span
+                                className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${shop.isOpen
+                                        ? "bg-green-50 text-green-700"
+                                        : "bg-gray-100 text-gray-500"
+                                    }`}
+                            >
+                                <span
+                                    className={`h-1.5 w-1.5 rounded-full ${shop.isOpen ? "bg-green-500" : "bg-gray-400"}`}
+                                />
+                                {shop.isOpen ? "Open now" : "Closed"}
+                            </span>
+                        </div>
+                        {shop.description ? (
+                            <p className="mt-1 text-sm text-gray-500">{shop.description}</p>
+                        ) : null}
+                        {shop.address?.city ? (
+                            <p className="mt-1 text-xs text-gray-400">
+                                {[shop.address.city, shop.address.state].filter(Boolean).join(", ")}
+                            </p>
+                        ) : null}
+                    </div>
+                </div>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
+                {/* Products */}
+                <div>
+                    <h2 className="mb-3 text-base font-semibold text-gray-900">
+                        Products from {shop.shopName}
+                    </h2>
+                    <ProductGrid
+                        products={products}
+                        loading={productsLoading}
+                        emptyMessage="This shop hasn't listed any products yet."
+                    />
+                </div>
+
+                {/* Hours sidebar */}
+                <div className="h-fit rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+                    <h3 className="mb-3 text-sm font-semibold text-gray-900">Business hours</h3>
+                    <ul className="space-y-1.5 text-sm">
+                        {DAY_ORDER.map((day, i) => {
+                            const h = shop.businessHours[day];
+                            const isToday = i === todayIndex;
+                            return (
+                                <li
+                                    key={day}
+                                    className={`flex justify-between ${isToday ? "font-semibold text-gray-900" : "text-gray-500"}`}
+                                >
+                                    <span className="capitalize">{day}</span>
+                                    <span>{h.isClosed ? "Closed" : `${h.open} - ${h.close}`}</span>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    );
+}

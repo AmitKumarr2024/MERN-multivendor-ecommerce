@@ -20,6 +20,13 @@ import { BadRequestError } from "../exceptions/ApiError.js";
  * we store it directly on the User document (currentChallenge, with a
  * short expiry) rather than a separate session store, since it's simple
  * and this project doesn't otherwise use server-side sessions.
+ *
+ * PLATFORM PASSKEY POLICY (Windows Hello / Touch ID / Face ID / Android):
+ * Both registration and authentication are configured to require a
+ * platform authenticator with local user verification (PIN/biometric)
+ * rather than leaving it up to the browser to offer security keys too.
+ * The PIN/biometric itself never reaches our backend - it only unlocks
+ * the private passkey material on the user's own device.
  * ------------------------------------------------------------------
  */
 
@@ -49,9 +56,14 @@ export const buildRegistrationOptions = async (user) => {
       id: pk.credentialId,
       transports: pk.transports,
     })),
+    // Force a platform (built-in) authenticator - on Windows this is
+    // Windows Hello - and require a discoverable, user-verified passkey
+    // instead of leaving the choice open to external security keys.
     authenticatorSelection: {
-      residentKey: "preferred",
-      userVerification: "preferred",
+      authenticatorAttachment: "platform",
+      residentKey: "required",
+      requireResidentKey: true,
+      userVerification: "required",
     },
   });
 
@@ -128,7 +140,9 @@ export const buildAuthenticationOptions = async (user) => {
       id: pk.credentialId,
       transports: pk.transports,
     })),
-    userVerification: "preferred",
+    // Require local verification (Windows Hello PIN/biometric etc.) at
+    // login time too, matching the registration policy above.
+    userVerification: "required",
   });
 
   user.currentChallenge = options.challenge;
@@ -146,7 +160,7 @@ export const buildAuthenticationOptions = async (user) => {
 export const buildDummyAuthenticationOptions = async () => {
   return generateAuthenticationOptions({
     rpID: RP_ID,
-    userVerification: "preferred",
+    userVerification: "required",
   });
 };
 

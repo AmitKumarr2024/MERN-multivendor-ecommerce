@@ -1,26 +1,171 @@
 @import "tailwindcss";
 
+/* =========================================================
+   GLOBAL STYLES + THEME CONFIGURATION
+
+   Purpose:
+   - Loads Tailwind CSS v4.
+   - Defines application-wide light/dark theme variables.
+   - Connects Geist fonts from app/layout.tsx with Tailwind.
+   - Provides basic global styles and accessibility defaults.
+   - Dark mode is controlled by next-themes through the
+     "dark" class added to the <html> element.
+
+   IMPORTANT:
+   Do not use prefers-color-scheme here for theme switching.
+   next-themes handles Light / Dark / System preferences.
+========================================================= */
+
+/* =========================================================
+   TAILWIND DARK MODE VARIANT
+
+   Tailwind CSS v4 uses this custom variant so classes like:
+
+   dark:bg-zinc-950
+   dark:text-white
+   dark:border-zinc-800
+
+   respond to the ".dark" class placed on <html> by
+   next-themes.
+========================================================= */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* =========================================================
+   LIGHT THEME
+
+   These are the default application colors when the
+   "dark" class is not present on <html>.
+========================================================= */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  color-scheme: light;
 }
+
+/* =========================================================
+   DARK THEME
+
+   next-themes adds:
+   <html class="dark">
+
+   when Dark mode is active.
+
+   These variables then replace the default light values.
+========================================================= */
+
+.dark {
+  --background: #09090b;
+  --foreground: #fafafa;
+
+  color-scheme: dark;
+}
+
+/* =========================================================
+   TAILWIND THEME VARIABLES
+
+   Exposes our CSS variables to Tailwind.
+
+   Example:
+   bg-background
+   text-foreground
+
+   Font variables come from next/font in app/layout.tsx.
+========================================================= */
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* =========================================================
+   DOCUMENT BASE STYLES
+========================================================= */
+
+html {
+  min-height: 100%;
 }
 
 body {
+  min-height: 100vh;
+
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+  /*
+   Geist is the primary application font.
+
+   Arial/Helvetica are fallbacks in case the Next.js
+   font cannot be loaded.
+  */
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
+}
+
+/* =========================================================
+   GLOBAL ELEMENT DEFAULTS
+
+   Ensures predictable sizing and consistent typography
+   for interactive elements throughout the application.
+========================================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled),
+a {
+  cursor: pointer;
+}
+
+/* =========================================================
+   ACCESSIBILITY
+
+   Shows a visible keyboard focus indicator for users
+   navigating the application without a mouse.
+========================================================= */
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* =========================================================
+   TEXT SELECTION
+
+   Controls the appearance of text highlighted by users.
+
+   Separate colors are provided for light and dark themes
+   to maintain sufficient contrast.
+========================================================= */
+
+::selection {
+  background: #18181b;
+  color: #ffffff;
+}
+
+.dark ::selection {
+  background: #fafafa;
+  color: #18181b;
 }

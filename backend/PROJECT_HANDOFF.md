@@ -29,6 +29,17 @@ and `config/webauthn.js` elsewhere.
 
 ---
 
+## ⛔ PAYMENT SYSTEM — explicitly out of scope right now
+
+A Razorpay + Cashfree payment module (adapter pattern, provider-agnostic
+orchestrator) was built and tested in an earlier session, but the founder
+decided to **stop and exclude payment integration entirely for now**. Do
+NOT build or resume payment work unless explicitly asked again. Order model
+still has `paymentStatus`/`paymentMethod` fields (COD works fine), just no
+online gateway is wired in.
+
+---
+
 ## What this project actually is (product vision, not just "another marketplace")
 
 This is being built as a **Hybrid Commerce Platform**, not a plain multi-vendor
@@ -56,23 +67,24 @@ reproduced; the summary below covers what's relevant to current code.
 
 A reviewer suggested writing an 80-120 page "Product Bible" before more coding.
 **I pushed back on that as premature for a solo/early-stage build** - the agreed
-approach instead is: finish the core transactional loop (which is now nearly
-done: auth → shop → product → cart → order → **logistics**, payment next),
-get a handful of real sellers using it, and only build the heavier modules
-(subscriptions, staff accounts, wallet, refunds, analytics, CRM, fraud
+approach instead is: finish the core transactional loop (auth → shop → product
+→ cart → order → logistics — this loop is now functionally complete minus
+payment), get a handful of real sellers using it, and only build the heavier
+modules (subscriptions, staff accounts, wallet, refunds, analytics, CRM, fraud
 protection) once real usage reveals what's actually needed - not from a
 speculative spec. Write a short 1-2 page brief per module only right before
 building it, not all of them upfront.
 
 **Priority classification agreed on:**
 
-- **Build now/soon**: logistics (in progress), a _simple_ refund flow
-  (manual/admin-approved, not the full automated workflow), a _simple_ wallet
-  ledger (just a transaction log, not full withdraw/processing states)
+- **Build now/soon**: a _simple_ refund flow (manual/admin-approved, not the
+  full automated workflow), a _simple_ wallet ledger (just a transaction log,
+  not full withdraw/processing states), real email service
 - **Defer until there are real users asking for them**: subscription tiers,
   staff accounts/permissions, reviews, seller analytics dashboards, a full
-  notification center (SMS/WhatsApp/push - email itself isn't even wired in
-  yet), platform finance/GST reporting, admin CRM/disputes, fraud protection
+  notification center (SMS/WhatsApp/push), platform finance/GST reporting,
+  admin CRM/disputes, fraud protection
+- **Explicitly stopped**: payment gateway integration (see section above)
 
 ## Tech stack
 
@@ -279,16 +291,14 @@ download the Mongo binary — cached after that).
 
 ## What's NOT built yet (roadmap, priority-ordered per the strategy note above)
 
-1. **Payment integration (Razorpay)** — `paymentStatus` field exists on Order but
-   nothing updates it from a real gateway yet. Natural next step since it sits
-   right before logistics in the flow (pay → platform creates shipment).
+1. ~~Payment integration~~ — **explicitly stopped/out of scope, do not resume without being asked again**
 2. **Real Shiprocket account verification** — the adapter was written against
    published API docs but never exercised against a live account; do this
    before trusting it with real orders.
 3. **Real email service** — needed to make `forgotPassword` production-safe (see
    gotcha above) and to actually notify users generally
 4. **Simple refund flow** (manual/admin-approved) and **simple wallet ledger**
-   (transaction log only) — agreed as the next "build now" tier after payments
+   (transaction log only) — agreed as the next "build now" tier
 5. **Recovery codes** — companion to Passkeys (backup access if a user loses
    all their devices) but not yet implemented
 6. Everything in the "defer until real users ask" tier: subscription plans,
@@ -311,3 +321,5 @@ download the Mongo binary — cached after that).
 - I think in product/business terms as much as code terms now (seller
   experience, not just endpoints) — keep giving both the technical "how" and
   the product "why" when it's relevant
+- **Payment integration was explicitly stopped mid-build - don't restart it
+  unless I bring it up again myself**
