@@ -21,8 +21,8 @@ import ProfileQuickLinks from "./profileQuickLinks";
  * Usage — same import, works everywhere:
  *
  *   app/(buyer)/profile/page.tsx   -> <ProfileView />
- *   app/(seller)/profile/page.tsx  -> <ProfileView />  (if you add one)
- *   app/(admin)/profile/page.tsx   -> <ProfileView />  (if you add one)
+ *   app/seller/profile/page.tsx  -> <ProfileView />  (if you add one)
+ *   app/admin/profile/page.tsx   -> <ProfileView />  (if you add one)
  *
  * What changes per role is driven entirely by
  * ROLE_PROFILE_CONFIG (features/profile/config), not by
@@ -36,7 +36,7 @@ export default function ProfileView() {
     if (!initialized) {
         return (
             <div className="mx-auto max-w-3xl p-6">
-                <p className="text-sm text-gray-400">Loading profile...</p>
+                <p className="text-sm text-muted">Loading profile...</p>
             </div>
         );
     }
@@ -44,7 +44,7 @@ export default function ProfileView() {
     if (!user) {
         return (
             <div className="mx-auto max-w-3xl p-6">
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-secondary">
                     You need to be logged in to view this page.
                 </p>
             </div>
@@ -74,9 +74,9 @@ export default function ProfileView() {
                         config={config}
                     />
 
-                    <section className="space-y-6 rounded-2xl border bg-white p-6 shadow-sm dark:bg-neutral-900">
+                    <section className="space-y-6 rounded-2xl border border-default bg-surface p-6 shadow-sm">
 
-                        <h2 className="text-lg font-semibold">
+                        <h2 className="text-lg font-semibold text-primary">
                             Security
                         </h2>
 

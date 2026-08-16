@@ -54,21 +54,32 @@ const initSocket = (httpServer) => {
   io.use(async (socket, next) => {
     try {
       const rawCookies = socket.handshake.headers.cookie;
-      if (!rawCookies) return next();
+      if (!rawCookies) {
+        console.log("❌ Socket: no cookies at all");
+        return next();
+      }
 
       const parsedCookies = cookie.parse(rawCookies);
       const token = parsedCookies.token;
-      if (!token) return next();
+      if (!token) {
+        console.log(
+          "❌ Socket: cookie header present but no 'token' key",
+          Object.keys(parsedCookies),
+        );
+        return next();
+      }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const user = await User.findById(decoded.id).select("-password");
       if (user && user.isActive) {
         socket.user = user;
+        console.log("✅ Socket authenticated:", user._id.toString());
+      } else {
+        console.log("❌ Socket: user not found or inactive");
       }
       next();
     } catch (error) {
-      // Invalid/expired token - treat as an anonymous connection rather than
-      // rejecting outright, since broadcasts should still work for them.
+      console.log("❌ Socket auth error:", error.message);
       next();
     }
   });

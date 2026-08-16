@@ -16,49 +16,66 @@
    next-themes handles Light / Dark / System preferences.
 ========================================================= */
 
-/* =========================================================
-   TAILWIND DARK MODE VARIANT
-
-   Tailwind CSS v4 uses this custom variant so classes like:
-
-   dark:bg-zinc-950
-   dark:text-white
-   dark:border-zinc-800
-
-   respond to the ".dark" class placed on <html> by
-   next-themes.
-========================================================= */
-
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* =========================================================
    LIGHT THEME
-
-   These are the default application colors when the
-   "dark" class is not present on <html>.
 ========================================================= */
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
 
+  /* Card / panel backgrounds (replaces bg-white) */
+  --surface: #ffffff;
+  --surface-muted: #f9fafb; /* replaces bg-gray-50 */
+  --surface-hover: #f3f4f6; /* replaces hover:bg-gray-100 */
+
+  /* Borders (replaces border-gray-200 / border-gray-300)
+     NOTE: named "default"/"strong", NOT "border-default" —
+     Tailwind builds the class as {utility}-{name}, so naming
+     the token "border-default" would generate the class
+     "border-border-default" instead of "border-default". */
+  --default: #e5e7eb;
+  --strong: #d1d5db;
+
+  /* Text (replaces text-gray-900 / text-gray-500 / text-gray-400)
+     Same reasoning: named "primary"/"secondary"/"muted", not
+     "text-primary", so the generated class is text-primary. */
+  --primary: #111827;
+  --secondary: #6b7280;
+  --muted: #9ca3af;
+
+  /* Brand/accent — logo badge, primary CTAs, active nav/toggle
+     states. Kept separate from --primary (which is a text
+     color) so a fill color can be swapped independently. */
+  --accent: #111827;
+  --accent-foreground: #ffffff;
+
   color-scheme: light;
 }
 
 /* =========================================================
    DARK THEME
-
-   next-themes adds:
-   <html class="dark">
-
-   when Dark mode is active.
-
-   These variables then replace the default light values.
 ========================================================= */
 
 .dark {
   --background: #09090b;
   --foreground: #fafafa;
+
+  --surface: #18181b;
+  --surface-muted: #27272a;
+  --surface-hover: #3f3f46;
+
+  --default: #27272a;
+  --strong: #3f3f46;
+
+  --primary: #fafafa;
+  --secondary: #a1a1aa;
+  --muted: #71717a;
+
+  --accent: #fafafa;
+  --accent-foreground: #18181b;
 
   color-scheme: dark;
 }
@@ -66,11 +83,14 @@
 /* =========================================================
    TAILWIND THEME VARIABLES
 
-   Exposes our CSS variables to Tailwind.
+   Exposes our CSS variables to Tailwind as real utility
+   classes, e.g.:
 
-   Example:
-   bg-background
-   text-foreground
+   bg-background        text-foreground
+   bg-surface            bg-surface-muted      bg-surface-hover
+   border-default        border-strong
+   text-primary           text-secondary        text-muted
+   bg-accent              text-accent-foreground
 
    Font variables come from next/font in app/layout.tsx.
 ========================================================= */
@@ -78,6 +98,20 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-hover: var(--surface-hover);
+
+  --color-default: var(--default);
+  --color-strong: var(--strong);
+
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -97,12 +131,6 @@ body {
   background: var(--background);
   color: var(--foreground);
 
-  /*
-   Geist is the primary application font.
-
-   Arial/Helvetica are fallbacks in case the Next.js
-   font cannot be loaded.
-  */
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 
   transition:
@@ -112,9 +140,6 @@ body {
 
 /* =========================================================
    GLOBAL ELEMENT DEFAULTS
-
-   Ensures predictable sizing and consistent typography
-   for interactive elements throughout the application.
 ========================================================= */
 
 * {
@@ -141,9 +166,6 @@ a {
 
 /* =========================================================
    ACCESSIBILITY
-
-   Shows a visible keyboard focus indicator for users
-   navigating the application without a mouse.
 ========================================================= */
 
 :focus-visible {
@@ -153,11 +175,6 @@ a {
 
 /* =========================================================
    TEXT SELECTION
-
-   Controls the appearance of text highlighted by users.
-
-   Separate colors are provided for light and dark themes
-   to maintain sufficient contrast.
 ========================================================= */
 
 ::selection {
@@ -168,4 +185,20 @@ a {
 .dark ::selection {
   background: #fafafa;
   color: #18181b;
+}
+:root {
+  /* ...existing... */
+  --warning-bg: #fffbeb;
+  --info-bg: #eff6ff;
+}
+
+.dark {
+  /* ...existing... */
+  --warning-bg: rgba(120, 53, 15, 0.4);
+  --info-bg: rgba(30, 58, 138, 0.4);
+}
+@theme inline {
+  /* ...existing... */
+  --color-warning-bg: var(--warning-bg);
+  --color-info-bg: var(--info-bg);
 }

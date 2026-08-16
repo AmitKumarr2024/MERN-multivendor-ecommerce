@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 interface FooterLink {
@@ -10,10 +11,6 @@ interface FooterSection {
     links: FooterLink[];
 }
 
-/* =========================================================
-   ONE CONFIG ARRAY instead of 4 separate constants + 4 JSX
-   blocks — add/remove a section by editing this list only.
-========================================================= */
 const FOOTER_SECTIONS: FooterSection[] = [
     {
         title: "Shop",
@@ -65,22 +62,29 @@ export default function Footer() {
     const currentYear = new Date().getFullYear();
 
     return (
-        <footer className="border-t border-zinc-200 bg-white text-zinc-700">
+        <footer className="border-t border-default bg-surface text-secondary">
             <div className="w-full px-4 py-10 sm:px-6 lg:px-8">
                 <div className="grid gap-8 sm:grid-cols-[1.3fr_repeat(4,1fr)] sm:gap-6">
                     {/* Brand — trust badges folded in here instead of a separate block */}
                     <div>
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 text-lg font-black tracking-tight text-zinc-950"
+                            className="flex shrink-0 items-center gap-2 font-bold text-primary"
                         >
-                            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-900 text-xs font-black text-white">
-                                M
+                            <Image
+                                src="/android-chrome-512x512.png"
+                                alt="Amitora Market"
+                                width={52}
+                                height={52}
+                                className="rounded-lg object-contain"
+                            />
+
+                            <span className="hidden sm:inline">
+                                Amitora Market
                             </span>
-                            Marketplace
                         </Link>
 
-                        <p className="mt-3 max-w-xs text-sm leading-6 text-zinc-500">
+                        <p className="mt-3 max-w-xs text-sm leading-6 text-secondary">
                             Quality products from trusted sellers, all in one place.
                         </p>
 
@@ -88,7 +92,7 @@ export default function Footer() {
                             {TRUST_BADGES.map((badge) => (
                                 <li
                                     key={badge}
-                                    className="flex items-center gap-1.5 text-xs font-medium text-zinc-500"
+                                    className="flex items-center gap-1.5 text-xs font-medium text-secondary"
                                 >
                                     <CheckIcon />
                                     {badge}
@@ -105,13 +109,13 @@ export default function Footer() {
             </div>
 
             {/* Bottom bar */}
-            <div className="border-t border-zinc-100">
-                <div className="flex w-full flex-col gap-3 px-4 py-5 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+            <div className="border-t border-default">
+                <div className="flex w-full flex-col gap-3 px-4 py-5 text-xs text-secondary sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
                     <p>© {currentYear} Marketplace. All rights reserved.</p>
 
                     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5">
                         {LEGAL_LINKS.map((link) => (
-                            <Link key={link.href} href={link.href} className="transition hover:text-zinc-950">
+                            <Link key={link.href} href={link.href} className="transition hover:text-primary">
                                 {link.label}
                             </Link>
                         ))}
@@ -122,20 +126,12 @@ export default function Footer() {
     );
 }
 
-/* =========================================================
-   FOOTER COLUMN
-   <details>/<summary> gives free accordion behaviour on
-   mobile with zero JS/state. From `sm:` up, the marker is
-   hidden and the content forced open — behaves like a plain
-   column on desktop.
-========================================================= */
-
 function FooterColumn({ section }: { section: FooterSection }) {
     return (
-        <details className="group border-b border-zinc-100 py-3 open:pb-3 sm:border-0 sm:py-0" open>
-            <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-bold text-zinc-950 sm:cursor-default sm:pointer-events-none">
+        <details className="group border-b border-default py-3 open:pb-3 sm:border-0 sm:py-0" open>
+            <summary className="flex cursor-pointer list-none items-center justify-between text-sm font-bold text-primary sm:cursor-default sm:pointer-events-none">
                 {section.title}
-                <ChevronIcon className="h-4 w-4 text-zinc-400 transition-transform group-open:rotate-180 sm:hidden" />
+                <ChevronIcon className="h-4 w-4 text-muted transition-transform group-open:rotate-180 sm:hidden" />
             </summary>
 
             <ul className="mt-3 space-y-2.5 sm:mt-4">
@@ -143,7 +139,7 @@ function FooterColumn({ section }: { section: FooterSection }) {
                     <li key={link.href}>
                         <Link
                             href={link.href}
-                            className="text-sm text-zinc-500 transition hover:text-zinc-950"
+                            className="text-sm text-secondary transition hover:text-primary"
                         >
                             {link.label}
                         </Link>
@@ -164,7 +160,7 @@ function ChevronIcon({ className }: { className?: string }) {
 
 function CheckIcon() {
     return (
-        <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-emerald-600" aria-hidden="true">
+        <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 shrink-0 text-success-text" aria-hidden="true">
             <path d="M4 10.5L8 14.5L16 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
     );

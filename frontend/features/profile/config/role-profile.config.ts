@@ -29,9 +29,9 @@ export const ROLE_PROFILE_CONFIG: Record<UserRole, RoleProfileConfig> = {
             },
         ],
         quickLinks: [
-            { label: "Seller dashboard", href: "/dashboard" },
-            { label: "My shop", href: "/shop" },
-            { label: "Orders to fulfil", href: "/(seller)/orders" },
+            { label: "Seller dashboard", href: "/seller/dashboard" },
+            { label: "My shop", href: "/seller/shop" },
+            { label: "Orders to fulfil", href: "/seller/orders" },
         ],
         // Sellers don't switch back to buyer — role upgrade is one-way.
         canSwitchRole: false,
@@ -42,9 +42,9 @@ export const ROLE_PROFILE_CONFIG: Record<UserRole, RoleProfileConfig> = {
         badgeLabel: "Admin",
         extraRows: () => [],
         quickLinks: [
-            { label: "Admin dashboard", href: "/(admin)/dashboard" },
-            { label: "Manage users", href: "/(admin)/users" },
-            { label: "Manage shops", href: "/(admin)/shops" },
+            { label: "Admin dashboard", href: "/admin/dashboard" },
+            { label: "Manage users", href: "/admin/users" },
+            { label: "Manage shops", href: "/admin/shops" },
         ],
         // Admins don't self-switch role via the buyer/seller toggle.
         canSwitchRole: false,

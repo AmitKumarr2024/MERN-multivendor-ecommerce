@@ -13,20 +13,40 @@ export type UserRole = "buyer" | "seller" | "admin";
 
 
 /* =========================================================
+   ADDRESS
+
+   Buyer's personal shipping/contact address - separate from
+   a seller's Shop.address. Kept as a single embedded object
+   (not an array) since multi-address support isn't built yet.
+========================================================= */
+
+export interface AuthAddress {
+   street?: string;
+   city?: string;
+   state?: string;
+   pincode?: string;
+   country?: string;
+}
+
+
+/* =========================================================
    AUTH USER
 ========================================================= */
 
 export interface AuthUser {
-    _id: string;
-    name: string;
-    email: string;
-    phone?: string | null;
+   _id: string;
+   name: string;
+   email: string;
+   phone?: string | null;
 
-    role: UserRole;
+   avatar?: string | null;
+   address?: AuthAddress | null;
 
-    shop?: string | null;
+   role: UserRole;
 
-    mustChangePassword?: boolean;
+   shop?: string | null;
+
+   mustChangePassword?: boolean;
 }
 
 
@@ -45,8 +65,8 @@ export interface AuthUser {
 ========================================================= */
 
 export interface AuthResponse {
-    user: AuthUser;
-    message?: string;
+   user: AuthUser;
+   message?: string;
 }
 
 
@@ -60,13 +80,13 @@ export interface AuthResponse {
 ========================================================= */
 
 export interface RegisterPayload {
-    name: string;
-    email: string;
-    password: string;
+   name: string;
+   email: string;
+   password: string;
 
-    phone?: string;
+   phone?: string;
 
-    role: "buyer" | "seller";
+   role: "buyer" | "seller";
 }
 
 
@@ -75,8 +95,8 @@ export interface RegisterPayload {
 ========================================================= */
 
 export interface LoginPayload {
-    email: string;
-    password: string;
+   email: string;
+   password: string;
 }
 
 
@@ -85,8 +105,10 @@ export interface LoginPayload {
 ========================================================= */
 
 export interface UpdateMePayload {
-    name?: string;
-    phone?: string;
+   name?: string;
+   phone?: string;
+   avatar?: string;
+   address?: AuthAddress;
 }
 
 
@@ -95,8 +117,8 @@ export interface UpdateMePayload {
 ========================================================= */
 
 export interface ChangePasswordPayload {
-    currentPassword: string;
-    newPassword: string;
+   currentPassword: string;
+   newPassword: string;
 }
 
 
@@ -105,7 +127,7 @@ export interface ChangePasswordPayload {
 ========================================================= */
 
 export interface UpdateRolePayload {
-    role: "buyer" | "seller";
+   role: "buyer" | "seller";
 }
 
 
@@ -114,7 +136,7 @@ export interface UpdateRolePayload {
 ========================================================= */
 
 export interface ForgotPasswordPayload {
-    email: string;
+   email: string;
 }
 
 
@@ -129,8 +151,8 @@ export interface ForgotPasswordPayload {
 ========================================================= */
 
 export interface ResetPasswordPayload {
-    token: string;
-    newPassword: string;
+   token: string;
+   newPassword: string;
 }
 
 
@@ -139,7 +161,7 @@ export interface ResetPasswordPayload {
 ========================================================= */
 
 export interface MessageResponse {
-    message: string;
+   message: string;
 }
 
 
@@ -148,16 +170,16 @@ export interface MessageResponse {
 ========================================================= */
 
 export interface AuthState {
-    user: AuthUser | null;
+   user: AuthUser | null;
 
-    loading: boolean;
+   loading: boolean;
 
-    /*
-     * Prevents protected UI from making authentication
-     * decisions before GET /auth/me has completed.
-     */
-    initialized: boolean;
+   /*
+    * Prevents protected UI from making authentication
+    * decisions before GET /auth/me has completed.
+    */
+   initialized: boolean;
 
-    error: string | null;
-    successMessage: string | null;
+   error: string | null;
+   successMessage: string | null;
 }

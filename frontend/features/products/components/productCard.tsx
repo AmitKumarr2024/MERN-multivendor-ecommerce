@@ -8,6 +8,7 @@ import {
     resolveDiscountPercent,
     resolveEffectivePrice,
 } from "../utils/productHelpers";
+import { WishlistButton } from "@/features/wishlist";
 
 interface ProductCardProps {
     product: Product;
@@ -23,9 +24,9 @@ export default function ProductCard({ product }: ProductCardProps) {
     return (
         <Link
             href={`/products/${product._id}`}
-            className="group flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+            className="group flex flex-col overflow-hidden rounded-2xl border border-default bg-surface shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
         >
-            <div className="relative aspect-square w-full overflow-hidden bg-gray-50">
+            <div className="relative aspect-square w-full overflow-hidden bg-surface-muted">
                 {image ? (
                     <Image
                         src={image}
@@ -35,26 +36,27 @@ export default function ProductCard({ product }: ProductCardProps) {
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                 ) : (
-                    <div className="flex h-full w-full items-center justify-center text-xs text-gray-300">
+                    <div className="flex h-full w-full items-center justify-center text-xs text-muted">
                         No image
                     </div>
                 )}
 
+                <WishlistButton productId={product._id} variant="icon" className="absolute right-2 top-2" />
                 {hasDiscount && (
-                    <span className="absolute left-2 top-2 rounded-full bg-rose-600 px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">
+                    <span className="absolute left-2 top-2 rounded-full bg-red-600 px-2 py-0.5 text-[11px] font-semibold text-white shadow-sm">
                         {discountPercent}% OFF
                     </span>
                 )}
 
                 {!product.isActive && (
-                    <span className="absolute right-2 top-2 rounded-full bg-gray-900/80 px-2 py-0.5 text-[11px] font-medium text-white">
+                    <span className="absolute right-2 top-2 rounded-full bg-accent/80 px-2 py-0.5 text-[11px] font-medium text-accent-foreground">
                         Hidden
                     </span>
                 )}
 
                 {product.stock === 0 && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-[1px]">
-                        <span className="rounded-full bg-gray-900 px-3 py-1 text-xs font-medium text-white">
+                    <div className="absolute inset-0 flex items-center justify-center bg-surface/70 backdrop-blur-[1px]">
+                        <span className="rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-foreground">
                             Out of stock
                         </span>
                     </div>
@@ -63,21 +65,21 @@ export default function ProductCard({ product }: ProductCardProps) {
 
             <div className="flex flex-1 flex-col gap-1 p-3 sm:p-4">
                 {shop ? (
-                    <span className="truncate text-[11px] font-medium uppercase tracking-wide text-gray-400">
+                    <span className="truncate text-[11px] font-medium uppercase tracking-wide text-muted">
                         {shop.shopName}
                     </span>
                 ) : null}
 
-                <h3 className="line-clamp-2 text-sm font-medium text-gray-900 sm:text-base">
+                <h3 className="line-clamp-2 text-sm font-medium text-primary sm:text-base">
                     {product.name}
                 </h3>
 
                 <div className="mt-auto flex items-baseline gap-2 pt-1">
-                    <span className="text-sm font-semibold text-gray-900 sm:text-base">
+                    <span className="text-sm font-semibold text-primary sm:text-base">
                         {formatPrice(effectivePrice)}
                     </span>
                     {hasDiscount && (
-                        <span className="text-xs text-gray-400 line-through">
+                        <span className="text-xs text-muted line-through">
                             {formatPrice(product.price)}
                         </span>
                     )}

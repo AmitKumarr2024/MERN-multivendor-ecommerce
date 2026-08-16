@@ -22,7 +22,6 @@ const STATUS_FILTERS: { value: OrderStatus | "all"; label: string }[] = [
     { value: "cancelled", label: "Cancelled" },
 ];
 
-// Only forward, sensible transitions - matches what a seller would realistically do.
 const NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
     pending: "confirmed",
     confirmed: "shipped",
@@ -54,10 +53,10 @@ export default function SellerOrdersList() {
     };
 
     return (
-        <div className="mx-auto max-w-5xl space-y-4 p-4 sm:space-y-6 sm:p-6">
+        <div className="mx-auto max-w-7xl space-y-4 p-4 sm:space-y-6 sm:p-6">
             <div>
-                <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">Orders</h1>
-                <p className="text-sm text-gray-500">Orders placed with your shop.</p>
+                <h1 className="text-xl font-semibold text-primary sm:text-2xl">Orders</h1>
+                <p className="text-sm text-secondary">Orders placed with your shop.</p>
             </div>
 
             <div className="flex gap-2 overflow-x-auto pb-1">
@@ -66,11 +65,10 @@ export default function SellerOrdersList() {
                         key={f.value}
                         type="button"
                         onClick={() => setStatusFilter(f.value)}
-                        className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                            statusFilter === f.value
-                                ? "bg-gray-900 text-white"
-                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                        }`}
+                        className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${statusFilter === f.value
+                                ? "bg-accent text-accent-foreground"
+                                : "bg-surface-muted text-secondary hover:bg-surface-hover"
+                            }`}
                     >
                         {f.label}
                     </button>
@@ -78,20 +76,17 @@ export default function SellerOrdersList() {
             </div>
 
             {error ? (
-                <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
+                <div className="rounded-lg bg-danger-bg px-4 py-3 text-sm text-danger-text">{error}</div>
             ) : null}
 
             {loading ? (
                 <div className="space-y-3">
                     {Array.from({ length: 4 }).map((_, i) => (
-                        <div
-                            key={i}
-                            className="h-24 animate-pulse rounded-2xl border border-gray-200 bg-gray-50"
-                        />
+                        <div key={i} className="h-24 animate-pulse rounded-2xl border border-default bg-surface-muted" />
                     ))}
                 </div>
             ) : orders.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center text-sm text-gray-500">
+                <div className="rounded-2xl border border-dashed border-default bg-surface py-16 text-center text-sm text-secondary">
                     No orders here yet.
                 </div>
             ) : (
@@ -123,39 +118,44 @@ function OrderRow({ order, busy, onAdvanceStatus, onShip }: OrderRowProps) {
     const nextStatus = NEXT_STATUS[order.orderStatus];
 
     return (
-        <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-5">
+        <div className="rounded-2xl border border-default bg-surface p-4 shadow-sm sm:p-5">
             <div className="flex flex-wrap items-start justify-between gap-2">
-                <div>
-                    <p className="text-sm font-semibold text-gray-900">
-                        #{order._id.slice(-8).toUpperCase()}
-                    </p>
-                    <p className="mt-0.5 text-xs text-gray-500">
-                        {buyer?.name ?? "Buyer"} · {order.items.length} item
-                        {order.items.length !== 1 ? "s" : ""} ·{" "}
-                        {new Date(order.createdAt).toLocaleDateString("en-IN", {
-                            day: "numeric",
-                            month: "short",
-                        })}
-                    </p>
+                <div className="flex items-center gap-3">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface-muted text-xs font-semibold text-secondary">
+                        {(buyer?.name ?? "B").charAt(0).toUpperCase()}
+                    </span>
+                    <div>
+                        <p className="text-sm font-semibold text-primary">
+                            #{order._id.slice(-8).toUpperCase()}
+                        </p>
+                        <p className="mt-0.5 text-xs text-secondary">
+                            {buyer?.name ?? "Buyer"} · {order.items.length} item
+                            {order.items.length !== 1 ? "s" : ""} ·{" "}
+                            {new Date(order.createdAt).toLocaleDateString("en-IN", {
+                                day: "numeric",
+                                month: "short",
+                            })}
+                        </p>
+                    </div>
                 </div>
                 <OrderStatusBadge status={order.orderStatus} />
             </div>
 
-            <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-gray-100 pt-3">
-                <p className="text-sm font-semibold text-gray-900">
+            <div className="mt-3 flex flex-col gap-3 border-t border-default pt-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm font-semibold text-primary">
                     ₹{order.grandTotal.toLocaleString("en-IN")}
-                    <span className="ml-2 text-xs font-normal text-gray-400">
+                    <span className="ml-2 text-xs font-normal text-muted">
                         {order.paymentMethod === "cod" ? "Cash on delivery" : "Paid online"}
                     </span>
                 </p>
 
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                     {order.orderStatus === "confirmed" && !order.shipment.awbCode && (
                         <button
                             type="button"
                             onClick={onShip}
                             disabled={busy}
-                            className="rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
+                            className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-accent-foreground disabled:opacity-50"
                         >
                             {busy ? "Shipping..." : "Ship this order"}
                         </button>
@@ -166,7 +166,7 @@ function OrderRow({ order, busy, onAdvanceStatus, onShip }: OrderRowProps) {
                             type="button"
                             onClick={onAdvanceStatus}
                             disabled={busy}
-                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                            className="rounded-lg border border-strong px-3 py-1.5 text-xs font-medium text-primary hover:bg-surface-hover disabled:opacity-50"
                         >
                             {busy ? "Updating..." : `Mark as ${nextStatus}`}
                         </button>
@@ -177,7 +177,7 @@ function OrderRow({ order, busy, onAdvanceStatus, onShip }: OrderRowProps) {
                             type="button"
                             onClick={onAdvanceStatus}
                             disabled={busy}
-                            className="rounded-lg border border-gray-300 px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                            className="rounded-lg border border-strong px-3 py-1.5 text-xs font-medium text-primary hover:bg-surface-hover disabled:opacity-50"
                         >
                             Mark as shipped (skip courier)
                         </button>
@@ -186,7 +186,7 @@ function OrderRow({ order, busy, onAdvanceStatus, onShip }: OrderRowProps) {
             </div>
 
             {order.shipment.awbCode && (
-                <p className="mt-2 text-xs text-gray-400">
+                <p className="mt-2 text-xs text-muted">
                     AWB: {order.shipment.awbCode} · {order.shipment.courierName ?? "Courier assigned"}
                 </p>
             )}

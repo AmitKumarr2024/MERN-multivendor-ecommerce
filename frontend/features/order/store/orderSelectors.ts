@@ -15,6 +15,9 @@ export const selectShopOrdersLoading = (state: RootState) => state.order.shopOrd
 export const selectCurrentOrder = (state: RootState) => state.order.currentOrder;
 export const selectOrderLoading = (state: RootState) => state.order.orderLoading;
 
+export const selectOrderTracking = (state: RootState) => state.order.tracking;
+export const selectTrackingLoading = (state: RootState) => state.order.trackingLoading;
+
 export const selectMutatingOrderId = (state: RootState) => state.order.mutatingOrderId;
 export const selectOrderError = (state: RootState) => state.order.error;
 export const selectOrderSuccessMessage = (state: RootState) => state.order.successMessage;

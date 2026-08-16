@@ -14,7 +14,6 @@ import {
 } from "../store/Productselectors";
 import type { ProductQueryParams } from "../types/product.types";
 
-import ProductFilters from "./Productform";
 import ProductGrid from "./productGrid";
 import Pagination from "./pagination";
 
@@ -53,17 +52,22 @@ export default function ProductListPage({
         <div className="mx-auto max-w-7xl space-y-4 p-4 sm:space-y-6 sm:p-6">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">{title}</h1>
+                    <h1 className="text-xl font-semibold text-primary sm:text-2xl">
+                        {title}
+                    </h1>
+
                     {!loading && (
-                        <p className="text-sm text-gray-500">{total} products found</p>
+                        <p className="text-sm text-secondary">
+                            {total} products found
+                        </p>
                     )}
                 </div>
             </div>
 
-            <ProductFilters value={query} onChange={setQuery} />
-
             {error ? (
-                <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
+                <div className="rounded-lg bg-danger-bg px-4 py-3 text-sm text-danger-text">
+                    {error}
+                </div>
             ) : null}
 
             <ProductGrid products={products} loading={loading} />
@@ -71,7 +75,9 @@ export default function ProductListPage({
             <Pagination
                 page={page}
                 pages={pages}
-                onPageChange={(p) => setQuery((q) => ({ ...q, page: p }))}
+                onPageChange={(p) =>
+                    setQuery((q) => ({ ...q, page: p }))
+                }
             />
         </div>
     );

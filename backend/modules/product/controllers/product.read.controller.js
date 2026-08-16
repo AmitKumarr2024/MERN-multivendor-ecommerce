@@ -5,6 +5,7 @@ import {
   getEffectivePrice,
   getDiscountPercent,
 } from "../../../services/pricing.service.js";
+import Category from "../../product/models/category.model.js";
 
 /**
  * PRODUCT READ CONTROLLER
@@ -53,31 +54,114 @@ export const getAllProducts = async (req, res, next) => {
       limit = 20,
     } = req.query;
 
-    const query = { isActive: true };
-    if (category) query.category = category;
-    if (search) query.$text = { $search: search };
-    if (minPrice || maxPrice) {
-      query.price = {};
-      if (minPrice) query.price.$gte = Number(minPrice);
-      if (maxPrice) query.price.$lte = Number(maxPrice);
+    const query = {
+      isActive: true,
+    };
+
+    /* =====================================================
+           CATEGORY FILTER
+
+           Frontend sends category SLUG:
+
+               ?category=tools
+
+           Product.category stores Category._id.
+
+           Therefore:
+
+               tools
+                 ↓
+               Category.slug
+                 ↓
+               Category._id
+                 ↓
+               Product.category
+        ===================================================== */
+
+    if (category) {
+      const categoryDoc = await Category.findOne({
+        slug: String(category).toLowerCase(),
+        isActive: true,
+      });
+
+      if (!categoryDoc) {
+        return res.json({
+          products: [],
+          total: 0,
+          page: Number(page),
+          pages: 0,
+          sort,
+        });
+      }
+
+      query.category = categoryDoc._id;
     }
 
-    const safeLimit = Math.min(Number(limit) || 20, 100); // hard cap to prevent abuse
+    /* =====================================================
+           SEARCH
+        ===================================================== */
+
+    if (search) {
+      query.$text = {
+        $search: search,
+      };
+    }
+
+    /* =====================================================
+           PRICE FILTER
+        ===================================================== */
+
+    if (minPrice || maxPrice) {
+      query.price = {};
+
+      if (minPrice) {
+        query.price.$gte = Number(minPrice);
+      }
+
+      if (maxPrice) {
+        query.price.$lte = Number(maxPrice);
+      }
+    }
+
+    /* =====================================================
+           PAGINATION
+        ===================================================== */
+
+    const safeLimit = Math.min(Number(limit) || 20, 100);
+
+    const currentPage = Math.max(Number(page) || 1, 1);
+
+    /* =====================================================
+           SORT
+        ===================================================== */
+
     const sortBy = SORT_OPTIONS[sort] || SORT_OPTIONS.newest;
 
+    /* =====================================================
+           FETCH PRODUCTS
+        ===================================================== */
+
     const products = await Product.find(query)
-      .populate("shop", "shopName slug logo") // needed to show supplier + link to dukan
+      .populate("shop", "shopName slug logo")
       .populate("category", "name slug")
       .sort(sortBy)
-      .skip((Number(page) - 1) * safeLimit)
+      .skip((currentPage - 1) * safeLimit)
       .limit(safeLimit);
 
+    /* =====================================================
+           TOTAL
+        ===================================================== */
+
     const total = await Product.countDocuments(query);
+
+    /* =====================================================
+           RESPONSE
+        ===================================================== */
 
     res.json({
       products,
       total,
-      page: Number(page),
+      page: currentPage,
       pages: Math.ceil(total / safeLimit),
       sort,
     });

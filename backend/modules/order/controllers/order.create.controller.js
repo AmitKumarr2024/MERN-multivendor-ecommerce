@@ -1,6 +1,7 @@
 import { checkoutCart } from "../../../services/order.service.js";
 import Shop from "../../shop/models/shop.model.js";
 import { emitNewOrderToSeller } from "../../../sockets/emit.js";
+import { createNotification } from "../../../services/notification.service.js";
 
 // @desc    Place an order from the current cart (splits into one order per shop)
 // @route   POST /api/orders/checkout
@@ -23,6 +24,20 @@ export const checkout = async (req, res, next) => {
           itemCount: order.items.length,
         });
       }
+    }
+
+    // checkoutCart se orders ban jaane ke baad, har order ke liye:
+    for (const order of orders) {
+      const shop = await Shop.findById(order.shop);
+      await createNotification({
+        recipient: shop.owner,
+        type: "order_placed",
+        title: "New order received",
+        message: `You received a new order worth ₹${order.grandTotal}`,
+        link: `/seller/orders`,
+        relatedId: order._id,
+        relatedModel: "Order",
+      });
     }
 
     res.status(201).json({

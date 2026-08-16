@@ -6,7 +6,12 @@ import {
   handleShipmentWebhook,
   trackOrderShipment,
 } from "../../../services/logistics/logistics.service.js";
-import { BadRequestError, NotFoundError, ForbiddenError } from "../../../exceptions/ApiError.js";
+import {
+  BadRequestError,
+  NotFoundError,
+  ForbiddenError,
+} from "../../../exceptions/ApiError.js";
+import { createNotification } from "../../../services/notification.service.js";
 
 /**
  * LOGISTICS CONTROLLER
@@ -26,7 +31,9 @@ export const checkServiceability = async (req, res, next) => {
 
     const shop = await Shop.findById(shopId);
     if (!shop || !shop.address?.pincode) {
-      throw new BadRequestError("This shop has not configured a pickup pincode yet");
+      throw new BadRequestError(
+        "This shop has not configured a pickup pincode yet",
+      );
     }
 
     const options = await getAvailableCourierOptions({
@@ -64,6 +71,17 @@ export const shipOrder = async (req, res, next) => {
 
     const updatedOrder = await autoCreateShipmentForOrder(order);
 
+    // 👇 NEW
+    await createNotification({
+      recipient: updatedOrder.buyer,
+      type: "order_status",
+      title: "Order shipped",
+      message: `Your order has been shipped${updatedOrder.shipment?.courierName ? ` via ${updatedOrder.shipment.courierName}` : ""}`,
+      link: `/buyer/orders/${updatedOrder._id}`,
+      relatedId: updatedOrder._id,
+      relatedModel: "Order",
+    });
+
     res.json({
       message: "Shipment created successfully",
       shipment: updatedOrder.shipment,
@@ -80,9 +98,12 @@ export const getTracking = async (req, res, next) => {
     if (!order) throw new NotFoundError("Order not found");
 
     const isBuyer = order.buyer.toString() === req.user._id.toString();
-    const isShopOwner = order.shop.owner?.toString() === req.user._id.toString();
+    const isShopOwner =
+      order.shop.owner?.toString() === req.user._id.toString();
     if (!isBuyer && !isShopOwner && req.user.role !== "admin") {
-      throw new ForbiddenError("You are not allowed to view this order's tracking");
+      throw new ForbiddenError(
+        "You are not allowed to view this order's tracking",
+      );
     }
 
     if (!order.shipment?.awbCode) {

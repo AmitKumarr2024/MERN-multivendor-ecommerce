@@ -33,6 +33,7 @@ export default function MyProductsList() {
 
     useEffect(() => {
         dispatch(fetchMyProducts());
+
         return () => {
             dispatch(clearProductError());
             dispatch(clearProductMessage());
@@ -48,6 +49,7 @@ export default function MyProductsList() {
             setConfirmDeleteId(id);
             return;
         }
+
         dispatch(deleteProduct(id));
         setConfirmDeleteId(null);
     };
@@ -56,29 +58,38 @@ export default function MyProductsList() {
         <div className="mx-auto max-w-6xl space-y-4 p-4 sm:space-y-6 sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
+                    <h1 className="text-xl font-semibold text-primary sm:text-2xl">
                         My products
                     </h1>
-                    <p className="text-sm text-gray-500">
+
+                    <p className="text-sm text-secondary">
                         Manage listings, stock, and visibility.
                     </p>
                 </div>
+
                 <Link
                     href="/seller/products/new"
-                    className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-accent px-4 py-2.5 text-sm font-medium text-accent-foreground shadow-sm transition-opacity hover:opacity-90"
                 >
-                    <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4">
-                        <path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 1 1 0-2h5V4a1 1 0 0 1 1-1Z" />
+                    <svg
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        className="h-4 w-4"
+                    >
+                        <path d="M10 3a1 1 0 0 1 1 1v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H4a1 1 0 0 1 0-2h5V4a1 1 0 0 1 1-1Z" />
                     </svg>
                     Add product
                 </Link>
             </div>
 
             {error ? (
-                <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>
+                <div className="rounded-lg bg-danger-bg px-4 py-3 text-sm text-danger-text">
+                    {error}
+                </div>
             ) : null}
+
             {successMessage ? (
-                <div className="rounded-lg bg-green-50 px-4 py-3 text-sm text-green-700">
+                <div className="rounded-lg bg-success-bg px-4 py-3 text-sm text-success-text">
                     {successMessage}
                 </div>
             ) : null}
@@ -88,18 +99,19 @@ export default function MyProductsList() {
                     {Array.from({ length: 4 }).map((_, i) => (
                         <div
                             key={i}
-                            className="h-20 animate-pulse rounded-2xl border border-gray-200 bg-gray-50"
+                            className="h-20 animate-pulse rounded-2xl border border-default bg-surface-muted"
                         />
                     ))}
                 </div>
             ) : products.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center">
-                    <p className="text-sm text-gray-500">
+                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-default bg-surface py-16 text-center">
+                    <p className="text-sm text-secondary">
                         You haven&apos;t listed any products yet.
                     </p>
+
                     <Link
                         href="/seller/products/new"
-                        className="mt-3 text-sm font-medium text-blue-600 hover:text-blue-700"
+                        className="mt-3 text-sm font-medium text-info-text transition-opacity hover:opacity-80"
                     >
                         Add your first product →
                     </Link>
@@ -111,9 +123,13 @@ export default function MyProductsList() {
                             key={product._id}
                             product={product}
                             confirming={confirmDeleteId === product._id}
-                            onToggleActive={() => handleToggleActive(product._id)}
+                            onToggleActive={() =>
+                                handleToggleActive(product._id)
+                            }
                             onDelete={() => handleDelete(product._id)}
-                            onCancelDelete={() => setConfirmDeleteId(null)}
+                            onCancelDelete={() =>
+                                setConfirmDeleteId(null)
+                            }
                         />
                     ))}
                 </div>
@@ -141,41 +157,50 @@ function ProductRow({
     const image = product.images?.[0];
 
     return (
-        <div className="flex flex-col gap-3 rounded-2xl border border-gray-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md sm:flex-row sm:items-center sm:gap-4 sm:p-4">
+        <div className="flex flex-col gap-3 rounded-2xl border border-default bg-surface p-3 shadow-sm transition-shadow hover:shadow-md sm:flex-row sm:items-center sm:gap-4 sm:p-4">
             <div className="flex flex-1 items-center gap-3 sm:gap-4">
-                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-gray-50">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-surface-muted">
                     {image ? (
-                        <Image src={image} alt={product.name} fill className="object-cover" />
+                        <Image
+                            src={image}
+                            alt={product.name}
+                            fill
+                            className="object-cover"
+                        />
                     ) : (
-                        <div className="flex h-full items-center justify-center text-[10px] text-gray-300">
+                        <div className="flex h-full items-center justify-center text-[10px] text-muted">
                             No image
                         </div>
                     )}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-gray-900 sm:text-base">
+                    <p className="truncate text-sm font-medium text-primary sm:text-base">
                         {product.name}
                     </p>
-                    <p className="mt-0.5 truncate text-xs text-gray-400">
+
+                    <p className="mt-0.5 truncate text-xs text-muted">
                         {category?.name ?? "Uncategorized"}
                     </p>
+
                     <div className="mt-1 flex flex-wrap items-center gap-2">
-                        <span className="text-sm font-semibold text-gray-900">
+                        <span className="text-sm font-semibold text-primary">
                             {formatPrice(product.price)}
                         </span>
+
                         <span
                             className={`text-xs font-medium ${product.stock === 0
-                                    ? "text-red-600"
+                                    ? "text-danger-text"
                                     : product.stock <= 5
-                                        ? "text-amber-600"
-                                        : "text-gray-500"
+                                        ? "text-warning-text"
+                                        : "text-secondary"
                                 }`}
                         >
                             {product.stock} in stock
                         </span>
+
                         {!product.isActive && (
-                            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-500">
+                            <span className="rounded-full bg-surface-muted px-2 py-0.5 text-[11px] font-medium text-secondary">
                                 Hidden
                             </span>
                         )}
@@ -185,8 +210,8 @@ function ProductRow({
 
             <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
                 <Link
-                    href={`/products/${product._id}/edit`}
-                    className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 sm:text-sm"
+                    href={`/seller/products/${product._id}/edit`}
+                    className="rounded-lg border border-default px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-surface-hover sm:text-sm"
                 >
                     Edit
                 </Link>
@@ -194,7 +219,7 @@ function ProductRow({
                 <button
                     type="button"
                     onClick={onToggleActive}
-                    className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:bg-gray-50 sm:text-sm"
+                    className="rounded-lg border border-default px-3 py-1.5 text-xs font-medium text-primary transition-colors hover:bg-surface-hover sm:text-sm"
                 >
                     {product.isActive ? "Hide" : "Show"}
                 </button>
@@ -204,14 +229,15 @@ function ProductRow({
                         <button
                             type="button"
                             onClick={onDelete}
-                            className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-red-700 sm:text-sm"
+                            className="rounded-lg bg-danger-solid px-3 py-1.5 text-xs font-medium text-white transition-opacity hover:opacity-90 sm:text-sm"
                         >
                             Confirm
                         </button>
+
                         <button
                             type="button"
                             onClick={onCancelDelete}
-                            className="rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-50 sm:text-sm"
+                            className="rounded-lg border border-default px-3 py-1.5 text-xs font-medium text-secondary transition-colors hover:bg-surface-hover sm:text-sm"
                         >
                             Cancel
                         </button>
@@ -220,7 +246,7 @@ function ProductRow({
                     <button
                         type="button"
                         onClick={onDelete}
-                        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-50 sm:text-sm"
+                        className="rounded-lg border border-danger-bg px-3 py-1.5 text-xs font-medium text-danger-text transition-colors hover:bg-danger-bg sm:text-sm"
                     >
                         Delete
                     </button>

@@ -14,7 +14,7 @@ export const getAllShops = async (req, res, next) => {
     const safeLimit = Math.min(Number(limit) || 20, 100);
 
     const shops = await Shop.find(query)
-      .select("shopName slug logo description")
+      .select("shopName slug logo banner description")
       .sort({ createdAt: -1 })
       .skip((Number(page) - 1) * safeLimit)
       .limit(safeLimit);

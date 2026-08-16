@@ -28,11 +28,18 @@ export const updateProduct = async (req, res, next) => {
   try {
     const product = await assertOwnsProduct(req.user._id, req.params.id);
 
+    // Category is referenced by SLUG in the request body (same convention
+    // as createProduct), not by ObjectId - Category.findById() would throw
+    // a CastError here since "groceries" isn't a valid ObjectId string.
     if (req.body.category) {
-      const categoryExists = await Category.findById(req.body.category);
+      const categoryExists = await Category.findOne({
+        slug: req.body.category.toLowerCase(),
+      });
       if (!categoryExists) {
         throw new BadRequestError("Invalid category");
       }
+      // Store the resolved ObjectId on the product, not the raw slug.
+      req.body.category = categoryExists._id;
     }
 
     Object.assign(product, req.body);

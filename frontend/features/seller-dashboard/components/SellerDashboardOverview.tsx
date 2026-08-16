@@ -9,19 +9,6 @@ import { fetchMyShop, selectMyShop, selectMyShopLoading, selectHasCheckedMyShop 
 import { fetchMyProducts, selectMyProducts, selectMyProductsLoading } from "@/features/products";
 import { fetchShopOrders, selectShopOrders, selectShopOrdersLoading, selectShopOrderCounts } from "@/features/order";
 
-/**
- * This IS the seller dashboard — there's no separate backend
- * "dashboard" endpoint, so this screen is built by combining
- * three existing endpoints:
- *   - GET /api/shops/me      (shop status)
- *   - GET /api/products/me   (product stats)
- *   - GET /api/orders/shop   (order counts, recent orders)
- *
- * No revenue charts / analytics here on purpose — that data
- * doesn't exist on the backend yet (see PROJECT_HANDOFF.md,
- * "defer until real users ask" tier). Adding fake numbers
- * here would be worse than not having them.
- */
 export default function SellerDashboardOverview() {
     const dispatch = useAppDispatch();
 
@@ -44,124 +31,166 @@ export default function SellerDashboardOverview() {
 
     if (hasCheckedShop && !shop && !shopLoading) {
         return (
+
             <div className="mx-auto max-w-3xl p-4 sm:p-6">
-                <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
-                    <p className="text-sm text-gray-600">
+                <div className="rounded-2xl border border-dashed border-default bg-surface p-10 text-center">
+                    <p className="text-sm text-secondary">
                         You haven&apos;t set up your shop yet — the dashboard needs a
                         shop to show data for.
                     </p>
                     <Link
                         href="/seller/shop"
-                        className="mt-3 inline-block rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                        className="mt-3 inline-block rounded-lg bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:opacity-90"
                     >
                         Set up your shop
                     </Link>
                 </div>
             </div>
+
         );
     }
 
     const lowStockCount = products.filter((p) => p.stock > 0 && p.stock <= 5).length;
     const outOfStockCount = products.filter((p) => p.stock === 0).length;
     const recentOrders = orders.slice(0, 5);
+    const totalRevenue = orders.reduce((sum, o) => sum + o.grandTotal, 0);
+    const deliveredCount = orders.filter((o) => o.orderStatus === "delivered").length;
+    const fulfillmentRate = orders.length > 0 ? Math.round((deliveredCount / orders.length) * 100) : 0;
+    const activeProductsRate =
+        products.length > 0 ? Math.round((products.filter((p) => p.isActive).length / products.length) * 100) : 0;
 
     return (
-        <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                    <h1 className="text-xl font-semibold text-gray-900 sm:text-2xl">
-                        {shopLoading ? "Loading..." : shop?.shopName ?? "Dashboard"}
+
+        <div className="mx-auto max-w-6xl space-y-5 p-4 pb-10 sm:space-y-6 sm:p-6">
+            {/* Header */}
+            <div className="flex items-center gap-3 sm:gap-4">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-purple-400 text-sm font-bold text-accent-foreground shadow-sm sm:h-12 sm:w-12 sm:text-lg">
+                    {(shop?.shopName ?? "D").charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                    <h1 className="truncate text-lg font-semibold text-primary sm:text-2xl">
+                        {shopLoading ? "Loading..." : `${shop?.shopName ?? "Dashboard"}`}
+                        {!shopLoading && shop && <span className="ml-1 font-normal text-secondary">👋</span>}
                     </h1>
-                    <p className="text-sm text-gray-500">Here&apos;s what&apos;s happening with your shop.</p>
+                    <p className="hidden text-sm text-secondary sm:block">
+                        Here&apos;s what&apos;s happening with your shop today.
+                    </p>
                 </div>
 
                 {shop && (
                     <span
-                        className={`inline-flex w-fit items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${shop.isActive ? "bg-green-50 text-green-700" : "bg-gray-100 text-gray-500"
+                        className={`shrink-0 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${shop.isActive ? "bg-success-bg text-success-text" : "bg-surface-muted text-secondary"
                             }`}
                     >
-                        <span className={`h-1.5 w-1.5 rounded-full ${shop.isActive ? "bg-green-500" : "bg-gray-400"}`} />
-                        {shop.isActive ? "Shop is live" : "Shop is hidden"}
+                        <span className={`h-1.5 w-1.5 rounded-full ${shop.isActive ? "bg-success-text" : "bg-muted"}`} />
+                        <span className="hidden sm:inline">{shop.isActive ? "Shop is live" : "Shop is hidden"}</span>
                     </span>
                 )}
             </div>
 
             {/* Stat cards */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+            <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+                <StatCard
+                    label="Total revenue"
+                    value={ordersLoading ? "…" : `₹${totalRevenue.toLocaleString("en-IN")}`}
+                    href="/seller/orders"
+                    icon={<RupeeIcon />}
+                    featured
+                />
                 <StatCard
                     label="Products"
                     value={productsLoading ? "…" : products.length}
                     href="/seller/products"
-                />
-                <StatCard
-                    label="Pending orders"
-                    value={ordersLoading ? "…" : orderCounts.pending}
-                    href="/seller/orders"
-                    accent={orderCounts.pending > 0 ? "amber" : undefined}
+                    icon={<BoxIcon />}
                 />
                 <StatCard
                     label="Low stock"
                     value={productsLoading ? "…" : lowStockCount}
                     href="/seller/products"
-                    accent={lowStockCount > 0 ? "amber" : undefined}
+                    icon={<TrendDownIcon />}
+                    tone={lowStockCount > 0 ? "warning" : undefined}
                 />
                 <StatCard
                     label="Out of stock"
                     value={productsLoading ? "…" : outOfStockCount}
                     href="/seller/products"
-                    accent={outOfStockCount > 0 ? "red" : undefined}
+                    icon={<AlertIcon />}
+                    tone={outOfStockCount > 0 ? "danger" : undefined}
                 />
             </div>
 
-            {/* Recent orders */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm sm:p-6">
-                <div className="mb-4 flex items-center justify-between">
-                    <h2 className="text-base font-semibold text-gray-900">Recent orders</h2>
-                    <Link href="/seller/orders" className="text-sm font-medium text-blue-600 hover:text-blue-700">
-                        View all →
-                    </Link>
+            <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
+                {/* Recent orders */}
+                <div className="rounded-2xl border border-default bg-surface shadow-sm lg:col-span-2">
+                    <div className="flex items-center justify-between border-b border-default px-4 py-4 sm:px-6">
+                        <h2 className="text-base font-semibold text-primary">Recent orders</h2>
+                        <Link href="/seller/orders" className="text-sm font-medium text-info-text hover:opacity-80">
+                            View all →
+                        </Link>
+                    </div>
+
+                    <div className="p-2 sm:p-3">
+                        {ordersLoading ? (
+                            <div className="space-y-2 p-2">
+                                {Array.from({ length: 3 }).map((_, i) => (
+                                    <div key={i} className="h-14 animate-pulse rounded-lg bg-surface-muted" />
+                                ))}
+                            </div>
+                        ) : recentOrders.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center py-10 text-center">
+                                <p className="text-sm text-muted">No orders yet.</p>
+                            </div>
+                        ) : (
+                            <ul>
+                                {recentOrders.map((order) => {
+                                    const buyer = typeof order.buyer === "string" ? null : order.buyer;
+                                    return (
+                                        <li key={order._id}>
+                                            <div className="flex items-center gap-3 rounded-xl px-2 py-2.5 text-sm transition-colors hover:bg-surface-hover sm:px-3">
+                                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent to-purple-300 text-xs font-bold text-accent-foreground">
+                                                    {(buyer?.name ?? "B").charAt(0).toUpperCase()}
+                                                </span>
+                                                <div className="min-w-0 flex-1">
+                                                    <p className="truncate font-semibold text-primary">
+                                                        #{order._id.slice(-8).toUpperCase()} — {buyer?.name ?? "Buyer"}
+                                                    </p>
+                                                    <p className="text-xs text-muted">
+                                                        {order.items.length} item{order.items.length !== 1 ? "s" : ""} · ₹
+                                                        {order.grandTotal.toLocaleString("en-IN")}
+                                                    </p>
+                                                </div>
+                                                <OrderStatusPill status={order.orderStatus} />
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )}
+                    </div>
                 </div>
 
-                {ordersLoading ? (
-                    <div className="space-y-2">
-                        {Array.from({ length: 3 }).map((_, i) => (
-                            <div key={i} className="h-12 animate-pulse rounded-lg bg-gray-50" />
-                        ))}
+                {/* Side column */}
+                <div className="flex flex-col gap-5">
+                    <div className="rounded-2xl border border-default bg-surface p-4 shadow-sm sm:p-5">
+                        <h2 className="mb-3 text-base font-semibold text-primary">Quick actions</h2>
+                        <div className="space-y-2">
+                            <QuickAction href="/seller/products/new" label="Add product" icon={<PlusIcon />} />
+                            <QuickAction href="/seller/orders" label="View orders" icon={<ListIcon />} />
+                            <QuickAction href="/seller/shop" label="Edit shop" icon={<StoreIcon />} />
+                        </div>
                     </div>
-                ) : recentOrders.length === 0 ? (
-                    <p className="text-sm text-gray-400">No orders yet.</p>
-                ) : (
-                    <ul className="divide-y divide-gray-100">
-                        {recentOrders.map((order) => {
-                            const buyer = typeof order.buyer === "string" ? null : order.buyer;
-                            return (
-                                <li key={order._id} className="flex items-center justify-between py-2.5 text-sm">
-                                    <div className="min-w-0">
-                                        <p className="truncate font-medium text-gray-900">
-                                            #{order._id.slice(-8).toUpperCase()} — {buyer?.name ?? "Buyer"}
-                                        </p>
-                                        <p className="text-xs text-gray-400">
-                                            {order.items.length} item{order.items.length !== 1 ? "s" : ""} · ₹
-                                            {order.grandTotal.toLocaleString("en-IN")}
-                                        </p>
-                                    </div>
-                                    <span className="shrink-0 text-xs font-medium capitalize text-gray-500">
-                                        {order.orderStatus}
-                                    </span>
-                                </li>
-                            );
-                        })}
-                    </ul>
-                )}
-            </div>
 
-            {/* Quick actions */}
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                <QuickAction href="/seller/products/new" label="Add product" />
-                <QuickAction href="/seller/orders" label="View orders" />
-                <QuickAction href="/seller/shop" label="Edit shop" />
+                    <div className="rounded-2xl border border-default bg-surface p-4 shadow-sm sm:p-5">
+                        <h2 className="mb-4 text-base font-semibold text-primary">Shop health</h2>
+                        <div className="space-y-4">
+                            <ProgressRow label="Products active" percent={activeProductsRate} barClassName="bg-success-text" />
+                            <ProgressRow label="Order fulfillment" percent={fulfillmentRate} barClassName="bg-info-text" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     );
 }
 
@@ -169,33 +198,155 @@ interface StatCardProps {
     label: string;
     value: number | string;
     href: string;
-    accent?: "amber" | "red";
+    icon: React.ReactNode;
+    tone?: "warning" | "danger";
+    featured?: boolean;
 }
 
-function StatCard({ label, value, href, accent }: StatCardProps) {
+function StatCard({ label, value, href, icon, tone, featured }: StatCardProps) {
+    const toneText = tone === "warning" ? "text-warning-text" : tone === "danger" ? "text-danger-text" : "text-primary";
+    const toneBg = tone === "warning" ? "bg-warning-bg" : tone === "danger" ? "bg-danger-bg" : "bg-surface-muted";
+    const iconText = tone === "warning" ? "text-warning-text" : tone === "danger" ? "text-danger-text" : "text-secondary";
+
     return (
         <Link
             href={href}
-            className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+            className={`flex flex-col gap-3 rounded-2xl border p-4 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md sm:p-5 ${featured ? "border-accent/30 bg-gradient-to-br from-accent/10 via-surface to-surface" : "border-default bg-surface"
+                }`}
         >
-            <p
-                className={`text-2xl font-bold ${accent === "amber" ? "text-amber-600" : accent === "red" ? "text-red-600" : "text-gray-900"
+            <span
+                className={`flex h-9 w-9 items-center justify-center rounded-xl ${featured ? "bg-accent text-accent-foreground" : `${toneBg} ${iconText}`
                     }`}
             >
-                {value}
-            </p>
-            <p className="mt-1 text-xs font-medium text-gray-500">{label}</p>
+                {icon}
+            </span>
+            <div>
+                <p className={`text-2xl font-extrabold tracking-tight ${featured ? "text-accent" : toneText}`}>
+                    {value}
+                </p>
+                <p className="mt-0.5 text-xs font-medium text-secondary">{label}</p>
+            </div>
         </Link>
     );
 }
 
-function QuickAction({ href, label }: { href: string; label: string }) {
+function QuickAction({ href, label, icon }: { href: string; label: string; icon: React.ReactNode }) {
     return (
         <Link
             href={href}
-            className="flex items-center justify-center rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50"
+            className="flex items-center gap-2.5 rounded-xl border border-default px-3.5 py-2.5 text-sm font-medium text-primary transition-colors hover:border-strong hover:bg-surface-hover"
         >
+            <span className="text-secondary">{icon}</span>
             {label}
         </Link>
+    );
+}
+
+function ProgressRow({
+    label,
+    percent,
+    barClassName,
+}: {
+    label: string;
+    percent: number;
+    barClassName: string;
+}) {
+    return (
+        <div>
+            <div className="mb-1.5 flex items-center justify-between text-xs">
+                <span className="font-medium text-secondary">{label}</span>
+                <span className="font-bold text-primary">{percent}%</span>
+            </div>
+            <div className="h-1.5 overflow-hidden rounded-full bg-surface-muted">
+                <div
+                    className={`h-full rounded-full transition-all duration-500 ${barClassName}`}
+                    style={{ width: `${percent}%` }}
+                />
+            </div>
+        </div>
+    );
+}
+
+function OrderStatusPill({ status }: { status: string }) {
+    const tones: Record<string, string> = {
+        pending: "bg-warning-bg text-warning-text",
+        confirmed: "bg-info-bg text-info-text",
+        shipped: "bg-info-bg text-info-text",
+        delivered: "bg-success-bg text-success-text",
+        cancelled: "bg-danger-bg text-danger-text",
+    };
+    const cls = tones[status] ?? "bg-surface-muted text-secondary";
+    return (
+        <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${cls}`}>
+            {status}
+        </span>
+    );
+}
+
+/* ---------- icons ---------- */
+
+function RupeeIcon() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <path d="M6 5h8M6 8h8M6 5c3 0 5 1 5 3.5S9 12 6 12l6 6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function BoxIcon() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <path d="M3 6.5l7-3.5 7 3.5-7 3.5-7-3.5zm0 0v7l7 3.5m0-10.5v10.5m7-10.5v7l-7 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function ClockIcon() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <circle cx="10" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M10 6v4l3 2" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function TrendDownIcon() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <path d="M3 6l5 5 3-3 6 6M13 14h4v-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function AlertIcon() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <path d="M10 3l8 14H2L10 3z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+            <path d="M10 8v3.5M10 14.2v.1" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        </svg>
+    );
+}
+
+function PlusIcon() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <path d="M10 4v12M4 10h12" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+    );
+}
+
+function ListIcon() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <path d="M4 6h12M4 10h12M4 14h8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        </svg>
+    );
+}
+
+function StoreIcon() {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden="true">
+            <path d="M3 8l1-4h12l1 4M3 8v7a1 1 0 001 1h3v-5h6v5h3a1 1 0 001-1V8M3 8h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
     );
 }

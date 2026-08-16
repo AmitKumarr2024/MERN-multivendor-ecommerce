@@ -14,9 +14,19 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Password is required"),
 });
 
+const addressSchema = z.object({
+  street: z.string().trim().optional(),
+  city: z.string().trim().optional(),
+  state: z.string().trim().optional(),
+  pincode: z.string().trim().optional(),
+  country: z.string().trim().optional(),
+});
+
 export const updateMeSchema = z.object({
   name: z.string().trim().min(1, "Name cannot be empty").optional(),
   phone: z.string().trim().optional(),
+  avatar: z.string().trim().optional(),
+  address: addressSchema.optional(),
 });
 
 export const changePasswordSchema = z.object({

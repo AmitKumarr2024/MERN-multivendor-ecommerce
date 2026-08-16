@@ -2,30 +2,70 @@
 
 Paste this entire document at the start of a new chat to continue exactly where I left off.
 
-## ⚠️ UNRESOLVED ISSUE — check/fix this first
+## ✅ RESOLVED — auth test-import issue (was flagged as unresolved in earlier handoffs)
 
-As of the last confirmed test run, the suite was failing with:
+Earlier handoffs (through 2026-08-08 morning) carried a warning about this failure:
 
 ```
 Cannot find module '../../modules/auth/auth.model.js' from 'backend/tests/services/cart.service.test.js'
 Cannot find module '../../modules/auth/auth.routes.js' from 'backend/tests/modules/auth.test.js'
 ```
 
-32/89 tests still passed (the ones not depending on auth), but 7 of 10 suites failed
-to even load. This started right after adding the Passkey/WebAuthn files to
-`modules/auth/`. It was NOT confirmed fixed before this handoff was written.
+**Verified resolved on 2026-08-08.** Inspected both files directly — they
+already import from the correct subfolder paths
+(`../../modules/auth/models/auth.model.js`,
+`../../modules/auth/routes/auth.routes.js`), not the old flat path. Ran the
+full suite to confirm:
 
-**First step in the new chat**: ask me to run `npm test` again to see current status.
-If the same error appears, ask me to run this in PowerShell and paste the output:
-
-```powershell
-Get-ChildItem -Path "backend\modules\auth" -Recurse -File | Select-Object FullName
+```
+Test Suites: 11 passed, 11 total
+Tests:       110 passed, 110 total
+Time:        7.056 s
 ```
 
-Expected 7 files in `backend/modules/auth/`: `auth.model.js`, `auth.controller.js`,
-`auth.validation.js`, `auth.routes.js`, `webauthn.controller.js`,
-`webauthn.validation.js`, `webauthn.routes.js` — plus `services/webauthn.service.js`
-and `config/webauthn.js` elsewhere.
+All 11 suites green (up from the last documented "89/89, 9/10 suites" —
+the extra suite/tests are from `wishlist` and `logistics.service.test.js`
+being added since). No further action needed on this. The takeaway that
+still matters going forward: **after any module folder restructuring, always
+re-verify test import paths against the real file locations** — this handoff
+doc itself had drifted from reality once (see folder-structure note below),
+so don't assume docs are current without checking.
+
+---
+
+## Corrected folder structure note (previous handoff had this wrong)
+
+The original handoff assumed a flat `modules/auth/` folder containing both
+auth AND webauthn files. **Actual structure is different — two separate
+modules**, confirmed via `Get-ChildItem -Path "backend\modules" -Recurse -Directory`:
+
+```
+modules/auth/
+├── auth.validation.js
+├── controllers/auth.controller.js
+├── models/auth.model.js
+└── routes/auth.routes.js
+
+modules/webAuthn/          ← SEPARATE module, not nested inside auth/
+├── webauthn.validation.js
+├── controllers/webauthn.controller.js
+└── routes/webauthn.routes.js
+```
+
+This is not a bug — just means any future references to "webauthn files in
+modules/auth" are outdated. Update mental model: webauthn lives in its own
+`modules/webAuthn/` module, and `services/webauthn.service.js` +
+`config/webauthn.js` support it from outside, per the original design.
+
+Every other module (`shop`, `product`, `cart`, `order`, `logistics`, `admin`,
+`messagingSystem`, `upload`, `wishlist`) already follows the
+`models/ controllers/ routes/` subfolder convention consistently — `auth`
+and `webAuthn` are no exception, they just weren't documented correctly
+before.
+
+**New module confirmed built since last handoff**: `modules/wishlist/`
+(model, controller, routes, validation) — matches the frontend status doc's
+"Wishlist" section, already fully wired both sides.
 
 ---
 
@@ -36,7 +76,9 @@ orchestrator) was built and tested in an earlier session, but the founder
 decided to **stop and exclude payment integration entirely for now**. Do
 NOT build or resume payment work unless explicitly asked again. Order model
 still has `paymentStatus`/`paymentMethod` fields (COD works fine), just no
-online gateway is wired in.
+online gateway is wired in. (Note: `config/razorpay.js` still exists on disk
+from that earlier work — it's dormant, not deleted, per the "don't resume
+unless asked" rule.)
 
 ---
 
@@ -101,53 +143,62 @@ building it, not all of them upfront.
   — all auto-disabled in test env)
 - **Logging**: Winston (files) + Morgan (HTTP requests)
 - **Testing**: Jest + Supertest + mongodb-memory-server (in-memory DB for tests)
-- **Frontend**: Not started yet — will be Next.js
+- **Frontend**: Next.js 16 App Router + TypeScript (Turbopack) — see the
+  separate frontend status doc, actively being built, most areas ✅ complete
 
-## Folder structure (backend/)
+## Folder structure (backend/) — VERIFIED against disk on 2026-08-08
 
 ```
 backend/
-├── config/              db.js, logger.js, cloudinary.js, webauthn.js, shiprocket.js
-├── constants/           roles.js, messages.js
-├── exceptions/          ApiError.js (BadRequestError, NotFoundError, UnauthorizedError, ForbiddenError)
-├── middleware/           authMiddleware.js, errorHandler.js, httpLogger.js, validate.js,
-│                        rateLimiter.js, upload.js (Multer config)
-├── services/             CENTRALIZED — pricing.service.js, inventory.service.js, cart.service.js,
-│                         order.service.js, shopHours.service.js, upload.service.js,
-│                         webauthn.service.js, logistics/logistics.service.js,
-│                         logistics/providers/shiprocketAdapter.js
-│                         (business logic lives here, NOT in controllers)
-├── sockets/              io.js, index.js, emit.js, presenceTracker.js
+├── index.js
+├── PROJECT_HANDOFF.md, README.md
+├── config/               cloudinary.js, db.js, razorpay.js (dormant), shiprocket.js, webauthn.js
+├── constants/            messages.js, roles.js
+├── exceptions/           ApiError.js
+├── logs/                 logger.js
+├── middleware/            authMiddleware.js, errorHandler.js, httpLogger.js,
+│                          rateLimiter.js, upload.js, validate.js
 ├── modules/
-│   ├── auth/             auth.model.js, auth.controller.js, auth.routes.js, auth.validation.js,
-│   │                     webauthn.controller.js, webauthn.routes.js, webauthn.validation.js
-│   │                     (see UNRESOLVED ISSUE above - verify this folder is intact)
-│   ├── shop/
-│   │   ├── models/shop.model.js
-│   │   └── controllers/  create/, read/, update/, slug/, hours/ (each in its own subfolder)
-│   │   └── routes/shop.routes.js, shop.validation.js
-│   ├── product/
-│   │   ├── models/       product.model.js, category.model.js
-│   │   └── controllers/  product.create/read/update/delete.controller.js, category.controller.js
-│   │   └── routes/       product.routes.js, category.routes.js, product.validation.js
-│   ├── cart/              cart.model.js, cart.controller.js, cart.routes.js, cart.validation.js
-│   ├── order/             order.model.js (shipment sub-schema expanded for logistics tracking),
-│   │                      order.create/read/update.controller.js, order.routes.js
-│   │                      (now also mounts ship + tracking endpoints from logistics module),
-│   │                      order.validation.js
-│   ├── logistics/         controllers/logistics.controller.js, routes/logistics.routes.js,
-│   │                      logistics.validation.js
-│   ├── admin/             admin.user/shop/product/order/dashboard.controller.js, admin.routes.js
-│   ├── messagingSystem/   conversation + broadcast (models, controllers, routes)
-│   └── upload/            upload.model.js (tracks who-uploaded-what for ownership checks),
-│                          controllers/upload.controller.js, routes/upload.routes.js
+│   ├── admin/             controllers/ (dashboard, order, product, shop, user), routes/admin.routes.js
+│   ├── auth/               auth.validation.js, controllers/auth.controller.js,
+│   │                       models/auth.model.js, routes/auth.routes.js
+│   │                       (⚠️ 2 test files still import old flat path — see UNRESOLVED ISSUE)
+│   ├── cart/               cart.validation.js, controllers/, models/, routes/
+│   ├── logistics/          logistics.validation.js, controllers/, routes/
+│   ├── messagingSystem/    controllers/broadcast + conversation, models/broadcast + conversation
+│   │                       + message, routes/broadcast + conversation
+│   ├── order/              order.validation.js, controllers/order.create/read/update,
+│   │                       models/order.model.js, routes/order.routes.js
+│   ├── product/             product.routes.index.js, product.validation.js,
+│   │                        controllers/ (create/read/update/delete + Category-controller/),
+│   │                        models/ (category.model.js, product.model.js),
+│   │                        routes/ (category.routes.js, product.routes.js)
+│   ├── shop/                shop.validation.js,
+│   │                        controllers/ (create/, hours/, management/, read/, slug/, update/),
+│   │                        models/shop.model.js, routes/shop.routes.js
+│   ├── upload/              controller/upload.controller.js, models/upload.model.js,
+│   │                        routes/upload.routes.js
+│   ├── webAuthn/            webauthn.validation.js, controllers/webauthn.controller.js,
+│   │                        routes/webauthn.routes.js
+│   │                        (separate module, NOT nested inside auth/ — see note above)
+│   └── wishlist/            wishlist.validation.js, controllers/, models/, routes/
+├── services/               cart.service.js, inventory.service.js, order.service.js,
+│                           pricing.service.js, shopHours.service.js, upload.service.js,
+│                           webauthn.service.js, logistics/logistics.service.js,
+│                           logistics/providers/shiprocketAdapter.js
+├── sockets/                emit.js, index.js, io.js, presenceTracker.js
 ├── tests/
-│   ├── services/          pricing, inventory, shopHours, cart.service, order.service,
-│   │                      logistics.service (unit/service-level, some with jest.unstable_mockModule)
-│   ├── modules/            auth, shop, product, order, upload (HTTP integration tests via Supertest)
-│   └── setup/db.js         in-memory MongoDB connect/clear/close helpers
-└── index.js               app entry point
+│   ├── modules/             auth.test.js, order.test.js, product.test.js, shop.test.js, upload.test.js
+│   ├── services/            cart.service.test.js, inventory.service.test.js,
+│   │                        logistics.service.test.js, order.service.test.js,
+│   │                        pricing.service.test.js, shopHours.service.test.js
+│   └── setup/db.js
+└── utils/                  cookieOptions.js, generateToken.js
 ```
+
+**Note**: `modules/shop/controllers/` has a `management/` subfolder that
+wasn't documented in earlier handoffs — check what's in there if working on
+shop features (likely admin-adjacent shop management, needs verification).
 
 ## Architecture patterns established (follow these for anything new)
 
@@ -158,35 +209,40 @@ backend/
 2. **Sub-controllers by concern**: Large modules split controllers into
    `create/read/update/delete` files (or subfolders for shop). Each file has a
    comment-block index at the top listing what's inside.
-3. **Ownership checks over role checks**: Product/Order routes do NOT gate on
+3. **Every module uses `models/ controllers/ routes/` subfolders** — this is
+   now confirmed consistent across all 11 modules (`admin`, `auth`, `cart`,
+   `logistics`, `messagingSystem`, `order`, `product`, `shop`, `upload`,
+   `webAuthn`, `wishlist`). Don't write new imports assuming a flat structure.
+4. **Ownership checks over role checks**: Product/Order routes do NOT gate on
    `authorizeRoles(SELLER)` — they rely on `Shop.findOne({owner: req.user._id})`
    ownership checks inside controllers instead. This was a deliberate fix: role
    gates blocked buyers from ever seeing the friendly "create your shop first"
    message.
-4. **Category is referenced by slug in API requests**, not ObjectId — e.g.
+5. **Category is referenced by slug in API requests**, not ObjectId — e.g.
    `POST /api/products` body sends `category: "electronics"` (a string slug),
-   which the controller looks up via `Category.findOne({slug})`.
-5. **Validation**: Every route wraps its schema with the `validate()` middleware
+   which the controller looks up via `Category.findOne({slug})`. This applies
+   on the frontend too — never `Category.findById(slug)`.
+6. **Validation**: Every route wraps its schema with the `validate()` middleware
    from `middleware/validate.js`. Schemas live in `<module>/<module>.validation.js`
    (sibling to routes/controllers, not in a subfolder).
-6. **Image upload is decoupled from the resource it belongs to**: frontend uploads
+7. **Image upload is decoupled from the resource it belongs to**: frontend uploads
    to a dedicated `/api/upload/*` endpoint first, gets back a `{url, publicId}`,
    then sends that URL as a plain string in the normal JSON body when
    creating/updating a shop or product. Shop/product endpoints stay pure JSON —
    only `modules/upload/` deals with multipart/form-data.
-7. **Upload folders are hardcoded server-side per route** (`/api/upload/shop-logo`,
+8. **Upload folders are hardcoded server-side per route** (`/api/upload/shop-logo`,
    `/shop-banner`, `/avatar`, `/product-images`), never client-controlled via a
    query param — that was a deliberate security fix (a `?folder=` param would let
    any caller write into any Cloudinary folder).
-8. **Passkeys are additive, not a replacement** for password auth — registering
+9. **Passkeys are additive, not a replacement** for password auth — registering
    one requires already being logged in via password first. Login later works
-   with either password OR passkey.
-9. **Logistics uses an adapter pattern**: `services/logistics/providers/*Adapter.js`
-   each implement the same 4-function shape (`checkServiceability`,
-   `createShipment`, `trackShipment`, `cancelShipment`). `logistics.service.js`
-   registers them in a `PROVIDERS` map, calls all of them in parallel for
-   serviceability checks, and auto-selects the best option (cheapest by
-   default) — **the seller never picks a courier**, they just click "Ship".
+   with either password OR passkey. Lives in its own `modules/webAuthn/` module.
+10. **Logistics uses an adapter pattern**: `services/logistics/providers/*Adapter.js`
+    each implement the same 4-function shape (`checkServiceability`,
+    `createShipment`, `trackShipment`, `cancelShipment`). `logistics.service.js`
+    registers them in a `PROVIDERS` map, calls all of them in parallel for
+    serviceability checks, and auto-selects the best option (cheapest by
+    default) — **the seller never picks a courier**, they just click "Ship".
 
 ## Known gotchas already fixed (don't reintroduce these)
 
@@ -241,28 +297,34 @@ backend/
   URL could POST fake shipment status updates. There's a `TODO` at that route
   to add HMAC verification once Shiprocket's dashboard provides a signing
   secret. Don't treat this endpoint as trusted input yet.
+- **NEW (2026-08-08): test files can silently drift from actual folder
+  structure** when modules get reorganized into `models/ controllers/ routes/`
+  subfolders — always grep/verify test import paths against real file
+  locations after any folder restructuring, don't assume they were updated
+  automatically.
 
-## Test status: last confirmed good run was 89/89 passing, 9/10 suites — but see
+## Test status
 
-## UNRESOLVED ISSUE above; a regression to 32/89 was reported after adding
-
-## Passkey files and not yet confirmed fixed. A new `logistics.service.test.js`
-
-## (7 tests, mocked - doesn't need a live Shiprocket account) was added since
-
-## and passed in isolation, but hasn't been run as part of the full suite yet.
+**Confirmed passing as of 2026-08-08: 110/110 tests, 11/11 suites**, ~7s run
+time. This includes all modules (auth, shop, product, order, upload, cart,
+inventory, pricing, shopHours, logistics) plus the earlier-flagged auth
+test-import issue, which turned out to already be fixed (see RESOLVED note
+above). `logistics.service.test.js` (7 tests, mocked, guards the
+`selectBestCourier` cheapest-vs-unsorted regression) is confirmed running
+as part of the full suite, not just in isolation.
 
 Run with `npm test` (uses `mongodb-memory-server`, needs internet on first run to
 download the Mongo binary — cached after that).
 
-## What's fully built (assuming the auth-module regression above gets fixed)
+## What's fully built
 
 - **Auth**: register/login/logout, profile update, change password, role switch
   (buyer↔seller), admin password reset with forced-change flag, self-service
   forgot/reset-password (dev-mode token, needs real email service for prod)
 - **Passkeys (WebAuthn)**: register a passkey while logged in, login with a
   passkey (password-free), list/delete registered devices. Uses
-  `@simplewebauthn/server` v13. RP_ID/ORIGIN configured via env vars.
+  `@simplewebauthn/server` v13. RP_ID/ORIGIN configured via env vars. Lives in
+  its own `modules/webAuthn/`, not nested inside `modules/auth/`.
 - **Shop**: CRUD, custom slug/URL with collision-safe auto-increment, business
   hours + holidays with `isCurrentlyOpen()` computed field, verify (admin)
 - **Product**: CRUD, categories (nested via `parent`), stock management, computed
@@ -277,6 +339,8 @@ download the Mongo binary — cached after that).
   "Ship this order" one-click flow with automatic cheapest-courier selection,
   webhook receiver that updates order status + notifies buyer in real time,
   buyer/seller/admin tracking endpoint
+- **Wishlist**: model/controller/routes/validation, 5 endpoints — matches
+  frontend which already has a full slice + `WishlistButton` + `WishlistPage`
 - **Admin**: full control over users (ban, role, password reset), shops (verify,
   force-toggle), products (force-toggle, force-delete), orders (view-all,
   force-delete with safety rules), dashboard stats
@@ -304,8 +368,23 @@ download the Mongo binary — cached after that).
 6. Everything in the "defer until real users ask" tier: subscription plans,
    staff accounts, reviews, seller analytics, full notification center,
    platform finance/GST reports, admin CRM, fraud protection
-7. Frontend (Next.js) — not started; will need `@simplewebauthn/browser` for the
-   passkey UI (`startRegistration()`, `startAuthentication()`)
+
+## Frontend status (Next.js 16, TypeScript, Redux Toolkit)
+
+Frontend is well underway — see the separate
+`E-Commerce_Marketplace_Frontend_Status` doc for full detail. Summary: auth,
+profile, products, shop, cart, checkout, buyer+seller orders, logistics,
+wishlist, seller dashboard, messaging, and full admin panel are all built
+and wired. Remaining work: dark-mode migration pass (several components
+left), wiring already-built components onto pages that don't use them yet
+(WishlistButton→ProductCard, broadcast/chat/delivery-estimate→shop pages),
+Category frontend, Notifications center, seller Settings/Shipping pages.
+
+**Housekeeping flagged (2026-08-08)**: three stray duplicate folders exist
+under `frontend/features/` — `profile copy 10/`, `profile copy 11/`,
+`profile copy 12/` — likely accidental IDE duplicates of `features/profile/`.
+Recommend deleting after confirming they're not referenced anywhere
+(quick check: `grep -r "profile copy" frontend/ --include="*.tsx" --include="*.ts"`).
 
 ## My preferred working style (for the new chat to follow)
 
@@ -318,8 +397,12 @@ download the Mongo binary — cached after that).
   out of sync
 - Explain things in Hinglish (Hindi+English mix), keep it practical
 - I'm building this in `D:\Amit\A Developer\2026 product\full stack project\E-commerce app\backend`
+  (frontend is the sibling `frontend\` folder in the same root)
 - I think in product/business terms as much as code terms now (seller
   experience, not just endpoints) — keep giving both the technical "how" and
   the product "why" when it's relevant
 - **Payment integration was explicitly stopped mid-build - don't restart it
   unless I bring it up again myself**
+- Always verify actual folder structure via PowerShell (`Get-ChildItem
+  -Recurse`) before assuming file locations — this handoff doc had drifted
+  from reality once already (auth module structure) and it's cheap to re-check

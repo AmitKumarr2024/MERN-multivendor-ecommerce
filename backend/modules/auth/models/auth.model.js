@@ -26,6 +26,25 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    // Profile photo URL (Cloudinary) - uploaded via /api/upload/avatar,
+    // same decoupled-upload pattern as Shop.logo/Shop.banner.
+    avatar: {
+      type: String,
+      default: "",
+    },
+    // Buyer's personal shipping/contact address - separate from Shop.address,
+    // which is the seller's business address. Kept as a single embedded
+    // object (not an array) since multi-address support isn't built yet -
+    // matches the "simple version first" philosophy used elsewhere in this
+    // project. Extend to an array of addresses later if buyers need to save
+    // more than one (home/work/parents' place etc).
+    address: {
+      street: { type: String, trim: true, default: "" },
+      city: { type: String, trim: true, default: "" },
+      state: { type: String, trim: true, default: "" },
+      pincode: { type: String, trim: true, default: "" },
+      country: { type: String, trim: true, default: "India" },
+    },
     role: {
       type: String,
       enum: Object.values(ROLES),

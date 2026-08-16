@@ -3,7 +3,10 @@ import crypto from "crypto";
 
 import generateToken from "../../../utils/generateToken.js";
 import { ROLES } from "../../../constants/roles.js";
-import { BadRequestError, UnauthorizedError } from "../../../exceptions/ApiError.js";
+import {
+  BadRequestError,
+  UnauthorizedError,
+} from "../../../exceptions/ApiError.js";
 import { COOKIE_NAME, getCookieOptions } from "../../../utils/cookieOptions.js";
 
 /**
@@ -29,7 +32,8 @@ const RESET_TOKEN_EXPIRES_MINUTES = 15;
 // like passwords), so a fast hash (sha256) is the standard/appropriate
 // choice here - unlike passwords, there's no point paying bcrypt's
 // deliberately-slow cost for something with this much entropy.
-const hashToken = (rawToken) => crypto.createHash("sha256").update(rawToken).digest("hex");
+const hashToken = (rawToken) =>
+  crypto.createHash("sha256").update(rawToken).digest("hex");
 
 // 1. ----------------------------------------------------------------
 // @desc    Register new user (buyer or seller)
@@ -52,7 +56,9 @@ export const registerUser = async (req, res, next) => {
     }
 
     // Only allow 'buyer' or 'seller' at registration; 'admin' set manually in DB
-    const allowedRole = [ROLES.BUYER, ROLES.SELLER].includes(role) ? role : ROLES.BUYER;
+    const allowedRole = [ROLES.BUYER, ROLES.SELLER].includes(role)
+      ? role
+      : ROLES.BUYER;
 
     const user = await User.create({
       name,
@@ -70,6 +76,8 @@ export const registerUser = async (req, res, next) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      avatar: user.avatar,
+      address: user.address,
       role: user.role,
       shop: user.shop,
     });
@@ -90,7 +98,9 @@ export const loginUser = async (req, res, next) => {
       throw new BadRequestError("Email and password are required");
     }
 
-    const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
+    const user = await User.findOne({ email: email.toLowerCase() }).select(
+      "+password",
+    );
     if (!user) {
       throw new UnauthorizedError("Invalid email or password");
     }
@@ -101,7 +111,9 @@ export const loginUser = async (req, res, next) => {
     }
 
     if (!user.isActive) {
-      throw new UnauthorizedError("Your account has been suspended. Please contact support.");
+      throw new UnauthorizedError(
+        "Your account has been suspended. Please contact support.",
+      );
     }
 
     const token = generateToken(user._id, user.role);
@@ -112,6 +124,8 @@ export const loginUser = async (req, res, next) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      avatar: user.avatar,
+      address: user.address,
       role: user.role,
       shop: user.shop,
       mustChangePassword: user.mustChangePassword,
@@ -144,12 +158,12 @@ export const getMe = async (req, res) => {
 };
 
 // 5. ----------------------------------------------------------------
-// @desc    Update logged-in user's profile (name, phone)
+// @desc    Update logged-in user's profile (name, phone, avatar, address)
 // @route   PUT /api/auth/me
 // @access  Private
 export const updateMe = async (req, res, next) => {
   try {
-    const { name, phone } = req.body;
+    const { name, phone, avatar, address } = req.body;
 
     const user = await User.findById(req.user._id);
     if (!user) {
@@ -163,6 +177,15 @@ export const updateMe = async (req, res, next) => {
       user.name = name.trim();
     }
     if (phone !== undefined) user.phone = phone;
+    if (avatar !== undefined) user.avatar = avatar;
+    if (address !== undefined) {
+      // Merge rather than replace, so a partial update (e.g. only city
+      // changed) doesn't wipe out the other address fields.
+      user.address = {
+        ...(user.address?.toObject?.() ?? user.address ?? {}),
+        ...address,
+      };
+    }
 
     await user.save();
 
@@ -171,6 +194,8 @@ export const updateMe = async (req, res, next) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      avatar: user.avatar,
+      address: user.address,
       role: user.role,
       shop: user.shop,
     });
@@ -188,13 +213,17 @@ export const changePassword = async (req, res, next) => {
     const { currentPassword, newPassword } = req.body;
 
     if (!currentPassword || !newPassword) {
-      throw new BadRequestError("Current password and new password are required");
+      throw new BadRequestError(
+        "Current password and new password are required",
+      );
     }
     if (newPassword.length < 6) {
       throw new BadRequestError("New password must be at least 6 characters");
     }
     if (currentPassword === newPassword) {
-      throw new BadRequestError("New password must be different from the current password");
+      throw new BadRequestError(
+        "New password must be different from the current password",
+      );
     }
 
     const user = await User.findById(req.user._id).select("+password");
@@ -247,7 +276,9 @@ export const updateMyRole = async (req, res, next) => {
     // which sets role to seller automatically). Block manually switching to seller
     // without one, so "seller" always implies "has a shop".
     if (role === ROLES.SELLER && !user.shop) {
-      throw new BadRequestError("Create a shop first - your role will switch to seller automatically");
+      throw new BadRequestError(
+        "Create a shop first - your role will switch to seller automatically",
+      );
     }
 
     user.role = role;
@@ -284,7 +315,8 @@ export const forgotPassword = async (req, res, next) => {
     }
 
     const genericResponse = {
-      message: "If an account with that email exists, a password reset link has been sent.",
+      message:
+        "If an account with that email exists, a password reset link has been sent.",
     };
 
     const user = await User.findOne({ email: email.toLowerCase() });
@@ -294,7 +326,9 @@ export const forgotPassword = async (req, res, next) => {
 
     const rawToken = crypto.randomBytes(32).toString("hex");
     user.resetPasswordToken = hashToken(rawToken);
-    user.resetPasswordExpires = new Date(Date.now() + RESET_TOKEN_EXPIRES_MINUTES * 60 * 1000);
+    user.resetPasswordExpires = new Date(
+      Date.now() + RESET_TOKEN_EXPIRES_MINUTES * 60 * 1000,
+    );
     await user.save();
 
     // TODO: replace this block with a real email call, e.g.:
@@ -304,7 +338,8 @@ export const forgotPassword = async (req, res, next) => {
       return res.json({
         ...genericResponse,
         devOnlyResetToken: rawToken,
-        devOnlyNote: "This token is only returned here because no email service is configured yet. Never expose this in production.",
+        devOnlyNote:
+          "This token is only returned here because no email service is configured yet. Never expose this in production.",
       });
     }
 

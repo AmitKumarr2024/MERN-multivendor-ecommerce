@@ -8,6 +8,12 @@ import categoryReducer from "@/features/category/store/categorySlice";
 import productReducer from "@/features/products/store/Productslice";
 import shopReducer from "@/features/shop/store/shopSlice";
 import orderReducer from "@/features/order/store/orderSlice";
+import cartReducer from "@/features/cart/store/cartSlice";
+import messagingReducer from "@/features/messaging/store/messagingSlice";
+import logisticsReducer from "@/features/logistics/store/logisticsSlice";
+import wishlistReducer from "@/features/wishlist/store/wishlistSlice";
+import adminReducer from "@/features/admin/store/Adminslice";
+import notificationReducer from "@/features/notification/store/notificationSlice";
 
 
 
@@ -46,6 +52,13 @@ export const makeStore = () => {
             products: productReducer,
             shop: shopReducer,
             order: orderReducer,
+            cart: cartReducer,
+            messaging: messagingReducer,
+            logistics: logisticsReducer,
+            wishlist: wishlistReducer,
+            admin:adminReducer,
+            notification: notificationReducer,
+
         },
     });
 };

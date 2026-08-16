@@ -35,3 +35,19 @@ export const emitNewOrderToSeller = (sellerUserId, order) => {
   if (!io) return;
   io.to(`user:${sellerUserId}`).emit("order:new", order);
 };
+
+export const emitNotification = (recipientUserId, notification) => {
+  const io = getIO();
+  if (!io) {
+    console.log(
+      "❌ emitNotification: io instance is null (socket server not initialized yet?)",
+    );
+    return;
+  }
+  const room = `user:${recipientUserId}`;
+  const roomSize = io.sockets.adapter.rooms.get(room)?.size || 0;
+  console.log(
+    `📡 Emitting "notification:new" to room "${room}" — ${roomSize} socket(s) connected`,
+  );
+  io.to(room).emit("notification:new", notification);
+};

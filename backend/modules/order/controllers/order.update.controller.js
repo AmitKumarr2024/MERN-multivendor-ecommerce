@@ -7,6 +7,7 @@ import {
 } from "../../../exceptions/ApiError.js";
 import { cancelOrder as cancelOrderService } from "../../../services/order.service.js";
 import { emitOrderStatusUpdate } from "../../../sockets/emit.js";
+import { createNotification } from "../../../services/notification.service.js";
 
 const VALID_STATUSES = [
   "pending",
@@ -48,6 +49,16 @@ export const updateOrderStatus = async (req, res, next) => {
       shopName: shop.shopName,
     });
 
+    await createNotification({
+      recipient: order.buyer,
+      type: "order_status",
+      title: "Order status updated",
+      message: `Your order is now ${order.orderStatus}`,
+      link: `/buyer/orders/${order._id}`,
+      relatedId: order._id,
+      relatedModel: "Order",
+    });
+
     res.json({ _id: order._id, orderStatus: order.orderStatus });
   } catch (error) {
     next(error);
@@ -68,6 +79,21 @@ export const cancelMyOrder = async (req, res, next) => {
     }
 
     const updatedOrder = await cancelOrderService(order, req.body.reason);
+
+    // 👇 Optional — seller ko batao
+    const shop = await Shop.findById(updatedOrder.shop);
+    if (shop) {
+      await createNotification({
+        recipient: shop.owner,
+        type: "order_status",
+        title: "Order cancelled",
+        message: "A buyer cancelled their order",
+        link: `/seller/orders`,
+        relatedId: updatedOrder._id,
+        relatedModel: "Order",
+      });
+    }
+
     res.json({ _id: updatedOrder._id, orderStatus: updatedOrder.orderStatus });
   } catch (error) {
     next(error);

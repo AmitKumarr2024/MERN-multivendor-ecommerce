@@ -22,7 +22,7 @@ interface RequireRoleProps {
 /**
  * Wrap any (buyer)/(seller)/(admin) page with this to keep
  * people out of profile sections that aren't theirs — e.g. a
- * buyer typing /(admin)/profile directly in the URL bar.
+ * buyer typing /admin/profile directly in the URL bar.
  *
  * Not a security boundary by itself (that's the backend's
  * job) — just keeps the UI honest and avoids flash-of-wrong-

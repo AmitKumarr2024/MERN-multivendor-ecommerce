@@ -25,15 +25,15 @@ export default function ProductGrid({
 
     if (products.length === 0) {
         return (
-            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white py-16 text-center">
+            <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-default bg-surface py-16 text-center">
                 <svg
                     viewBox="0 0 20 20"
                     fill="currentColor"
-                    className="mb-3 h-10 w-10 text-gray-300"
+                    className="mb-3 h-10 w-10 text-muted"
                 >
                     <path d="M3 4h14l1 4H2l1-4Zm-1 5h16v7a1 1 0 0 1-1 1h-4v-5H7v5H3a1 1 0 0 1-1-1V9Z" />
                 </svg>
-                <p className="text-sm text-gray-500">{emptyMessage}</p>
+                <p className="text-sm text-secondary">{emptyMessage}</p>
             </div>
         );
     }

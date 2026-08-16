@@ -36,10 +36,10 @@ export const createCategory = async (req, res, next) => {
 // @access  Public
 export const getAllCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find({ isActive: true }).populate(
-      "parent",
-      "name slug",
-    );
+    const categories = await Category.find({
+      isActive: true,
+    }).populate("parent", "name slug");
+
     res.json(categories);
   } catch (error) {
     next(error);

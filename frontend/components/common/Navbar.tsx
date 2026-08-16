@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useRef, useState } from "react";
 
@@ -12,7 +13,11 @@ import {
     selectUserRole,
 } from "@/features/auth/store/authSelector";
 import { logoutUser } from "@/features/auth/store/authSlice";
+import { fetchMyConversations, selectTotalUnreadCount } from "@/features/messaging";
 import { getRoleNavConfig, MAIN_NAV_LINKS } from "../layouts/config/nav.config";
+import { fetchMyCart, selectCartItemCount } from "@/features/cart/page";
+import ThemeToggle from "@/components/ui/ThemeToggle";
+import { NotificationBell } from "@/features/notification";
 
 /**
  * Lean marketplace navbar — one row, minimal icons.
@@ -20,11 +25,16 @@ import { getRoleNavConfig, MAIN_NAV_LINKS } from "../layouts/config/nav.config";
  * Deliberately NOT included (add back only if you actually
  * need it, don't default to it):
  * - separate "discovery" category strip under the navbar
- * - notification bell
- * - wishlist icon in the top bar (still reachable via account menu)
  * - gradient/decorative logo styling
  *
  * Role-specific routing still comes from nav.config.ts.
+ *
+ * Dark mode:
+ * All colors use semantic tokens (bg-surface, text-primary,
+ * border-default, etc.) defined in globals.css instead of raw
+ * Tailwind grays — see the token table there. This is what
+ * makes the whole navbar respond to the "dark" class on <html>
+ * without needing dark: prefixes everywhere.
  */
 export default function Navbar() {
     const dispatch = useAppDispatch();
@@ -34,11 +44,14 @@ export default function Navbar() {
     const user = useAppSelector(selectCurrentUser);
     const isAuthenticated = useAppSelector(selectIsAuthenticated);
     const role = useAppSelector(selectUserRole);
+    const unread = useAppSelector(selectTotalUnreadCount(role === "seller"));
 
     const [mounted, setMounted] = useState(false);
     const [search, setSearch] = useState("");
     const [menuOpen, setMenuOpen] = useState(false);
     const [accountOpen, setAccountOpen] = useState(false);
+
+    const cartCount = useAppSelector(selectCartItemCount);
 
     const accountRef = useRef<HTMLDivElement | null>(null);
 
@@ -46,6 +59,12 @@ export default function Navbar() {
     const authReady = mounted && initialized;
     const navConfig = getRoleNavConfig(role);
 
+    useEffect(() => {
+        if (!authReady || !isAuthenticated) return;
+
+        dispatch(fetchMyConversations());
+        dispatch(fetchMyCart());
+    }, [dispatch, authReady, isAuthenticated]);
     useEffect(() => {
         if (!accountOpen) return;
         const onClick = (e: MouseEvent) => {
@@ -77,15 +96,27 @@ export default function Navbar() {
         }
     };
 
+    const messagesHref = role === "seller" ? "/seller/messages" : "/buyer/messages";
+
     return (
-        <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
+        <header className="sticky top-0 z-50 border-b border-default bg-surface">
             <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
                 {/* Logo */}
-                <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-gray-900">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gray-900 text-sm text-white">
-                        M
+                <Link
+                    href="/"
+                    className="flex shrink-0 items-center gap-2 font-bold text-primary"
+                >
+                    <Image
+                        src="/android-chrome-512x512.png"
+                        alt="Amitora Market"
+                        width={52}
+                        height={52}
+                        className="rounded-lg object-contain"
+                    />
+
+                    <span className="hidden sm:inline">
+                        Amitora Market
                     </span>
-                    <span className="hidden sm:inline">Marketplace</span>
                 </Link>
 
                 {/* Desktop links */}
@@ -94,7 +125,7 @@ export default function Navbar() {
                         <Link
                             key={link.href}
                             href={link.href}
-                            className="rounded-md px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                            className="rounded-md px-3 py-2 text-sm font-medium text-secondary hover:bg-surface-hover hover:text-primary"
                         >
                             {link.label}
                         </Link>
@@ -109,12 +140,12 @@ export default function Navbar() {
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
                             placeholder="Search products..."
-                            className="h-10 w-full rounded-lg border border-gray-300 bg-gray-50 pl-9 pr-3 text-sm outline-none focus:border-gray-900 focus:bg-white"
+                            className="h-10 w-full rounded-lg border border-strong bg-surface-muted pl-9 pr-3 text-sm text-primary outline-none focus:border-accent focus:bg-surface"
                         />
                         <svg
                             viewBox="0 0 20 20"
                             fill="currentColor"
-                            className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                            className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
                         >
                             <path
                                 fillRule="evenodd"
@@ -127,26 +158,58 @@ export default function Navbar() {
 
                 {/* Right side actions (desktop) */}
                 <div className="hidden items-center gap-2 md:flex">
+                    <ThemeToggle />
+
+                    {isAuthenticated && (
+                        <Link
+                            href={messagesHref}
+                            className="relative flex h-9 w-9 items-center justify-center rounded-md text-secondary hover:bg-surface-hover"
+                            aria-label="Messages"
+                        >
+                            <MessageIcon />
+                            {unread > 0 && (
+                                <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-semibold text-white">
+                                    {unread}
+                                </span>
+                            )}
+                        </Link>
+                    )}
+                    {isAuthenticated && <NotificationBell />}
                     <Link
-                        href="/cart"
-                        className="relative flex h-9 w-9 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100"
+                        href="/buyer/cart"
+                        className="relative flex h-9 w-9 items-center justify-center rounded-md text-secondary hover:bg-surface-hover"
                         aria-label="Cart"
                     >
                         <CartIcon />
-                        {/* TODO: wire to cart slice item count */}
+
+                        {cartCount > 0 && (
+                            <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-semibold text-white">
+                                {cartCount}
+                            </span>
+                        )}
                     </Link>
 
                     {!authReady ? (
-                        <div className="h-9 w-24 animate-pulse rounded-md bg-gray-100" />
+                        <div className="h-9 w-24 animate-pulse rounded-md bg-surface-hover" />
                     ) : isAuthenticated ? (
                         <div ref={accountRef} className="relative">
                             <button
                                 type="button"
                                 onClick={() => setAccountOpen((v) => !v)}
-                                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-primary hover:bg-surface-hover"
                             >
-                                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-900 text-xs font-semibold text-white">
-                                    {getInitials(user?.name ?? "A")}
+                                <span className="relative flex h-7 w-7 shrink-0 items-center justify-center overflow-hidden rounded-full bg-accent text-xs font-semibold text-accent-foreground">
+                                    {user?.avatar ? (
+                                        <Image
+                                            src={user.avatar}
+                                            alt={user?.name || "Account"}
+                                            fill
+                                            sizes="28px"
+                                            className="object-cover"
+                                        />
+                                    ) : (
+                                        getInitials(user?.name ?? "A")
+                                    )}
                                 </span>
                                 <span className="hidden max-w-20 truncate lg:inline">
                                     {user?.name?.split(" ")[0] ?? "Account"}
@@ -154,18 +217,18 @@ export default function Navbar() {
                             </button>
 
                             {accountOpen && (
-                                <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-gray-200 bg-white py-1 shadow-lg">
-                                    <div className="border-b border-gray-100 px-3 py-2">
-                                        <p className="truncate text-sm font-medium text-gray-900">
+                                <div className="absolute right-0 top-full mt-1 w-48 rounded-lg border border-default bg-surface py-1 shadow-lg">
+                                    <div className="border-b border-default px-3 py-2">
+                                        <p className="truncate text-sm font-medium text-primary">
                                             {user?.name}
                                         </p>
-                                        <p className="truncate text-xs text-gray-500">{user?.email}</p>
+                                        <p className="truncate text-xs text-secondary">{user?.email}</p>
                                     </div>
 
                                     <Link
                                         href={navConfig.profileHref}
                                         onClick={() => setAccountOpen(false)}
-                                        className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                        className="block px-3 py-2 text-sm text-primary hover:bg-surface-hover"
                                     >
                                         My Profile
                                     </Link>
@@ -175,7 +238,7 @@ export default function Navbar() {
                                             key={item.href}
                                             href={item.href}
                                             onClick={() => setAccountOpen(false)}
-                                            className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                            className="block px-3 py-2 text-sm text-primary hover:bg-surface-hover"
                                         >
                                             {item.label}
                                         </Link>
@@ -185,26 +248,26 @@ export default function Navbar() {
                                         <Link
                                             href={navConfig.ordersHref}
                                             onClick={() => setAccountOpen(false)}
-                                            className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                            className="block px-3 py-2 text-sm text-primary hover:bg-surface-hover"
                                         >
                                             {navConfig.ordersLabel}
                                         </Link>
                                     )}
 
                                     <Link
-                                        href="/wishlist"
+                                        href="/buyer/wishlist"
                                         onClick={() => setAccountOpen(false)}
-                                        className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                                        className="block px-3 py-2 text-sm text-primary hover:bg-surface-hover"
                                     >
                                         Wishlist
                                     </Link>
 
-                                    <div className="my-1 border-t border-gray-100" />
+                                    <div className="my-1 border-t border-default" />
 
                                     <button
                                         type="button"
                                         onClick={handleLogout}
-                                        className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50"
+                                        className="block w-full px-3 py-2 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
                                     >
                                         Sign out
                                     </button>
@@ -215,13 +278,13 @@ export default function Navbar() {
                         <div className="flex items-center gap-2">
                             <Link
                                 href="/login"
-                                className="rounded-md px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+                                className="rounded-md px-3 py-2 text-sm font-medium text-primary hover:bg-surface-hover"
                             >
                                 Sign in
                             </Link>
                             <Link
                                 href="/register"
-                                className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white hover:bg-gray-800"
+                                className="rounded-md bg-accent px-3 py-2 text-sm font-medium text-accent-foreground hover:opacity-90"
                             >
                                 Sign up
                             </Link>
@@ -231,9 +294,24 @@ export default function Navbar() {
 
                 {/* Mobile toggle */}
                 <div className="ml-auto flex items-center gap-1 md:hidden">
+                    {isAuthenticated && (
+                        <Link
+                            href={messagesHref}
+                            className="relative flex h-9 w-9 items-center justify-center rounded-md text-secondary"
+                            aria-label="Messages"
+                        >
+                            <MessageIcon />
+                            {unread > 0 && (
+                                <span className="absolute right-0 top-0 flex h-4 min-w-4 items-center justify-center rounded-full bg-red-600 px-1 text-[9px] font-semibold text-white">
+                                    {unread}
+                                </span>
+                            )}
+                        </Link>
+                    )}
+                    {isAuthenticated && <NotificationBell />}
                     <Link
-                        href="/cart"
-                        className="flex h-9 w-9 items-center justify-center rounded-md text-gray-600"
+                        href="/buyer/cart"
+                        className="flex h-9 w-9 items-center justify-center rounded-md text-secondary"
                         aria-label="Cart"
                     >
                         <CartIcon />
@@ -241,7 +319,7 @@ export default function Navbar() {
                     <button
                         type="button"
                         onClick={() => setMenuOpen((v) => !v)}
-                        className="flex h-9 w-9 items-center justify-center rounded-md text-gray-700 hover:bg-gray-100"
+                        className="flex h-9 w-9 items-center justify-center rounded-md text-primary hover:bg-surface-hover"
                         aria-label="Menu"
                         aria-expanded={menuOpen}
                     >
@@ -251,19 +329,19 @@ export default function Navbar() {
             </div>
 
             {/* Mobile search - always visible below the bar on small screens */}
-            <form onSubmit={handleSearch} className="border-t border-gray-100 px-4 py-2 lg:hidden">
+            <form onSubmit={handleSearch} className="border-t border-default px-4 py-2 lg:hidden">
                 <div className="relative">
                     <input
                         type="search"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search products..."
-                        className="h-10 w-full rounded-lg border border-gray-300 bg-gray-50 pl-9 pr-3 text-sm outline-none focus:border-gray-900 focus:bg-white"
+                        className="h-10 w-full rounded-lg border border-strong bg-surface-muted pl-9 pr-3 text-sm text-primary outline-none focus:border-accent focus:bg-surface"
                     />
                     <svg
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
+                        className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted"
                     >
                         <path
                             fillRule="evenodd"
@@ -276,38 +354,46 @@ export default function Navbar() {
 
             {/* Mobile menu — simple dropdown, not a full overlay panel */}
             {menuOpen && (
-                <div className="border-t border-gray-100 bg-white md:hidden">
+                <div className="border-t border-default bg-surface md:hidden">
                     <nav className="space-y-0.5 px-2 py-2">
                         {MAIN_NAV_LINKS.map((link) => (
                             <Link
                                 key={link.href}
                                 href={link.href}
                                 onClick={() => setMenuOpen(false)}
-                                className="block rounded-md px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                                className="block rounded-md px-3 py-2.5 text-sm font-medium text-primary hover:bg-surface-hover"
                             >
                                 {link.label}
                             </Link>
                         ))}
 
-                        <div className="my-1 border-t border-gray-100" />
+                        <div className="my-1 border-t border-default" />
+
+                        {/* Theme switch — mobile menu */}
+                        <div className="flex items-center justify-between px-3 py-2">
+                            <span className="text-sm font-medium text-primary">Theme</span>
+                            <ThemeToggle />
+                        </div>
+
+                        <div className="my-1 border-t border-default" />
 
                         {!authReady ? (
                             <div className="space-y-2 px-3 py-2">
-                                <div className="h-9 w-full animate-pulse rounded-md bg-gray-100" />
+                                <div className="h-9 w-full animate-pulse rounded-md bg-surface-hover" />
                             </div>
                         ) : isAuthenticated ? (
                             <>
                                 <div className="px-3 py-2">
-                                    <p className="truncate text-sm font-medium text-gray-900">
+                                    <p className="truncate text-sm font-medium text-primary">
                                         {user?.name}
                                     </p>
-                                    <p className="truncate text-xs text-gray-500">{user?.email}</p>
+                                    <p className="truncate text-xs text-secondary">{user?.email}</p>
                                 </div>
 
                                 <Link
                                     href={navConfig.profileHref}
                                     onClick={() => setMenuOpen(false)}
-                                    className="block rounded-md px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                                    className="block rounded-md px-3 py-2.5 text-sm text-primary hover:bg-surface-hover"
                                 >
                                     My Profile
                                 </Link>
@@ -317,7 +403,7 @@ export default function Navbar() {
                                         key={item.href}
                                         href={item.href}
                                         onClick={() => setMenuOpen(false)}
-                                        className="block rounded-md px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                                        className="block rounded-md px-3 py-2.5 text-sm text-primary hover:bg-surface-hover"
                                     >
                                         {item.label}
                                     </Link>
@@ -327,16 +413,16 @@ export default function Navbar() {
                                     <Link
                                         href={navConfig.ordersHref}
                                         onClick={() => setMenuOpen(false)}
-                                        className="block rounded-md px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                                        className="block rounded-md px-3 py-2.5 text-sm text-primary hover:bg-surface-hover"
                                     >
                                         {navConfig.ordersLabel}
                                     </Link>
                                 )}
 
                                 <Link
-                                    href="/wishlist"
+                                    href="/buyer/wishlist"
                                     onClick={() => setMenuOpen(false)}
-                                    className="block rounded-md px-3 py-2.5 text-sm text-gray-700 hover:bg-gray-50"
+                                    className="block rounded-md px-3 py-2.5 text-sm text-primary hover:bg-surface-hover"
                                 >
                                     Wishlist
                                 </Link>
@@ -344,7 +430,7 @@ export default function Navbar() {
                                 <button
                                     type="button"
                                     onClick={handleLogout}
-                                    className="block w-full rounded-md px-3 py-2.5 text-left text-sm text-red-600 hover:bg-red-50"
+                                    className="block w-full rounded-md px-3 py-2.5 text-left text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40"
                                 >
                                     Sign out
                                 </button>
@@ -354,14 +440,14 @@ export default function Navbar() {
                                 <Link
                                     href="/login"
                                     onClick={() => setMenuOpen(false)}
-                                    className="flex-1 rounded-md border border-gray-300 py-2 text-center text-sm font-medium text-gray-700"
+                                    className="flex-1 rounded-md border border-strong py-2 text-center text-sm font-medium text-primary"
                                 >
                                     Sign in
                                 </Link>
                                 <Link
                                     href="/register"
                                     onClick={() => setMenuOpen(false)}
-                                    className="flex-1 rounded-md bg-gray-900 py-2 text-center text-sm font-medium text-white"
+                                    className="flex-1 rounded-md bg-accent py-2 text-center text-sm font-medium text-accent-foreground"
                                 >
                                     Sign up
                                 </Link>
@@ -379,6 +465,20 @@ function getInitials(name: string) {
     if (parts.length === 0) return "A";
     if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function MessageIcon() {
+    return (
+        <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+            <path
+                d="M4 12c0-4.4 3.6-8 8-8s8 3.6 8 8-3.6 8-8 8a9.5 9.5 0 0 1-2.8-.4L4 21l1.3-3.8A7.9 7.9 0 0 1 4 12Z"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+            />
+        </svg>
+    );
 }
 
 function CartIcon() {

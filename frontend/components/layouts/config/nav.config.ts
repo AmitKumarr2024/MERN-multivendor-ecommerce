@@ -54,7 +54,7 @@ export interface RoleNavConfig {
 export const ROLE_NAV_CONFIG: Record<NavRole, RoleNavConfig> = {
     buyer: {
         profileHref: "/buyer/profile",
-        ordersHref: "/orders",
+        ordersHref: "/buyer/orders",
         ordersLabel: "My Orders",
         accountBadge: "Buyer Account",
         extraMenuItems: [],
