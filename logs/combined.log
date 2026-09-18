@@ -25379,3 +25379,7 @@
 {"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient Khata credit for this order — choose another payment method","timestamp":"2026-09-18T05:11:35.275Z"}
 {"level":"warn","message":"POST /api/orders/checkout -> 400 Khata is not available for this shop or your request is not yet approved","timestamp":"2026-09-18T05:11:35.460Z"}
 {"level":"warn","message":"POST /api/orders/checkout -> 400 Khata payment is only available when all items in your cart are from the same shop","timestamp":"2026-09-18T05:11:35.757Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-09-18T05:14:06.787Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-09-18T05:14:06.801Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-09-18T05:14:06.805Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-09-18T05:14:06.829Z"}
