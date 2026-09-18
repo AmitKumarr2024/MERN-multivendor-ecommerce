@@ -37,7 +37,11 @@ export const getDiscountPercent = (product) => {
  * Calculates the full price breakdown for a single line item (product + quantity).
  * This is the kind of calculation reused across cart, checkout, and invoices.
  */
-export const calculateLineItemTotal = (product, quantity, taxRate = DEFAULT_TAX_RATE) => {
+export const calculateLineItemTotal = (
+  product,
+  quantity,
+  taxRate = DEFAULT_TAX_RATE,
+) => {
   const unitPrice = getEffectivePrice(product);
   const subtotal = unitPrice * quantity;
   const tax = subtotal * taxRate;
@@ -57,8 +61,13 @@ export const calculateLineItemTotal = (product, quantity, taxRate = DEFAULT_TAX_
  * plus shipping, minus any coupon discount.
  * `items` = [{ product, quantity }]
  */
-export const calculateOrderTotal = (items, { shippingCost = 0, couponDiscount = 0 } = {}) => {
-  const lineItems = items.map(({ product, quantity }) => calculateLineItemTotal(product, quantity));
+export const calculateOrderTotal = (
+  items,
+  { shippingCost = 0, couponDiscount = 0 } = {},
+) => {
+  const lineItems = items.map(({ product, quantity }) =>
+    calculateLineItemTotal(product, quantity),
+  );
 
   const itemsSubtotal = lineItems.reduce((sum, item) => sum + item.subtotal, 0);
   const totalTax = lineItems.reduce((sum, item) => sum + item.tax, 0);
@@ -73,4 +82,23 @@ export const calculateOrderTotal = (items, { shippingCost = 0, couponDiscount = 
     couponDiscount,
     grandTotal: Number(Math.max(grandTotal, 0).toFixed(2)), // never go negative
   };
+};
+
+// pricing.service.js me add karo - existing getEffectivePrice ke saath
+
+// Variant-aware price resolver - agar variantId diya hai aur us variant ka
+// apna price set hai to wahi use hota hai, warna product ka base price.
+export const getEffectivePriceForVariant = (product, variantId) => {
+  if (variantId) {
+    const variant = product.getVariantById
+      ? product.getVariantById(variantId)
+      : product.variants?.id(variantId);
+
+    if (variant) {
+      if (variant.discountPrice != null) return variant.discountPrice;
+      if (variant.price != null) return variant.price;
+    }
+  }
+  // Fallback to product-level price (also covers hasVariants=false case)
+  return getEffectivePrice(product);
 };

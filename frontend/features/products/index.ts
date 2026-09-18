@@ -6,6 +6,11 @@ export { default as ProductFilters } from "./components/productFilters";
 export { default as Pagination } from "./components/pagination";
 export { default as MyProductsList } from "./components/myProductsList";
 export { default as ProductForm } from "./components/Productform";
+export { default as ProductFilterBar } from "./components/ProductFilterBar";
+
+export { default as ProductFilterSidebar } from "./components/ProductFilterSidebar";
+
+export { default as ProductFilterChips } from "./components/ProductFilterChips";
 
 export { default as productReducer } from "./store/Productslice";
 export * from "./store/Productslice";

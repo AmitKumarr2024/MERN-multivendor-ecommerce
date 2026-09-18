@@ -1,154 +1,299 @@
 "use client";
 
 import { useState } from "react";
+import {
+    AlertCircle,
+    CheckCircle2,
+    ChevronDown,
+    LockKeyhole,
+    ShieldCheck,
+} from "lucide-react";
 
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import { changePassword } from "@/features/auth/store/authSlice";
-import { selectAuthError, selectAuthLoading } from "@/features/auth/store/authSelector";
-import SectionCard from "./sectioncard";
+import {
+    selectAuthError,
+    selectAuthLoading,
+} from "@/features/auth/store/authSelector";
 
-const LockIcon = (
-    <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5">
-        <path d="M5 8V6a5 5 0 0 1 10 0v2h.5A1.5 1.5 0 0 1 17 9.5v7A1.5 1.5 0 0 1 15.5 18h-11A1.5 1.5 0 0 1 3 16.5v-7A1.5 1.5 0 0 1 4.5 8H5Zm2 0h6V6a3 3 0 0 0-6 0v2Z" />
-    </svg>
-);
+const inputClass = `
+    w-full
+    rounded-xl
+    border
+    border-default
+    bg-surface
+    px-3.5
+    py-2.5
+    text-sm
+    text-primary
+    outline-none
+    transition-all
+    placeholder:text-muted
+    focus:border-accent
+    focus:ring-2
+    focus:ring-accent/15
+`;
 
 export default function ChangePasswordForm() {
     const dispatch = useAppDispatch();
-    const loading = useAppSelector(selectAuthLoading);
-    const error = useAppSelector(selectAuthError);
+
+    const loading = useAppSelector(
+        selectAuthLoading,
+    );
+
+    const error = useAppSelector(
+        selectAuthError,
+    );
 
     const [open, setOpen] = useState(false);
-    const [currentPassword, setCurrentPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [localError, setLocalError] = useState<string | null>(null);
-    const [done, setDone] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const [currentPassword, setCurrentPassword] =
+        useState("");
+
+    const [newPassword, setNewPassword] =
+        useState("");
+
+    const [confirmPassword, setConfirmPassword] =
+        useState("");
+
+    const [localError, setLocalError] =
+        useState<string | null>(null);
+
+    const [done, setDone] =
+        useState(false);
+
+    const handleSubmit = async (
+        e: React.FormEvent,
+    ) => {
         e.preventDefault();
-        setLocalError(null);
 
-        if (newPassword !== confirmPassword) {
-            setLocalError("New password and confirmation don't match.");
+        setLocalError(null);
+        setDone(false);
+
+        if (
+            newPassword !==
+            confirmPassword
+        ) {
+            setLocalError(
+                "New password and confirmation don't match.",
+            );
             return;
         }
 
-        const result = await dispatch(changePassword({ currentPassword, newPassword }));
+        const result = await dispatch(
+            changePassword({
+                currentPassword,
+                newPassword,
+            }),
+        );
 
-        if (changePassword.fulfilled.match(result)) {
+        if (
+            changePassword.fulfilled.match(
+                result,
+            )
+        ) {
             setDone(true);
+
             setCurrentPassword("");
             setNewPassword("");
             setConfirmPassword("");
         }
     };
 
+    const handleToggle = () => {
+        setOpen((value) => !value);
+        setDone(false);
+        setLocalError(null);
+    };
+
     return (
-        <SectionCard
-            title="Password"
-            description="Keep your account secure with a strong password."
-            icon={LockIcon}
-            action={
-                <button
-                    type="button"
-                    onClick={() => {
-                        setOpen((v) => !v);
-                        setDone(false);
-                        setLocalError(null);
-                    }}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-xs font-medium text-gray-700 transition-colors hover:border-gray-300 hover:bg-gray-50 sm:text-sm"
-                >
-                    {open ? "Close" : "Change"}
-                </button>
-            }
-        >
+        <div className="p-5 sm:p-6">
+            {/* Header */}
+            <button
+                type="button"
+                onClick={handleToggle}
+                className="
+                    flex
+                    w-full
+                    items-center
+                    justify-between
+                    gap-4
+                    text-left
+                "
+            >
+                <div className="flex min-w-0 items-center gap-3">
+                    <div
+                        className="
+                            flex
+                            h-10
+                            w-10
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-xl
+                            bg-surface-muted
+                            text-secondary
+                        "
+                    >
+                        <LockKeyhole className="h-4 w-4" />
+                    </div>
+
+                    <div className="min-w-0">
+                        <h3 className="text-sm font-bold text-primary">
+                            Password
+                        </h3>
+
+                        <p className="mt-0.5 text-xs text-muted">
+                            Update your account password
+                        </p>
+                    </div>
+                </div>
+
+                <ChevronDown
+                    className={`
+                        h-4 w-4
+                        shrink-0
+                        text-muted
+                        transition-transform
+                        duration-200
+                        ${open ? "rotate-180" : ""}
+                    `}
+                />
+            </button>
+
+            {/* Collapsed */}
             {!open && (
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                    <span className="tracking-widest">••••••••••</span>
+                <div className="mt-4 flex items-center gap-2 text-xs text-muted">
+                    <ShieldCheck className="h-3.5 w-3.5 text-emerald-500" />
+
+                    <span>
+                        Password protected
+                    </span>
                 </div>
             )}
 
+            {/* Form */}
             {open && (
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form
+                    onSubmit={handleSubmit}
+                    className="mt-5 space-y-5"
+                >
                     {(error || localError) && (
-                        <div className="flex items-start gap-2 rounded-lg bg-red-50 px-3 py-2.5 text-sm text-red-600">
-                            <svg
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                className="mt-0.5 h-4 w-4 shrink-0"
-                            >
-                                <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm.75 4.5v5h-1.5v-5h1.5Zm0 6.5v1.5h-1.5V13h1.5Z" />
-                            </svg>
-                            <span>{localError || error}</span>
+                        <div className="flex items-start gap-2 rounded-2xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm text-red-600 dark:text-red-400">
+                            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+
+                            <span>
+                                {localError ||
+                                    error}
+                            </span>
                         </div>
                     )}
 
                     {done && (
-                        <div className="flex items-start gap-2 rounded-lg bg-green-50 px-3 py-2.5 text-sm text-green-700">
-                            <svg
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                                className="mt-0.5 h-4 w-4 shrink-0"
-                            >
-                                <path d="M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16Zm3.7 5.7-4.5 4.5-2.9-2.9 1.06-1.06L9.2 9.14l3.44-3.44 1.06 1Z" />
-                            </svg>
-                            <span>Password changed successfully.</span>
+                        <div className="flex items-start gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3 text-sm text-emerald-600 dark:text-emerald-400">
+                            <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+
+                            <span>
+                                Password changed successfully.
+                            </span>
                         </div>
                     )}
 
                     <div>
-                        <label className="mb-1.5 block text-xs font-medium text-gray-700 sm:text-sm">
+                        <label className="mb-1.5 block text-xs font-semibold text-secondary">
                             Current password
                         </label>
+
                         <input
                             type="password"
-                            value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            value={
+                                currentPassword
+                            }
+                            onChange={(e) =>
+                                setCurrentPassword(
+                                    e.target.value,
+                                )
+                            }
                             required
-                            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                            className={
+                                inputClass
+                            }
                         />
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
                         <div>
-                            <label className="mb-1.5 block text-xs font-medium text-gray-700 sm:text-sm">
+                            <label className="mb-1.5 block text-xs font-semibold text-secondary">
                                 New password
                             </label>
+
                             <input
                                 type="password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
+                                value={
+                                    newPassword
+                                }
+                                onChange={(e) =>
+                                    setNewPassword(
+                                        e.target.value,
+                                    )
+                                }
                                 required
                                 minLength={8}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                                className={
+                                    inputClass
+                                }
                             />
                         </div>
 
                         <div>
-                            <label className="mb-1.5 block text-xs font-medium text-gray-700 sm:text-sm">
+                            <label className="mb-1.5 block text-xs font-semibold text-secondary">
                                 Confirm password
                             </label>
+
                             <input
                                 type="password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                value={
+                                    confirmPassword
+                                }
+                                onChange={(e) =>
+                                    setConfirmPassword(
+                                        e.target.value,
+                                    )
+                                }
                                 required
                                 minLength={8}
-                                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm shadow-sm transition-colors focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900"
+                                className={
+                                    inputClass
+                                }
                             />
                         </div>
                     </div>
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800 disabled:opacity-50 sm:w-auto"
-                    >
-                        {loading ? "Updating..." : "Update password"}
-                    </button>
+                    <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            className="
+                                rounded-xl
+                                bg-accent
+                                px-5
+                                py-2.5
+                                text-sm
+                                font-semibold
+                                text-accent-foreground
+                                transition-all
+                                hover:-translate-y-0.5
+                                hover:opacity-90
+                                disabled:opacity-50
+                            "
+                        >
+                            {loading
+                                ? "Updating..."
+                                : "Update password"}
+                        </button>
+                    </div>
                 </form>
             )}
-        </SectionCard>
+        </div>
     );
 }

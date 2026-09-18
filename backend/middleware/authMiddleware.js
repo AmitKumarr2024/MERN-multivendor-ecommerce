@@ -1,11 +1,12 @@
 import jwt from "jsonwebtoken";
 import User from "../modules/auth/models/auth.model.js";
 import { UnauthorizedError, ForbiddenError } from "../exceptions/ApiError.js";
+import { COOKIE_NAME, getCookieOptions } from "../utils/cookieOptions.js";
 
 export const protect = async (req, res, next) => {
   // Prefer httpOnly cookie; fall back to Authorization header (useful for
   // mobile apps / Postman where cookies aren't convenient)
-  let token = req.cookies?.token;
+  let token = req.cookies?.[COOKIE_NAME];
 
   if (
     !token &&
@@ -24,8 +25,12 @@ export const protect = async (req, res, next) => {
 
     req.user = await User.findById(decoded.id).select("-password");
     if (!req.user) {
+      // Token verified fine, but the account behind it no longer exists
+      // (deleted, DB reset, etc). Clear the dead cookie so the browser
+      // stops re-sending it on every future request.
+      res.clearCookie(COOKIE_NAME, getCookieOptions());
       return next(
-        new UnauthorizedError("User not found, authorization denied"),
+        new UnauthorizedError("Session expired, please log in again"),
       );
     }
     if (!req.user.isActive) {
@@ -37,6 +42,8 @@ export const protect = async (req, res, next) => {
     }
     return next();
   } catch (error) {
+    // Covers expired / malformed / tampered tokens - same self-heal
+    res.clearCookie(COOKIE_NAME, getCookieOptions());
     return next(new UnauthorizedError("Not authorized, invalid token"));
   }
 };

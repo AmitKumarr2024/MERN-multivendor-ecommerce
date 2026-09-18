@@ -7,22 +7,39 @@ import { NotFoundError } from "../../../../exceptions/ApiError.js";
 export const getAllShops = async (req, res, next) => {
   try {
     const { search, page = 1, limit = 20 } = req.query;
+
     const query = { isActive: true };
 
-    if (search) query.shopName = { $regex: search, $options: "i" };
+    if (search) {
+      query.shopName = {
+        $regex: search,
+        $options: "i",
+      };
+    }
 
     const safeLimit = Math.min(Number(limit) || 20, 100);
 
     const shops = await Shop.find(query)
-      .select("shopName slug logo banner description")
+      .select(
+        "shopName slug logo banner description address owner isVerified businessHours holidayDates createdAt",
+      )
+      .populate("owner", "name")
       .sort({ createdAt: -1 })
       .skip((Number(page) - 1) * safeLimit)
       .limit(safeLimit);
 
     const total = await Shop.countDocuments(query);
 
+    const shopData = shops.map((shop) => {
+      const data = shop.toObject();
+
+      data.isOpen = shop.isCurrentlyOpen();
+
+      return data;
+    });
+
     res.json({
-      shops,
+      shops: shopData,
       total,
       page: Number(page),
       pages: Math.ceil(total / safeLimit),

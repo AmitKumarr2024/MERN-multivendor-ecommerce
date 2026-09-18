@@ -1,0 +1,614 @@
+/* ============================================================
+   MARKETPLACE HERO ANIMATION — OPTIMIZED
+   ============================================================
+   Perf principles applied throughout this file:
+   1. Animate ONLY `transform` + `opacity` (compositor-only
+      properties). Never animate `left/right/bottom/top`.
+   2. `translate3d(...)` instead of `translate(...)` to force
+      each element onto its own GPU layer.
+   3. `will-change` is scoped to `.element` only, and the browser
+      is trusted to manage layer promotion — we don't leave it
+      on indefinitely on elements that never move (.image, .label).
+   4. `contain: layout paint style` isolates this component's
+      reflow/repaint from the rest of the page.
+   5. One `--dur` custom property drives every keyframe's timing
+      instead of six independent hardcoded durations.
+   ============================================================ */
+
+.animation {
+  --dur: 12s;
+
+  position: relative;
+
+  width: 100%;
+  max-width: 620px;
+
+  height: clamp(300px, 48vw, 480px);
+
+  margin: 0 auto;
+
+  /* Labels are positioned outside their image elements — never clip. */
+  overflow: visible;
+
+  isolation: isolate;
+
+  /* Scope layout/paint/style recalculation to this subtree only. */
+  contain: layout paint style;
+}
+
+/* ============================================================
+   COMMON IMAGE
+   ============================================================ */
+
+.image {
+  display: block;
+
+  width: 100%;
+  height: auto;
+
+  object-fit: contain;
+
+  user-select: none;
+  -webkit-user-drag: none;
+
+  /* Images never move themselves (their parent .element does),
+     so no will-change / layer promotion needed here. */
+}
+
+/* ============================================================
+   STATIC SHOP
+   ============================================================
+   Always visible. No opacity/transform animation — cheapest
+   possible paint, and it's the LCP element so it stays a plain
+   static layer (no forced compositing overhead).
+   ============================================================ */
+
+.shop {
+  position: absolute;
+
+  left: 50%;
+  bottom: 4%;
+
+  width: clamp(220px, 58vw, 350px);
+
+  transform: translate3d(-50%, 0, 0);
+
+  z-index: 10;
+}
+
+/* ============================================================
+   ALL ANIMATED ELEMENTS
+   ============================================================ */
+
+.element {
+  position: absolute;
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  /* Promote to its own compositor layer only while animating. */
+  will-change: transform, opacity;
+
+  /* backface-visibility + perspective nudge some browsers toward
+     GPU compositing more reliably for 2D transform animations. */
+  backface-visibility: hidden;
+
+  animation-duration: var(--dur);
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* ============================================================
+   LABEL
+   ============================================================ */
+
+.label {
+  position: absolute;
+
+  left: 50%;
+  top: calc(100% + 7px);
+
+  transform: translate3d(-50%, 0, 0);
+
+  width: max-content;
+  max-width: 140px;
+
+  white-space: nowrap;
+
+  padding: 4px 9px;
+
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+
+  background: var(--surface);
+  color: var(--text-primary);
+
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  /* Static shadow — NOT animated, so no repaint cost per frame. */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+
+  pointer-events: none;
+
+  z-index: 100;
+}
+
+.shop .label {
+  top: calc(100% + 7px);
+}
+
+/* ============================================================
+   1. SELLER
+   ============================================================ */
+
+.seller {
+  left: 22%;
+  bottom: 27%;
+
+  width: clamp(115px, 23vw, 155px);
+
+  z-index: 20;
+
+  animation-name: seller;
+}
+
+@keyframes seller {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0) scale(0.85);
+  }
+  8% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  25% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  32% {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -12px, 0) scale(0.95);
+  }
+}
+
+/* ============================================================
+   2. CUSTOMER ORDER
+   ============================================================ */
+
+.customerOrder {
+  right: 4%;
+  bottom: 9%;
+
+  width: clamp(100px, 21vw, 160px);
+
+  z-index: 20;
+
+  animation-name: customerOrder;
+}
+
+@keyframes customerOrder {
+  0%,
+  20% {
+    opacity: 0;
+    transform: translate3d(45px, 0, 0) scale(0.9);
+  }
+  25% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  36% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  42% {
+    opacity: 0;
+    transform: translate3d(20px, 0, 0) scale(0.95);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(20px, 0, 0) scale(0.95);
+  }
+}
+
+/* ============================================================
+   3. MOBILE
+   ============================================================ */
+
+.mobile {
+  left: 50%;
+  top: 4%;
+
+  width: clamp(70px, 14vw, 105px);
+
+  z-index: 30;
+
+  animation-name: mobile;
+}
+
+@keyframes mobile {
+  0%,
+  32% {
+    opacity: 0;
+    transform: translate3d(-50%, -25px, 0) scale(0.75) rotate(-5deg);
+  }
+  38% {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0) scale(1) rotate(0deg);
+  }
+  48% {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0) scale(1) rotate(0deg);
+  }
+  53% {
+    opacity: 0;
+    transform: translate3d(-50%, -10px, 0) scale(0.9) rotate(3deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -10px, 0) scale(0.9) rotate(3deg);
+  }
+}
+
+/* ============================================================
+   4. SHOPPING BAG
+   ============================================================ */
+
+.bag {
+  left: 50%;
+  bottom: 25%;
+
+  width: clamp(55px, 12vw, 90px);
+
+  z-index: 25;
+
+  animation-name: bag;
+}
+
+@keyframes bag {
+  0%,
+  45% {
+    opacity: 0;
+    transform: translate3d(-50%, 30px, 0) scale(0.6) rotate(-8deg);
+  }
+  50% {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0) scale(1) rotate(3deg);
+  }
+  55% {
+    opacity: 1;
+    transform: translate3d(-50%, -5px, 0) scale(1) rotate(-3deg);
+  }
+  60% {
+    opacity: 0;
+    transform: translate3d(-50%, -25px, 0) scale(0.85) rotate(5deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(-50%, -25px, 0) scale(0.85) rotate(5deg);
+  }
+}
+
+/* ============================================================
+   5. PARCEL
+   ============================================================ */
+
+.parcel {
+  left: 50%;
+  bottom: 25%;
+
+  width: clamp(55px, 12vw, 90px);
+
+  z-index: 40;
+
+  animation-name: parcel;
+}
+
+@keyframes parcel {
+  0%,
+  55% {
+    opacity: 0;
+    transform: translate3d(-50%, 10px, 0) scale(0.6);
+  }
+  60% {
+    opacity: 1;
+    transform: translate3d(-50%, 0, 0) scale(1);
+  }
+  65% {
+    opacity: 1;
+    transform: translate3d(20px, -15px, 0) scale(0.95);
+  }
+  72% {
+    opacity: 1;
+    transform: translate3d(110px, -35px, 0) scale(0.92);
+  }
+  79% {
+    opacity: 1;
+    transform: translate3d(210px, -15px, 0) scale(0.9);
+  }
+  84% {
+    opacity: 1;
+    transform: translate3d(285px, 0, 0) scale(0.85);
+  }
+  88% {
+    opacity: 0;
+    transform: translate3d(305px, 0, 0) scale(0.75);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(305px, 0, 0) scale(0.75);
+  }
+}
+
+/* ============================================================
+   6. FINAL CUSTOMER
+   ============================================================ */
+
+.customer {
+  right: 5%;
+  bottom: 7%;
+
+  width: clamp(105px, 23vw, 170px);
+
+  z-index: 25;
+
+  animation-name: customer;
+}
+
+@keyframes customer {
+  0%,
+  65% {
+    opacity: 0;
+    transform: translate3d(40px, 0, 0) scale(0.9);
+  }
+  70% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  84% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  87% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1.03);
+  }
+  94% {
+    opacity: 0;
+    transform: translate3d(10px, 0, 0) scale(0.97);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(10px, 0, 0) scale(0.97);
+  }
+}
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (min-width: 640px) {
+  .animation {
+    height: 420px;
+  }
+
+  .shop {
+    width: 290px;
+    bottom: 5%;
+  }
+
+  .seller {
+    left: 23%;
+    bottom: 27%;
+    width: 145px;
+  }
+
+  .customerOrder {
+    right: 4%;
+    bottom: 9%;
+    width: 145px;
+  }
+
+  .mobile {
+    width: 95px;
+  }
+
+  .bag {
+    width: 80px;
+  }
+
+  .parcel {
+    width: 80px;
+  }
+
+  .customer {
+    right: 4%;
+    bottom: 7%;
+    width: 150px;
+  }
+
+  .label {
+    font-size: 10px;
+  }
+}
+
+/* ============================================================
+   DESKTOP
+   ============================================================ */
+
+@media (min-width: 1024px) {
+  .animation {
+    height: 480px;
+    max-width: 620px;
+  }
+
+  .shop {
+    width: 350px;
+    bottom: 6%;
+  }
+
+  .seller {
+    left: 21%;
+    bottom: 27%;
+    width: 155px;
+  }
+
+  .customerOrder {
+    right: 5%;
+    bottom: 9%;
+    width: 160px;
+  }
+
+  .mobile {
+    top: 4%;
+    width: 105px;
+  }
+
+  .bag {
+    width: 90px;
+  }
+
+  .parcel {
+    width: 90px;
+  }
+
+  .customer {
+    right: 5%;
+    bottom: 7%;
+    width: 170px;
+  }
+
+  .label {
+    font-size: 10px;
+  }
+}
+
+/* ============================================================
+   SMALL MOBILE
+   ============================================================ */
+
+@media (max-width: 639px) {
+  .animation {
+    height: clamp(290px, 78vw, 350px);
+    width: 100%;
+  }
+
+  .shop {
+    width: clamp(210px, 63vw, 270px);
+    bottom: 5%;
+  }
+
+  .seller {
+    left: 18%;
+    bottom: 29%;
+    width: clamp(105px, 27vw, 130px);
+  }
+
+  .customerOrder {
+    right: 1%;
+    bottom: 9%;
+    width: clamp(88px, 22vw, 115px);
+  }
+
+  .mobile {
+    top: 2%;
+    width: clamp(62px, 16vw, 78px);
+  }
+
+  .bag {
+    bottom: 24%;
+    width: clamp(52px, 13vw, 68px);
+  }
+
+  .parcel {
+    bottom: 24%;
+    width: clamp(52px, 13vw, 68px);
+  }
+
+  .customer {
+    right: 0%;
+    bottom: 7%;
+    width: clamp(95px, 25vw, 125px);
+  }
+
+  .label {
+    top: calc(100% + 5px);
+    padding: 3px 7px;
+    font-size: 8px;
+    max-width: 100px;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.08);
+  }
+
+  .shop .label {
+    top: calc(100% + 5px);
+  }
+}
+
+/* ============================================================
+   VERY SMALL PHONES
+   ============================================================ */
+
+@media (max-width: 380px) {
+  .animation {
+    height: 290px;
+  }
+
+  .shop {
+    width: 215px;
+    bottom: 6%;
+  }
+
+  .seller {
+    left: 13%;
+    bottom: 29%;
+    width: 105px;
+  }
+
+  .customerOrder {
+    right: 0;
+    width: 88px;
+  }
+
+  .mobile {
+    width: 60px;
+  }
+
+  .bag,
+  .parcel {
+    width: 52px;
+  }
+
+  .customer {
+    width: 92px;
+    right: -1%;
+  }
+
+  .label {
+    font-size: 7px;
+    padding: 3px 6px;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================
+   The component itself already skips mounting animated frames
+   under prefers-reduced-motion (see the .tsx file), so this
+   block is a pure CSS-only fallback/safety net in case the
+   component is ever rendered without the JS gate (e.g. SSR
+   flash before hydration, or reused in a context that skips it).
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  .element {
+    animation: none !important;
+    will-change: auto;
+    opacity: 0;
+  }
+}

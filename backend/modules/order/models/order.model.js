@@ -7,6 +7,9 @@ const orderItemSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
+    variantId: { type: mongoose.Schema.Types.ObjectId, default: null },
+    color: { type: String, default: null },
+    size: { type: String, default: null },
     // Snapshot fields - captured at order time so later price/name changes
     // on the product don't alter historical orders
     name: { type: String, required: true },
@@ -54,12 +57,19 @@ const orderSchema = new mongoose.Schema(
 
     paymentStatus: {
       type: String,
-      enum: ["pending", "paid", "failed", "refunded"],
+      // "khata_pending" - set when the order is charged against the
+      // buyer's Khata credit at checkout (see khata.service.js's
+      // chargeKhataForOrder). There's no separate gateway confirmation
+      // step for Khata, unlike "paid" for a completed online payment.
+      enum: ["pending", "paid", "failed", "refunded", "khata_pending"],
       default: "pending",
     },
     paymentMethod: {
       type: String,
-      enum: ["cod", "razorpay"],
+      // "razorpay" is intentionally NOT included yet - payment gateway
+      // integration is not built (no backend API/routes exist for it as
+      // of now). Add it back here once that work is done.
+      enum: ["cod", "khata"],
       default: "cod",
     },
     paymentId: { type: String, default: null }, // gateway transaction id, set once Razorpay is wired in

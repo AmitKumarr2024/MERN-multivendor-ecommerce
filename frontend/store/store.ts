@@ -1,6 +1,4 @@
-import {
-    configureStore,
-} from "@reduxjs/toolkit";
+import { configureStore } from "@reduxjs/toolkit";
 
 import authReducer from "@/features/auth/store/authSlice";
 import passkeyReducer from "@/features/auth/store/passkeySlice";
@@ -14,8 +12,10 @@ import logisticsReducer from "@/features/logistics/store/logisticsSlice";
 import wishlistReducer from "@/features/wishlist/store/wishlistSlice";
 import adminReducer from "@/features/admin/store/Adminslice";
 import notificationReducer from "@/features/notification/store/notificationSlice";
-
-
+import reviewReducer from "@/features/reviews/store/reviewSlice";
+import searchReducer from "@/features/search/store/searchSlice";
+import { staffReducer } from "@/features/staff";
+import { khataReducer } from "@/features/khata";
 
 /**
  * =========================================================
@@ -40,29 +40,36 @@ import notificationReducer from "@/features/notification/store/notificationSlice
  *
  * passkey
  *    └── WebAuthn / passkey authentication state.
+ *
+ * khata
+ *    └── Shop-specific buyer credit ledger: apply/approve/
+ *        reject/suspend, credit limit, transactions,
+ *        monthly statements, month-close settlements.
  * =========================================================
  */
 
 export const makeStore = () => {
-    return configureStore({
-        reducer: {
-            auth: authReducer,
-            passkey: passkeyReducer,
-            category: categoryReducer,
-            products: productReducer,
-            shop: shopReducer,
-            order: orderReducer,
-            cart: cartReducer,
-            messaging: messagingReducer,
-            logistics: logisticsReducer,
-            wishlist: wishlistReducer,
-            admin:adminReducer,
-            notification: notificationReducer,
-
-        },
-    });
+  return configureStore({
+    reducer: {
+      auth: authReducer,
+      passkey: passkeyReducer,
+      category: categoryReducer,
+      products: productReducer,
+      shop: shopReducer,
+      order: orderReducer,
+      cart: cartReducer,
+      messaging: messagingReducer,
+      logistics: logisticsReducer,
+      wishlist: wishlistReducer,
+      admin: adminReducer,
+      notification: notificationReducer,
+      reviews: reviewReducer,
+      search: searchReducer,
+      staff: staffReducer,
+      khata: khataReducer,
+    },
+  });
 };
-
 
 /* =========================================================
    REDUX TYPES
@@ -71,10 +78,7 @@ export const makeStore = () => {
 /**
  * Type representing the Redux store created by makeStore().
  */
-export type AppStore = ReturnType<
-    typeof makeStore
->;
-
+export type AppStore = ReturnType<typeof makeStore>;
 
 /**
  * Type representing the complete Redux state.
@@ -84,15 +88,11 @@ export type AppStore = ReturnType<
  * state.auth
  * state.passkey
  */
-export type RootState = ReturnType<
-    AppStore["getState"]
->;
-
+export type RootState = ReturnType<AppStore["getState"]>;
 
 /**
  * Type representing the Redux dispatch function.
  *
  * Required for correctly typed async thunks.
  */
-export type AppDispatch =
-    AppStore["dispatch"];
+export type AppDispatch = AppStore["dispatch"];

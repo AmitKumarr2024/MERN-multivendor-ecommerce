@@ -12,7 +12,10 @@ const shippingAddressSchema = z.object({
 
 export const checkoutSchema = z.object({
   shippingAddress: shippingAddressSchema,
-  paymentMethod: z.enum(["cod", "razorpay"]).optional(),
+  // "razorpay" intentionally excluded — payment gateway not built yet.
+  // Add it back here (and to the Order model's paymentMethod enum) once
+  // that integration exists.
+  paymentMethod: z.enum(["cod", "khata"]).optional(),
 });
 
 export const updateStatusSchema = z.object({

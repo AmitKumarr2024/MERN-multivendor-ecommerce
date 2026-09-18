@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import ThemeProvider from "./ThemeProvider";
 import ReduxProvider from "./ReduxProvider";
 import AuthInitializer from "@/features/auth/components/AuthInitializer";
@@ -33,9 +34,32 @@ interface AppProviderProps {
  * Adding a new app-wide provider later (e.g. a CartHydrator or
  * NotificationProvider) means editing ONLY this file, in the
  * right slot — layout.tsx never needs to change.
+ *
+ * Also listens for the `ratelimit:exceeded` CustomEvent dispatched by
+ * services/axios.ts whenever the backend returns a 429. Kept here
+ * (not inside axios.ts) so the actual toast/UI call stays swappable
+ * without touching the axios layer. TODO: replace console.warn below
+ * with the real toast call once the project's toast library is
+ * confirmed.
  * =========================================================
  */
 export default function AppProvider({ children }: AppProviderProps) {
+    useEffect(() => {
+        const handleRateLimit = (e: Event) => {
+            const { message, retryAfterSeconds } = (e as CustomEvent).detail;
+            // TODO: swap for real toast call, e.g. toast.error(message)
+            console.warn(
+                retryAfterSeconds
+                    ? `${message} (retry in ~${retryAfterSeconds}s)`
+                    : message
+            );
+        };
+
+        window.addEventListener("ratelimit:exceeded", handleRateLimit);
+        return () =>
+            window.removeEventListener("ratelimit:exceeded", handleRateLimit);
+    }, []);
+
     return (
         <ThemeProvider>
             <ReduxProvider>

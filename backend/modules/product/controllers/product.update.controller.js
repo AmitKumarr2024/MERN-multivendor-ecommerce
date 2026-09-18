@@ -28,9 +28,6 @@ export const updateProduct = async (req, res, next) => {
   try {
     const product = await assertOwnsProduct(req.user._id, req.params.id);
 
-    // Category is referenced by SLUG in the request body (same convention
-    // as createProduct), not by ObjectId - Category.findById() would throw
-    // a CastError here since "groceries" isn't a valid ObjectId string.
     if (req.body.category) {
       const categoryExists = await Category.findOne({
         slug: req.body.category.toLowerCase(),
@@ -38,11 +35,16 @@ export const updateProduct = async (req, res, next) => {
       if (!categoryExists) {
         throw new BadRequestError("Invalid category");
       }
-      // Store the resolved ObjectId on the product, not the raw slug.
       req.body.category = categoryExists._id;
     }
 
-    Object.assign(product, req.body);
+    // Variants array poori tarah replace nahi karte "update" me - dedicated
+    // endpoints (add/update/delete variant) use karo taaki accidental
+    // full-array overwrite se stock data na uड़ jaaye. Yahan sirf non-variant
+    // fields allow karte hain.
+    const { variants, hasVariants, ...safeUpdates } = req.body;
+
+    Object.assign(product, safeUpdates);
     await product.save();
     res.json(product);
   } catch (error) {
@@ -50,15 +52,19 @@ export const updateProduct = async (req, res, next) => {
   }
 };
 
-// @desc    Update stock only (dedicated endpoint - useful for quick inventory edits)
+// @desc    Update stock only (flat-stock products, no variants)
 // @route   PATCH /api/products/:id/stock
 // @access  Private (seller)
 export const updateProductStock = async (req, res, next) => {
   try {
     const product = await assertOwnsProduct(req.user._id, req.params.id);
 
-    // All the "what counts as valid stock" and "is this low stock" logic
-    // lives in the service - the controller just wires request -> service -> response.
+    if (product.hasVariants) {
+      throw new BadRequestError(
+        "This product uses variants - update stock via /variants/:variantId instead",
+      );
+    }
+
     const { isLowStock, isOutOfStock } = await setStock(
       product,
       req.body.stock,
@@ -75,7 +81,7 @@ export const updateProductStock = async (req, res, next) => {
   }
 };
 
-// @desc    Toggle product active/inactive (soft show/hide from storefront)
+// @desc    Toggle product active/inactive
 // @route   PATCH /api/products/:id/toggle-active
 // @access  Private (seller)
 export const toggleProductActive = async (req, res, next) => {
@@ -85,6 +91,88 @@ export const toggleProductActive = async (req, res, next) => {
     await product.save();
 
     res.json({ _id: product._id, isActive: product.isActive });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ============================================================
+// VARIANT MANAGEMENT - dedicated endpoints, dono garment (size/color)
+// aur electronics (storage/color) jaise use-cases cover karte hain
+// ============================================================
+
+// @desc    Add a new variant (e.g. a new size/color combination)
+// @route   POST /api/products/:id/variants
+// @access  Private (seller)
+export const addVariant = async (req, res, next) => {
+  try {
+    const product = await assertOwnsProduct(req.user._id, req.params.id);
+
+    const { color, size, sku, price, discountPrice, stock, images } = req.body;
+    if (stock === undefined) {
+      throw new BadRequestError("Variant stock is required");
+    }
+
+    product.variants.push({
+      color,
+      size,
+      sku,
+      price,
+      discountPrice,
+      stock,
+      images,
+    });
+    product.hasVariants = true; // pehla variant add hote hi mode switch ho jaata hai
+    await product.save();
+
+    res.status(201).json(product);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Update one variant (stock, price, images etc.)
+// @route   PUT /api/products/:id/variants/:variantId
+// @access  Private (seller)
+export const updateVariant = async (req, res, next) => {
+  try {
+    const product = await assertOwnsProduct(req.user._id, req.params.id);
+
+    const variant = product.getVariantById(req.params.variantId);
+    if (!variant) {
+      throw new NotFoundError("Variant not found");
+    }
+
+    Object.assign(variant, req.body);
+    await product.save();
+
+    res.json(product);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Delete a variant
+// @route   DELETE /api/products/:id/variants/:variantId
+// @access  Private (seller)
+export const deleteVariant = async (req, res, next) => {
+  try {
+    const product = await assertOwnsProduct(req.user._id, req.params.id);
+
+    const variant = product.getVariantById(req.params.variantId);
+    if (!variant) {
+      throw new NotFoundError("Variant not found");
+    }
+
+    variant.deleteOne();
+
+    // Agar sab variants delete ho gaye, flat-stock mode pe wapas switch karo
+    if (product.variants.length === 0) {
+      product.hasVariants = false;
+    }
+
+    await product.save();
+    res.json(product);
   } catch (error) {
     next(error);
   }

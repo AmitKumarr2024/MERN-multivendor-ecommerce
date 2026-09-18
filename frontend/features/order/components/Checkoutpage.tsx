@@ -17,6 +17,7 @@ import { checkout } from "../store/orderSlice";
 import type { PaymentMethod, ShippingAddress } from "../types/order.types";
 // NEW: shipping cost / delivery-days preview before placing the order
 import { DeliveryEstimate } from "@/features/logistics";
+import { KhataPaymentOption } from "@/features/khata";
 
 const emptyAddress: ShippingAddress = {
     fullName: "",
@@ -81,6 +82,22 @@ export default function CheckoutPage() {
     const uniqueShopIds = Array.from(
         new Set(items.map((item) => getShopId(item.product.shop))),
     );
+
+    // Khata is only offered as a payment method when the cart involves a
+    // SINGLE shop — Khata credit is shop-specific, so a multi-vendor cart
+    // charged entirely to one shop's Khata wouldn't make sense. Backend
+    // splits multi-shop checkout into one order per shop anyway, so this
+    // keeps the frontend selection unambiguous.
+    const isSingleShopCart = uniqueShopIds.length === 1;
+
+    // If the cart becomes multi-shop after Khata was selected (e.g. user
+    // added an item from a different shop mid-checkout), fall back to COD
+    // so we never submit an invalid "khata" method for a multi-vendor order.
+    useEffect(() => {
+        if (!isSingleShopCart && paymentMethod === "khata") {
+            setPaymentMethod("cod");
+        }
+    }, [isSingleShopCart, paymentMethod]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -251,6 +268,20 @@ export default function CheckoutPage() {
                                     Pay online (coming soon)
                                 </span>
                             </label>
+
+                            {/* Khata — only offered for single-shop carts, since
+                                credit is shop-specific and cannot be split across
+                                sellers in one transaction. No payment gateway
+                                involved, so this works independently of the
+                                "pay online" status above. */}
+                            {isSingleShopCart && (
+                                <KhataPaymentOption
+                                    shopId={uniqueShopIds[0]}
+                                    orderTotal={cartTotal}
+                                    selected={paymentMethod === "khata"}
+                                    onSelect={() => setPaymentMethod("khata")}
+                                />
+                            )}
                         </div>
                     </div>
 

@@ -14,6 +14,7 @@ const shopSchema = new mongoose.Schema(
       required: [true, "Shop name is required"],
       trim: true,
     },
+    khataEnabled: { type: Boolean, default: false },
     // Ye slug hi custom dukan URL banata hai -> /shop/:slug
     slug: {
       type: String,

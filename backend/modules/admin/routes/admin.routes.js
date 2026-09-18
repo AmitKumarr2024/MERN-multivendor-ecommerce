@@ -21,36 +21,38 @@ import {
   getAllOrdersAdmin,
   forceDeleteOrder,
 } from "../controllers/admin.order.controller.js";
+import {
+  getAllReviewsAdmin,
+  forceDeleteReview,
+} from "../controllers/admin.review.controller.js"; // 👈 NEW
 import { protect, authorizeRoles } from "../../../middleware/authMiddleware.js";
 import { ROLES } from "../../../constants/roles.js";
 
 const router = express.Router();
 
-// Every route below requires: logged in AND role === admin
 router.use(protect, authorizeRoles(ROLES.ADMIN));
 
-// Dashboard
 router.get("/dashboard", getDashboardStats);
 
-// Users
 router.get("/users", getAllUsers);
 router.get("/users/:id", getUserById);
 router.put("/users/:id/role", updateUserRole);
 router.patch("/users/:id/ban", toggleUserBan);
 router.patch("/users/:id/reset-password", adminResetPassword);
 
-// Shops
 router.get("/shops", getAllShopsAdmin);
 router.patch("/shops/:id/verify", verifyShop);
 router.patch("/shops/:id/toggle-active", forceToggleShop);
 
-// Products
 router.get("/products", getAllProductsAdmin);
 router.patch("/products/:id/toggle-active", forceToggleProduct);
 router.delete("/products/:id", forceDeleteProduct);
 
-// Orders
 router.get("/orders", getAllOrdersAdmin);
 router.delete("/orders/:id", forceDeleteOrder);
+
+// 👇 NEW - Reviews
+router.get("/reviews", getAllReviewsAdmin);
+router.delete("/reviews/:id", forceDeleteReview);
 
 export default router;

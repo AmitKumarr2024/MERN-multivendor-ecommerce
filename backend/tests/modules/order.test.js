@@ -12,6 +12,8 @@ import cookieParser from "cookie-parser";
 import { connectTestDB, closeTestDB, clearTestDB } from "../setup/db.js";
 import authRoutes from "../../modules/auth/routes/auth.routes.js";
 import shopRoutes from "../../modules/shop/routes/shop.routes.js";
+import shopKhataRoutes from "../../modules/khata/routes/shopKhata.routes.js";
+import khataRoutes from "../../modules/khata/routes/khata.routes.js";
 import productRoutes from "../../modules/product/routes/product.routes.js";
 import cartRoutes from "../../modules/cart/routes/cart.routes.js";
 import orderRoutes from "../../modules/order/routes/order.routes.js";
@@ -26,6 +28,8 @@ const buildTestApp = () => {
   app.use(cookieParser());
   app.use("/api/auth", authRoutes);
   app.use("/api/shops", shopRoutes);
+  app.use("/api/shops/:shopId/khata", shopKhataRoutes);
+  app.use("/api/khata", khataRoutes);
   app.use("/api/products", productRoutes);
   app.use("/api/cart", cartRoutes);
   app.use("/api/orders", orderRoutes);
@@ -89,6 +93,33 @@ const setupShopWithProduct = async (stock = 10) => {
     category,
     product: productRes.body,
   };
+};
+
+// Sets up a buyer with an APPROVED khata for the given shop, with the given
+// credit limit — used to exercise the "pay with khata" checkout path.
+const setupApprovedKhataBuyer = async (
+  sellerAgent,
+  shopId,
+  buyerEmail,
+  creditLimit,
+) => {
+  const buyerAgent = await registerAndLogin(buyerEmail);
+
+  // Seller must enable khata on the shop before a buyer can apply.
+  await sellerAgent
+    .patch(`/api/shops/${shopId}/khata/settings`)
+    .send({ enabled: true });
+
+  const applyRes = await buyerAgent
+    .post(`/api/shops/${shopId}/khata/apply`)
+    .send({});
+  const khataId = applyRes.body.data._id;
+
+  await sellerAgent
+    .patch(`/api/khata/${khataId}/approve`)
+    .send({ creditLimit });
+
+  return { buyerAgent, khataId };
 };
 
 describe("POST /api/orders/checkout", () => {
@@ -241,5 +272,169 @@ describe("PATCH /api/orders/:id/cancel", () => {
     const res = await otherBuyerAgent.patch(`/api/orders/${orderId}/cancel`);
 
     expect(res.statusCode).toBe(403);
+  });
+});
+
+describe("POST /api/orders/checkout — paymentMethod: khata", () => {
+  test("checking out with an approved khata creates the order and a matching KhataTransaction", async () => {
+    const { sellerAgent, shopId, product } = await setupShopWithProduct(10);
+    const { buyerAgent, khataId } = await setupApprovedKhataBuyer(
+      sellerAgent,
+      shopId,
+      "khata-buyer1@example.com",
+      5000,
+    );
+
+    await buyerAgent
+      .post("/api/cart/items")
+      .send({ productId: product._id, quantity: 2 });
+
+    const checkoutRes = await buyerAgent
+      .post("/api/orders/checkout")
+      .send({ shippingAddress, paymentMethod: "khata" });
+
+    expect(checkoutRes.statusCode).toBe(201);
+    expect(checkoutRes.body.orders).toHaveLength(1);
+    expect(checkoutRes.body.orders[0].paymentMethod).toBe("khata");
+    expect(checkoutRes.body.orders[0].paymentStatus).toBe("khata_pending");
+
+    // Verify a credit_purchase transaction was written against the buyer's khata
+    const history = await buyerAgent.get(
+      `/api/khata/${khataId}/transactions?as=buyer`,
+    );
+    expect(history.statusCode).toBe(200);
+    expect(history.body.data).toHaveLength(1);
+    expect(history.body.data[0].type).toBe("credit_purchase");
+    expect(history.body.data[0].amount).toBe(
+      checkoutRes.body.orders[0].grandTotal,
+    );
+
+    // Stock should still decrement normally, same as any other payment method
+    const updatedProduct = await Product.findById(product._id);
+    expect(updatedProduct.stock).toBe(8); // 10 - 2
+  });
+
+  test("rejects checkout with khata when the order total exceeds available credit", async () => {
+    const { sellerAgent, shopId, product } = await setupShopWithProduct(10);
+    const { buyerAgent } = await setupApprovedKhataBuyer(
+      sellerAgent,
+      shopId,
+      "khata-buyer2@example.com",
+      50, // very low limit — one unit at ₹100 already exceeds it
+    );
+
+    await buyerAgent
+      .post("/api/cart/items")
+      .send({ productId: product._id, quantity: 1 });
+
+    const checkoutRes = await buyerAgent
+      .post("/api/orders/checkout")
+      .send({ shippingAddress, paymentMethod: "khata" });
+
+    expect(checkoutRes.statusCode).toBe(400);
+    expect(checkoutRes.body.message).toMatch(/insufficient khata credit/i);
+
+    // No order should have been created, and stock must be untouched
+    const orders = await Order.find({});
+    expect(orders).toHaveLength(0);
+
+    const updatedProduct = await Product.findById(product._id);
+    expect(updatedProduct.stock).toBe(10);
+  });
+
+  test("rejects checkout with khata when the buyer has no approved khata for that shop", async () => {
+    const { product } = await setupShopWithProduct(10);
+    const buyerAgent = await registerAndLogin("khata-buyer3@example.com");
+
+    await buyerAgent
+      .post("/api/cart/items")
+      .send({ productId: product._id, quantity: 1 });
+
+    const checkoutRes = await buyerAgent
+      .post("/api/orders/checkout")
+      .send({ shippingAddress, paymentMethod: "khata" });
+
+    expect(checkoutRes.statusCode).toBe(400);
+    expect(checkoutRes.body.message).toMatch(/not available|not approved/i);
+
+    const orders = await Order.find({});
+    expect(orders).toHaveLength(0);
+  });
+
+  test("rejects khata payment for a multi-vendor cart", async () => {
+    const shopA = await setupShopWithProduct(10);
+    const shopB = await setupShopWithProduct(10);
+
+    const { buyerAgent } = await setupApprovedKhataBuyer(
+      shopA.sellerAgent,
+      shopA.shopId,
+      "khata-buyer4@example.com",
+      5000,
+    );
+    // Also give this buyer an approved khata at shop B, so the rejection is
+    // specifically about the multi-shop cart, not a missing khata account.
+    await shopB.sellerAgent
+      .patch(`/api/shops/${shopB.shopId}/khata/settings`)
+      .send({ enabled: true });
+
+    await buyerAgent
+      .post("/api/cart/items")
+      .send({ productId: shopA.product._id, quantity: 1 });
+    await buyerAgent
+      .post("/api/cart/items")
+      .send({ productId: shopB.product._id, quantity: 1 });
+
+    const checkoutRes = await buyerAgent
+      .post("/api/orders/checkout")
+      .send({ shippingAddress, paymentMethod: "khata" });
+
+    expect(checkoutRes.statusCode).toBe(400);
+    expect(checkoutRes.body.message).toMatch(/same shop/i);
+
+    const orders = await Order.find({});
+    expect(orders).toHaveLength(0);
+  });
+
+  test("cancelling a khata-paid order reverses the ledger charge", async () => {
+    const { sellerAgent, shopId, product } = await setupShopWithProduct(10);
+    const { buyerAgent, khataId } = await setupApprovedKhataBuyer(
+      sellerAgent,
+      shopId,
+      "khata-buyer5@example.com",
+      5000,
+    );
+
+    await buyerAgent
+      .post("/api/cart/items")
+      .send({ productId: product._id, quantity: 2 });
+    const checkoutRes = await buyerAgent
+      .post("/api/orders/checkout")
+      .send({ shippingAddress, paymentMethod: "khata" });
+    const orderId = checkoutRes.body.orders[0]._id;
+
+    const beforeCancel = await buyerAgent.get(
+      `/api/khata/${khataId}/transactions?as=buyer`,
+    );
+    expect(beforeCancel.body.data).toHaveLength(1); // just the credit_purchase
+
+    const cancelRes = await buyerAgent
+      .patch(`/api/orders/${orderId}/cancel`)
+      .send({ reason: "Changed my mind" });
+    expect(cancelRes.statusCode).toBe(200);
+
+    const afterCancel = await buyerAgent.get(
+      `/api/khata/${khataId}/transactions?as=buyer`,
+    );
+    expect(afterCancel.body.data).toHaveLength(2); // credit_purchase + reversing adjustment
+
+    const adjustment = afterCancel.body.data.find(
+      (t) => t.type === "adjustment",
+    );
+    expect(adjustment).toBeDefined();
+    expect(adjustment.amount).toBe(-checkoutRes.body.orders[0].grandTotal);
+
+    // Stock restored, same as any other cancelled order
+    const updatedProduct = await Product.findById(product._id);
+    expect(updatedProduct.stock).toBe(10);
   });
 });

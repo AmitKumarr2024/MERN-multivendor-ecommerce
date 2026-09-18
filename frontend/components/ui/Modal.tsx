@@ -9,6 +9,7 @@ interface ModalProps {
     open: boolean;
     onClose: () => void;
     title?: string;
+    subtitle?: string;
     children: ReactNode;
 }
 
@@ -16,6 +17,7 @@ export default function Modal({
     open,
     onClose,
     title,
+    subtitle,
     children,
 }: ModalProps) {
     useEffect(() => {
@@ -63,6 +65,11 @@ export default function Modal({
                         <h2 className="font-bold text-zinc-950 dark:text-white">
                             {title}
                         </h2>
+                        {subtitle && (
+                            <p className="mt-0.5 text-sm text-zinc-500 dark:text-zinc-400">
+                                {subtitle}
+                            </p>
+                        )}
                     </div>
                 )}
 

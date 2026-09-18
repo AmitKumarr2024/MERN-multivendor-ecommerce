@@ -3,31 +3,15 @@ import Order from "../modules/order/models/order.model.js";
 import Cart from "../modules/cart/models/cart.model.js";
 import { BadRequestError } from "../exceptions/ApiError.js";
 import {
-  getEffectivePrice,
+  getEffectivePriceForVariant,
   calculateLineItemTotal,
 } from "./pricing.service.js";
 import { decrementStock, restoreStock } from "./inventory.service.js";
-
-/**
- * ORDER SERVICE
- * ------------------------------------------------------------------
- * The checkout algorithm lives here, not in the controller:
- *   1. Load the user's cart, populated with product + shop data.
- *   2. Group cart items by shop - a multi-vendor cart becomes one
- *      Order document per shop (mirrors how Amazon/Flipkart split
- *      a single checkout into separate seller shipments).
- *   3. For each shop's items: validate stock, decrement it, calculate
- *      totals via pricing.service, and create the Order.
- *   4. If anything fails partway through, roll back stock already
- *      decremented for the orders that did succeed.
- *   5. Clear the cart once all orders are created successfully.
- *
- * NOTE: True atomicity here would use a MongoDB replica-set transaction
- * (mongoose session). This uses a manual best-effort rollback instead,
- * which is fine for a single-instance MongoDB setup. Upgrade to
- * `mongoose.startSession()` transactions once running a replica set.
- * ------------------------------------------------------------------
- */
+import {
+  canUseKhata,
+  chargeKhataForOrder,
+  reverseKhataCharge,
+} from "./khata/khata.service.js";
 
 const groupItemsByShop = (cartItems) => {
   const groups = new Map();
@@ -67,7 +51,8 @@ export const checkoutCart = async (
 
   const cart = await Cart.findOne({ user: userId }).populate({
     path: "items.product",
-    select: "name images price discountPrice stock isActive shop",
+    select:
+      "name images price discountPrice stock isActive shop hasVariants variants",
     populate: { path: "shop", select: "_id shopName" },
   });
 
@@ -76,40 +61,83 @@ export const checkoutCart = async (
   }
 
   const shopGroups = groupItemsByShop(cart.items);
+
+  // Khata is shop-specific credit, so it only makes sense when the entire
+  // cart belongs to a single shop. A multi-vendor cart paid via "khata"
+  // would have no single shop's ledger to charge against.
+  if (paymentMethod === "khata" && shopGroups.size > 1) {
+    throw new BadRequestError(
+      "Khata payment is only available when all items in your cart are from the same shop",
+    );
+  }
+
   const createdOrders = [];
-  const decrementedForRollback = []; // { product, quantity } - in case we need to undo
+  const decrementedForRollback = []; // { product, quantity, variantId }
+  const khataChargedForRollback = []; // { shopId, buyerId, orderId } — for reversal if a later shop-group fails
 
   try {
-    for (const [, group] of shopGroups) {
+    for (const [shopId, group] of shopGroups) {
       const orderItems = [];
       let itemsSubtotal = 0;
       let tax = 0;
 
       for (const cartItem of group.items) {
         const product = cartItem.product;
+        const variantId = cartItem.variantId || null;
+        const variant = variantId ? product.getVariantById(variantId) : null;
 
-        // decrementStock throws if not enough stock - caught below for rollback
-        await decrementStock(product, cartItem.quantity);
-        decrementedForRollback.push({ product, quantity: cartItem.quantity });
+        if (product.hasVariants && !variant) {
+          throw new BadRequestError(
+            `A selected option for "${product.name}" is no longer available`,
+          );
+        }
 
-        const lineTotal = calculateLineItemTotal(product, cartItem.quantity);
+        await decrementStock(product, cartItem.quantity, variantId);
+        decrementedForRollback.push({
+          product,
+          quantity: cartItem.quantity,
+          variantId,
+        });
+
+        const unitPrice = getEffectivePriceForVariant(product, variantId);
+        const lineTotal = calculateLineItemTotal(
+          { ...product.toObject(), price: unitPrice, discountPrice: null },
+          cartItem.quantity,
+        );
         itemsSubtotal += lineTotal.subtotal;
         tax += lineTotal.tax;
 
         orderItems.push({
           product: product._id,
+          variantId,
+          color: variant?.color || null,
+          size: variant?.size || null,
           name: product.name,
-          image: product.images?.[0] || "",
-          unitPrice: getEffectivePrice(product),
+          image: variant?.images?.[0] || product.images?.[0] || "",
+          unitPrice,
           quantity: cartItem.quantity,
           subtotal: lineTotal.subtotal,
         });
       }
 
-      const shippingCost = 0; // flat/free for now - shipment module will calculate this via courier rates later
+      const shippingCost = 0;
       const grandTotal = Number(
         (itemsSubtotal + tax + shippingCost).toFixed(2),
       );
+
+      // Khata eligibility must be re-checked here (not just at UI level) —
+      // stock decrements above can shift timing, and this is the last point
+      // before the order + ledger entry are actually created.
+      if (paymentMethod === "khata") {
+        const eligibility = await canUseKhata(shopId, userId, grandTotal);
+        if (!eligibility.eligible) {
+          throw new BadRequestError(
+            eligibility.reason === "insufficient_credit"
+              ? "Insufficient Khata credit for this order — choose another payment method"
+              : "Khata is not available for this shop or your request is not yet approved",
+          );
+        }
+      }
 
       const order = await Order.create({
         buyer: userId,
@@ -121,28 +149,44 @@ export const checkoutCart = async (
         grandTotal,
         shippingAddress,
         paymentMethod,
-        paymentStatus: paymentMethod === "cod" ? "pending" : "pending", // gateway will update this once wired in
+        // COD and online stay "pending" as before. Khata orders are
+        // considered settled against the buyer's credit line immediately —
+        // there is no separate gateway confirmation step for khata.
+        paymentStatus: paymentMethod === "khata" ? "khata_pending" : "pending",
       });
 
       createdOrders.push(order);
+
+      // Only ever reached when paymentMethod === "khata" — COD and online
+      // payment paths never call chargeKhataForOrder, per the hard rule
+      // that Khata debt is created only on explicit buyer/seller selection.
+      if (paymentMethod === "khata") {
+        await chargeKhataForOrder({
+          shopId: group.shop._id,
+          buyerId: userId,
+          orderId: order._id,
+          amount: grandTotal,
+        });
+        khataChargedForRollback.push({
+          shopId: group.shop._id,
+          buyerId: userId,
+          orderId: order._id,
+        });
+      }
     }
 
-    // Everything succeeded - empty the cart
     cart.items = [];
     await cart.save();
 
     return createdOrders;
   } catch (error) {
-    // Best-effort rollback: restore stock for everything we'd already decremented
-    for (const { product, quantity } of decrementedForRollback) {
-      await restoreStock(product, quantity).catch(() => {
-        // if rollback itself fails, there's nothing more we can safely do here;
-        // this is exactly the scenario a real DB transaction would prevent
-      });
+    for (const { product, quantity, variantId } of decrementedForRollback) {
+      await restoreStock(product, quantity, variantId).catch(() => {});
     }
-    // Also remove any orders that got created before the failure
+    for (const { shopId, buyerId, orderId } of khataChargedForRollback) {
+      await reverseKhataCharge({ shopId, buyerId, orderId }).catch(() => {});
+    }
     await Order.deleteMany({ _id: { $in: createdOrders.map((o) => o._id) } });
-
     throw error;
   }
 };
@@ -154,13 +198,26 @@ export const cancelOrder = async (order, reason) => {
     );
   }
 
-  // Restore stock for each item back to the product
   const Product = mongoose.model("Product");
   for (const item of order.items) {
     const product = await Product.findById(item.product);
     if (product) {
-      await restoreStock(product, item.quantity);
+      await restoreStock(product, item.quantity, item.variantId || null);
     }
+  }
+
+  // If this order was paid via Khata, cancelling it must also reverse the
+  // ledger entry — otherwise the buyer's outstanding balance stays charged
+  // for an order that no longer exists.
+  if (
+    order.paymentMethod === "khata" &&
+    order.paymentStatus === "khata_pending"
+  ) {
+    await reverseKhataCharge({
+      shopId: order.shop,
+      buyerId: order.buyer,
+      orderId: order._id,
+    }).catch(() => {});
   }
 
   order.orderStatus = "cancelled";

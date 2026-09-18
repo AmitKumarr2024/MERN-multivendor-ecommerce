@@ -1,34 +1,37 @@
 import Product from "../models/product.model.js";
 import Shop from "../../shop/models/shop.model.js";
-import { NotFoundError } from "../../../exceptions/ApiError.js";
+import {
+  NotFoundError,
+  BadRequestError,
+} from "../../../exceptions/ApiError.js";
 import {
   getEffectivePrice,
   getDiscountPercent,
 } from "../../../services/pricing.service.js";
 import Category from "../../product/models/category.model.js";
+import {
+  searchProducts,
+  getSearchSuggestions,
+  getTrendingSearches,
+  getSearchFallbackSuggestions,
+} from "../../../services/search.service.js";
 
 /**
  * PRODUCT READ CONTROLLER
  * ------------------------------------------------------------------
- * All "read/GET" operations related to Product live in this single file.
  * New developer? Start here — this is the full list of what's available:
  *
- *   1. getAllProducts        -> GET /api/products
- *                                Homepage feed: filter, search, sort, pagination
- *   2. getProductById         -> GET /api/products/:id
- *                                Single product detail page
- *   3. getProductsByShopSlug  -> GET /api/products/shop/:slug
- *                                All products of one specific dukan (public)
- *   4. getMyProducts          -> GET /api/products/me
- *                                Logged-in seller's own products (dashboard)
- *
- * Need to add a new read operation (e.g. "related products", "trending
- * products", "recently viewed")? Add it below with the same @desc/@route
- * comment style and update this index.
+ *   1. getAllProducts          -> GET /api/products
+ *   2. getProductById           -> GET /api/products/:id
+ *   3. getProductsByShopSlug     -> GET /api/products/shop/:slug
+ *   4. getMyProducts              -> GET /api/products/me
+ *   5. getRelatedProducts          -> GET /api/products/:id/related
+ *   6. searchProductsHandler        -> GET /api/products/search?q=
+ *   7. searchSuggestionsHandler      -> GET /api/products/search/suggestions?q=
+ *   8. trendingSearchesHandler        -> GET /api/products/search/trending
  * ------------------------------------------------------------------
  */
 
-// Allowed sort options - whitelist keeps the query safe from arbitrary field injection
 const SORT_OPTIONS = {
   newest: { createdAt: -1 },
   oldest: { createdAt: 1 },
@@ -54,29 +57,7 @@ export const getAllProducts = async (req, res, next) => {
       limit = 20,
     } = req.query;
 
-    const query = {
-      isActive: true,
-    };
-
-    /* =====================================================
-           CATEGORY FILTER
-
-           Frontend sends category SLUG:
-
-               ?category=tools
-
-           Product.category stores Category._id.
-
-           Therefore:
-
-               tools
-                 ↓
-               Category.slug
-                 ↓
-               Category._id
-                 ↓
-               Product.category
-        ===================================================== */
+    const query = { isActive: true };
 
     if (category) {
       const categoryDoc = await Category.findOne({
@@ -97,49 +78,22 @@ export const getAllProducts = async (req, res, next) => {
       query.category = categoryDoc._id;
     }
 
-    /* =====================================================
-           SEARCH
-        ===================================================== */
-
+    // NOTE: this inline $text search stays for the homepage's simple filter
+    // bar. For the robust typo-tolerant experience (autocomplete, fallback,
+    // "did you mean"), use the dedicated /search endpoint below instead.
     if (search) {
-      query.$text = {
-        $search: search,
-      };
+      query.$text = { $search: search };
     }
-
-    /* =====================================================
-           PRICE FILTER
-        ===================================================== */
 
     if (minPrice || maxPrice) {
       query.price = {};
-
-      if (minPrice) {
-        query.price.$gte = Number(minPrice);
-      }
-
-      if (maxPrice) {
-        query.price.$lte = Number(maxPrice);
-      }
+      if (minPrice) query.price.$gte = Number(minPrice);
+      if (maxPrice) query.price.$lte = Number(maxPrice);
     }
 
-    /* =====================================================
-           PAGINATION
-        ===================================================== */
-
     const safeLimit = Math.min(Number(limit) || 20, 100);
-
     const currentPage = Math.max(Number(page) || 1, 1);
-
-    /* =====================================================
-           SORT
-        ===================================================== */
-
     const sortBy = SORT_OPTIONS[sort] || SORT_OPTIONS.newest;
-
-    /* =====================================================
-           FETCH PRODUCTS
-        ===================================================== */
 
     const products = await Product.find(query)
       .populate("shop", "shopName slug logo")
@@ -148,15 +102,7 @@ export const getAllProducts = async (req, res, next) => {
       .skip((currentPage - 1) * safeLimit)
       .limit(safeLimit);
 
-    /* =====================================================
-           TOTAL
-        ===================================================== */
-
     const total = await Product.countDocuments(query);
-
-    /* =====================================================
-           RESPONSE
-        ===================================================== */
 
     res.json({
       products,
@@ -184,8 +130,6 @@ export const getProductById = async (req, res, next) => {
       throw new NotFoundError("Product not found");
     }
 
-    // Attach computed pricing fields - business logic lives in the service,
-    // controller just calls it and attaches the result to the response.
     const productData = product.toObject();
     productData.effectivePrice = getEffectivePrice(product);
     productData.discountPercent = getDiscountPercent(product);
@@ -231,6 +175,83 @@ export const getMyProducts = async (req, res, next) => {
       "name slug",
     );
     res.json(products);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 5. ----------------------------------------------------------------
+// @desc    Get related/similar products - same category, top-rated first
+// @route   GET /api/products/:id/related
+// @access  Public
+export const getRelatedProducts = async (req, res, next) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) {
+      throw new NotFoundError("Product not found");
+    }
+
+    const related = await Product.find({
+      category: product.category,
+      _id: { $ne: product._id },
+      isActive: true,
+    })
+      .populate("shop", "shopName slug logo")
+      .populate("category", "name slug")
+      .sort({ averageRating: -1, reviewCount: -1, createdAt: -1 })
+      .limit(8);
+
+    res.json(related);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 6. ----------------------------------------------------------------
+// @desc    Robust search - typo-tolerant, relevance-ranked, with zero-result fallback
+// @route   GET /api/products/search?q=&page=&limit=
+// @access  Public
+export const searchProductsHandler = async (req, res, next) => {
+  try {
+    const { q, page, limit } = req.query;
+    if (!q || !q.trim()) {
+      throw new BadRequestError("Search query is required");
+    }
+
+    const result = await searchProducts(q, { page, limit });
+
+    if (result.total === 0) {
+      result.suggestions = await getSearchFallbackSuggestions(q);
+    }
+
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 7. ----------------------------------------------------------------
+// @desc    Autocomplete suggestions as the user types
+// @route   GET /api/products/search/suggestions?q=
+// @access  Public
+export const searchSuggestionsHandler = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    const result = await getSearchSuggestions(q || "");
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// 8. ----------------------------------------------------------------
+// @desc    Trending search terms - shown when search box is empty
+// @route   GET /api/products/search/trending
+// @access  Public
+export const trendingSearchesHandler = async (req, res, next) => {
+  try {
+    const trending = await getTrendingSearches();
+    res.json({ trending });
   } catch (error) {
     next(error);
   }

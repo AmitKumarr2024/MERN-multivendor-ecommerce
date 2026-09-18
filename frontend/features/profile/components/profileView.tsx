@@ -15,38 +15,46 @@ import ChangePasswordForm from "./changePasswordForm";
 import PasskeyManager from "./passkeyManager";
 import ProfileQuickLinks from "./profileQuickLinks";
 
-/**
- * ONE profile page for buyer, seller, and admin.
- *
- * Usage — same import, works everywhere:
- *
- *   app/(buyer)/profile/page.tsx   -> <ProfileView />
- *   app/seller/profile/page.tsx  -> <ProfileView />  (if you add one)
- *   app/admin/profile/page.tsx   -> <ProfileView />  (if you add one)
- *
- * What changes per role is driven entirely by
- * ROLE_PROFILE_CONFIG (features/profile/config), not by
- * separate components or if/else chains here.
- */
 export default function ProfileView() {
-    const initialized = useAppSelector(selectAuthInitialized);
-    const user = useAppSelector(selectCurrentUser);
-    const role = useAppSelector(selectUserRole);
+    const initialized = useAppSelector(
+        selectAuthInitialized,
+    );
+
+    const user = useAppSelector(
+        selectCurrentUser,
+    );
+
+    const role = useAppSelector(
+        selectUserRole,
+    );
 
     if (!initialized) {
         return (
-            <div className="mx-auto max-w-3xl p-6">
-                <p className="text-sm text-muted">Loading profile...</p>
+            <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+                <div className="space-y-4">
+                    <div className="h-28 animate-pulse rounded-3xl bg-surface-muted" />
+                    <div className="h-64 animate-pulse rounded-3xl bg-surface-muted" />
+                </div>
             </div>
         );
     }
 
     if (!user) {
         return (
-            <div className="mx-auto max-w-3xl p-6">
-                <p className="text-sm text-secondary">
-                    You need to be logged in to view this page.
-                </p>
+            <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-md rounded-3xl border border-default bg-surface p-8 text-center">
+                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-surface-muted text-muted">
+                        <span className="text-lg">!</span>
+                    </div>
+
+                    <h1 className="mt-4 text-lg font-bold text-primary">
+                        Sign in required
+                    </h1>
+
+                    <p className="mt-2 text-sm text-secondary">
+                        You need to be logged in to view your profile.
+                    </p>
+                </div>
             </div>
         );
     }
@@ -54,51 +62,105 @@ export default function ProfileView() {
     const config = getRoleProfileConfig(role);
 
     return (
-        <div className="mx-auto max-w-7xl px-4 py-8">
+        <div className="min-h-screen">
+            <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
 
-            {/* Header */}
-            <ProfileHeader
-                user={user}
-                config={config}
-            />
+                {/* =====================================================
+                    PROFILE HEADER
+                ===================================================== */}
 
-            <div className="mt-8 grid gap-8 lg:grid-cols-12">
+                <ProfileHeader
+                    user={user}
+                    config={config}
+                />
 
-                {/* Main Content */}
-                <main className="space-y-8 lg:col-span-8">
+                {/* =====================================================
+                    MAIN LAYOUT
+                ===================================================== */}
 
-                    <ProfileInfoForm />
+                <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
 
-                    <RoleExtraInfo
-                        user={user}
-                        config={config}
-                    />
+                    {/* =================================================
+                        MAIN
+                    ================================================= */}
 
-                    <section className="space-y-6 rounded-2xl border border-default bg-surface p-6 shadow-sm">
+                    <main className="min-w-0 space-y-6">
 
-                        <h2 className="text-lg font-semibold text-primary">
-                            Security
-                        </h2>
+                        <ProfileInfoForm />
 
-                        <ChangePasswordForm />
+                        <RoleExtraInfo
+                            user={user}
+                            config={config}
+                        />
 
-                        <PasskeyManager />
+                        {/* Security */}
+                        <section
+                            className="
+                                overflow-hidden
+                                rounded-3xl
+                                border
+                                border-default
+                                bg-surface
+                            "
+                        >
+                            <div
+                                className="
+                                    border-b
+                                    border-default
+                                    px-5
+                                    py-5
+                                    sm:px-6
+                                "
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div
+                                        className="
+                                            flex
+                                            h-10
+                                            w-10
+                                            shrink-0
+                                            items-center
+                                            justify-center
+                                            rounded-xl
+                                            bg-accent/10
+                                            text-accent
+                                        "
+                                    >
+                                        🔐
+                                    </div>
 
-                    </section>
+                                    <div>
+                                        <h2 className="text-base font-bold text-primary">
+                                            Security
+                                        </h2>
 
-                </main>
+                                        <p className="mt-0.5 text-xs text-muted">
+                                            Protect your account and manage
+                                            sign-in methods.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
 
-                {/* Sidebar */}
-                <aside className="space-y-6 lg:col-span-4">
+                            <div className="divide-y divide-default">
+                                <ChangePasswordForm />
 
-                    <ProfileQuickLinks
-                        config={config}
-                    />
+                                <PasskeyManager />
+                            </div>
+                        </section>
+                    </main>
 
-                </aside>
+                    {/* =================================================
+                        SIDEBAR
+                    ================================================= */}
 
+                    <aside className="min-w-0 space-y-6 lg:sticky lg:top-6 lg:self-start">
+                        <ProfileQuickLinks
+                            config={config}
+                        />
+                    </aside>
+                </div>
             </div>
-
         </div>
     );
 }

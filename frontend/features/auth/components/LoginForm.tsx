@@ -201,8 +201,9 @@ export default function LoginForm() {
             /* =============================================
                LOGIN REQUEST
 
-               loginUser should return the authenticated
-               user information after successful login.
+               loginUser returns the authenticated AuthUser
+               object DIRECTLY (not wrapped in { user }).
+               See authSlice.ts's loginUser thunk comment.
             ============================================= */
 
             const response =
@@ -217,14 +218,17 @@ export default function LoginForm() {
 
             /* =============================================
                SUCCESS NOTIFICATION
+
+               response IS the AuthUser — do not access
+               response.user, it does not exist.
             ============================================= */
 
             toast.success(
                 "Signed in successfully",
                 {
                     description:
-                        `Welcome back${response.user?.name
-                            ? `, ${response.user.name}`
+                        `Welcome back${response.name
+                            ? `, ${response.name}`
                             : ""
                         }.`,
                 },
@@ -243,13 +247,13 @@ export default function LoginForm() {
                Buyer:
                Marketplace home.
 
-               If your login response does not contain
-               response.user, change these checks according
-               to the actual AuthResponse structure.
+               response IS the AuthUser directly, so the
+               role is read as response.role (NOT
+               response.user.role).
             ============================================= */
 
             if (
-                response.user?.role ===
+                response.role ===
                 "seller"
             ) {
 
@@ -258,7 +262,7 @@ export default function LoginForm() {
                 );
 
             } else if (
-                response.user?.role ===
+                response.role ===
                 "admin"
             ) {
 

@@ -23,7 +23,7 @@ const NAV_ITEMS = [
         label: "Orders",
         icon: ClipboardIcon,
     },
-   
+
     {
         href: "/seller/messages",
         label: "Messages",
@@ -105,11 +105,11 @@ export default function SellerSidebar({
                 SIDEBAR
             ====================================================== */}
             <aside
-                className={`fixed inset-y-0 left-0 z-50 flex h-screen shrink-0 flex-col border-r border-default bg-surface transition-all duration-200 lg:sticky lg:top-[70px] lg:z-30 lg:h-[calc(100vh-70px)] lg:translate-x-0 ${mobileOpen
-                        ? "translate-x-0"
-                        : "-translate-x-full lg:translate-x-0"
+                className={`fixed inset-y-0 left-0 z-50 flex h-screen shrink-0 flex-col border-r border-default bg-surface transition-all duration-200 lg:sticky lg:top-17.5 lg:z-30 lg:h-[calc(100vh-70px)] lg:translate-x-0 ${mobileOpen
+                    ? "translate-x-0"
+                    : "-translate-x-full lg:translate-x-0"
                     } ${collapsed
-                        ? "w-[76px] p-3"
+                        ? "w-19 p-3"
                         : "w-64 p-4"
                     }`}
             >
@@ -176,7 +176,7 @@ export default function SellerSidebar({
                                             : "text-secondary hover:bg-surface-hover hover:text-primary"
                                         }`}
                                 >
-                                    <Icon className="h-[18px] w-[18px] shrink-0" />
+                                    <Icon className="h-4.5 w-4.5 shrink-0" />
 
                                     {!collapsed && (
                                         <span>{label}</span>
@@ -210,7 +210,7 @@ export default function SellerSidebar({
                             }`}
                     >
                         {/* Dynamic initials */}
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-accent to-purple-400 text-xs font-bold text-accent-foreground">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-accent to-purple-400 text-xs font-bold text-accent-foreground">
                             {initials}
                         </span>
 
@@ -248,7 +248,7 @@ export default function SellerSidebar({
                         <svg
                             viewBox="0 0 20 20"
                             fill="none"
-                            className="h-[18px] w-[18px]"
+                            className="h-4.5 w-4.5"
                         >
                             <path
                                 d="M3 6h14M3 10h14M3 14h14"

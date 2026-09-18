@@ -11,6 +11,7 @@ const NAV_ITEMS = [
     { href: "/admin/products", label: "Products", icon: BoxIcon },
     { href: "/admin/orders", label: "Orders", icon: ClipboardIcon },
     { href: "/admin/categories", label: "Categories", icon: TagIcon },
+    { href: "/admin/reviews", label: "Reviews", icon: StarIcon }
 ] as const;
 
 interface AdminSidebarProps {
@@ -54,14 +55,14 @@ export default function AdminSidebar({ children }: AdminSidebarProps) {
 
             <aside
                 className={`fixed inset-y-0 left-0 z-50 flex h-screen shrink-0 flex-col border-r border-default bg-surface transition-all duration-200 lg:sticky lg:top-[70px] lg:z-30 lg:h-[calc(100vh-70px)] lg:translate-x-0 ${mobileOpen
-                        ? "translate-x-0"
-                        : "-translate-x-full lg:translate-x-0"
+                    ? "translate-x-0"
+                    : "-translate-x-full lg:translate-x-0"
                     } ${collapsed
                         ? "w-[76px] p-3"
                         : "w-64 p-4"
                     }`}
             >
-                
+
 
                 {/* Collapse toggle — desktop only */}
                 <button
@@ -196,6 +197,18 @@ function TagIcon({ className }: { className?: string }) {
         <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
             <path d="M4 4h6l6 6-6 6-6-6V4z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
             <circle cx="7" cy="7" r="1" fill="currentColor" />
+        </svg>
+    );
+}
+function StarIcon({ className }: { className?: string }) {
+    return (
+        <svg viewBox="0 0 20 20" fill="none" className={className} aria-hidden="true">
+            <path
+                d="M10 2.5l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4-3.9-3.8 5.4-.8L10 2.5z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+            />
         </svg>
     );
 }

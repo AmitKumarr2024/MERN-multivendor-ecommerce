@@ -21,6 +21,11 @@ const NOTIFICATION_TYPES = [
   "message", // naya chat message
   "wishlist_price_drop", // (future)
   "system", // platform-wide announcement/admin toast
+  "khata_request",
+  "khata_approved",
+  "khata_rejected",
+  "khata_suspended",
+  "khata_payment_recorded",
 ];
 
 const notificationSchema = new mongoose.Schema(

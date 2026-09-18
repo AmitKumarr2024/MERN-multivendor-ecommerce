@@ -18,12 +18,15 @@ export const createProduct = async (req, res, next) => {
     const {
       name,
       description,
+      specifications,
       price,
       discountPrice,
       images,
       category,
       stock,
       weightKg,
+      hasVariants,
+      variants,
     } = req.body;
 
     if (!name || price === undefined || !category) {
@@ -37,16 +40,29 @@ export const createProduct = async (req, res, next) => {
       throw new BadRequestError("Invalid category");
     }
 
+    // Agar hasVariants true hai, kam se kam ek variant hona chahiye
+    // aur uska stock sahi honi chahiye - warna product "sellable" hi nahi hoga
+    if (hasVariants) {
+      if (!Array.isArray(variants) || variants.length === 0) {
+        throw new BadRequestError(
+          "At least one variant (e.g. a size/color combination) is required when variants are enabled",
+        );
+      }
+    }
+
     const product = await Product.create({
       shop: shop._id,
       name,
       description,
+      specifications: specifications || [],
       price,
       discountPrice,
       images,
       category: categoryExists._id,
-      stock,
+      stock: hasVariants ? 0 : stock, // flat stock irrelevant when variants exist
       weightKg,
+      hasVariants: !!hasVariants,
+      variants: hasVariants ? variants : [],
     });
 
     res.status(201).json(product);

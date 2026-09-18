@@ -23,6 +23,11 @@ import uploadRoutes from "./modules/upload/routes/upload.routes.js";
 import logisticsRoutes from "./modules/logistics/routes/logistics.routes.js";
 import wishlistRoutes from "./modules/wishlist/routes/wishlist.routes.js";
 import notificationRoutes from "./modules/notification/routes/notification.routes.js";
+import reviewRoutes from "./modules/review/routes/review.routes.js";
+import shopStaffRoutes from "./modules/staff/routes/shopStaff.routes.js";
+import staffRoutes from "./modules/staff/routes/staff.routes.js";
+import shopKhataRoutes from "./modules/khata/routes/shopKhata.routes.js";
+import khataRoutes from "./modules/khata/routes/khata.routes.js";
 
 dotenv.config();
 
@@ -32,7 +37,23 @@ const PORT = process.env.PORT || 5000;
 logger.info(`Starting server on port ${PORT}...`);
 
 // Connect to MongoDB
-connectDB();
+// ------------------------------------------------------------------
+// Skipped during tests (NODE_ENV === "test"). Test files use their own
+// isolated mongodb-memory-server connection (see tests/setup/db.js).
+//
+// Without this guard, simply IMPORTING this file — even accidentally,
+// via a shared import chain in a test — connects to the REAL database
+// (whatever MONGO_URI points to). If that test file then runs cleanup
+// hooks like `collection.deleteMany({})` in afterEach, it wipes the
+// REAL database instead of the throwaway in-memory one. This is exactly
+// what happened once during development — see PROJECT_HANDOFF notes.
+//
+// In dev and production this behaves identically to before: connectDB()
+// still runs immediately on startup, nothing else changes.
+// ------------------------------------------------------------------
+if (process.env.NODE_ENV !== "test") {
+  connectDB();
+}
 
 // Middleware
 app.use(httpLogger); // logs every incoming request (method, path, status, response time)
@@ -65,6 +86,11 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/logistics", logisticsRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/shops/:shopId/staff", shopStaffRoutes);
+app.use("/api/staff", staffRoutes);
+app.use("/api/shops/:shopId/khata", shopKhataRoutes);
+app.use("/api/khata", khataRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");

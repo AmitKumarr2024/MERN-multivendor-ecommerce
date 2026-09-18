@@ -7,7 +7,9 @@ type ButtonVariant =
     | "primary"
     | "secondary"
     | "danger"
-    | "ghost";
+    | "ghost"
+    | "outline"
+    | "destructive";
 
 type ButtonSize =
     | "sm"
@@ -44,7 +46,13 @@ const Button = forwardRef<
             secondary:
                 "border border-zinc-300 bg-white text-zinc-800 hover:bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200 dark:hover:bg-zinc-800",
 
+            outline:
+                "border border-zinc-300 bg-transparent text-zinc-800 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-200 dark:hover:bg-zinc-800",
+
             danger:
+                "bg-red-600 text-white hover:bg-red-700",
+
+            destructive:
                 "bg-red-600 text-white hover:bg-red-700",
 
             ghost:

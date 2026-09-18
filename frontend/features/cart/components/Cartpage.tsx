@@ -106,7 +106,7 @@ export default function CartPage() {
     if (!user) {
         return (
             <div className="mx-auto max-w-7xl p-4 sm:p-6">
-                <div className="flex min-h-[300px] items-center justify-center">
+                <div className="flex min-h-75 items-center justify-center">
                     <div className="text-center">
                         <p className="text-sm text-secondary">
                             Redirecting to login...

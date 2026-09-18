@@ -1,17 +1,19 @@
 import Cart from "../modules/cart/models/cart.model.js";
 import Product from "../modules/product/models/product.model.js";
 import { BadRequestError, NotFoundError } from "../exceptions/ApiError.js";
-import { canFulfill } from "./inventory.service.js";
 
 /**
  * CART SERVICE
  * ------------------------------------------------------------------
  * Business rules for adding/updating/removing cart items. Controllers
  * just call these - all "can this actually be added" logic lives here.
+ *
+ * Variant-aware: a cart item is now uniquely identified by
+ * (product, variantId) instead of just (product) - so Red/M and Red/L
+ * of the same product are two separate line items.
  * ------------------------------------------------------------------
  */
 
-// Fetches (or lazily creates) a user's cart
 export const getOrCreateCart = async (userId) => {
   let cart = await Cart.findOne({ user: userId });
   if (!cart) {
@@ -20,9 +22,44 @@ export const getOrCreateCart = async (userId) => {
   return cart;
 };
 
-// Adds a product to the cart, or increases quantity if it's already in there.
-// Validates stock availability before allowing it.
-export const addItemToCart = async (userId, productId, quantity = 1) => {
+// Resolves how much stock is available, and the display name, for either
+// a flat product or a specific variant - centralizes the branching so
+// addItemToCart/updateItemQuantity don't duplicate this logic.
+const resolveStockInfo = (product, variantId) => {
+  if (!product.hasVariants) {
+    return { availableStock: product.stock, label: product.name };
+  }
+
+  const variant = product.getVariantById(variantId);
+  if (!variant) {
+    throw new BadRequestError(
+      "Please select a valid size/color option for this product",
+    );
+  }
+
+  const variantLabel = [variant.color, variant.size]
+    .filter(Boolean)
+    .join(" / ");
+  return {
+    availableStock: variant.stock,
+    label: `${product.name}${variantLabel ? ` (${variantLabel})` : ""}`,
+  };
+};
+
+const findCartItem = (cart, productId, variantId) => {
+  return cart.items.find(
+    (item) =>
+      item.product.toString() === productId &&
+      String(item.variantId || "") === String(variantId || ""),
+  );
+};
+
+export const addItemToCart = async (
+  userId,
+  productId,
+  quantity = 1,
+  variantId = null,
+) => {
   if (quantity <= 0) {
     throw new BadRequestError("Quantity must be at least 1");
   }
@@ -32,40 +69,62 @@ export const addItemToCart = async (userId, productId, quantity = 1) => {
     throw new NotFoundError("Product not found or unavailable");
   }
 
-  const cart = await getOrCreateCart(userId);
-  const existingItem = cart.items.find((item) => item.product.toString() === productId);
-  const requestedQuantity = existingItem ? existingItem.quantity + quantity : quantity;
+  if (product.hasVariants && !variantId) {
+    throw new BadRequestError(
+      "Please select a size/color option before adding to cart",
+    );
+  }
 
-  if (!canFulfill(product, requestedQuantity)) {
-    throw new BadRequestError(`Only ${product.stock} unit(s) of "${product.name}" available`);
+  const { availableStock, label } = resolveStockInfo(product, variantId);
+
+  const cart = await getOrCreateCart(userId);
+  const existingItem = findCartItem(cart, productId, variantId);
+  const requestedQuantity = existingItem
+    ? existingItem.quantity + quantity
+    : quantity;
+
+  if (requestedQuantity > availableStock) {
+    throw new BadRequestError(
+      `Only ${availableStock} unit(s) of "${label}" available`,
+    );
   }
 
   if (existingItem) {
     existingItem.quantity = requestedQuantity;
   } else {
-    cart.items.push({ product: productId, quantity });
+    cart.items.push({ product: productId, variantId, quantity });
   }
 
   await cart.save();
   return cart;
 };
 
-// Sets an item's quantity to an exact value (used by a quantity input in the UI)
-export const updateItemQuantity = async (userId, productId, quantity) => {
+export const updateItemQuantity = async (
+  userId,
+  productId,
+  quantity,
+  variantId = null,
+) => {
   if (quantity <= 0) {
-    throw new BadRequestError("Quantity must be at least 1. Use remove to delete the item.");
+    throw new BadRequestError(
+      "Quantity must be at least 1. Use remove to delete the item.",
+    );
   }
 
   const product = await Product.findById(productId);
   if (!product) {
     throw new NotFoundError("Product not found");
   }
-  if (!canFulfill(product, quantity)) {
-    throw new BadRequestError(`Only ${product.stock} unit(s) of "${product.name}" available`);
+
+  const { availableStock, label } = resolveStockInfo(product, variantId);
+  if (quantity > availableStock) {
+    throw new BadRequestError(
+      `Only ${availableStock} unit(s) of "${label}" available`,
+    );
   }
 
   const cart = await getOrCreateCart(userId);
-  const item = cart.items.find((i) => i.product.toString() === productId);
+  const item = findCartItem(cart, productId, variantId);
   if (!item) {
     throw new NotFoundError("Item not in cart");
   }
@@ -75,15 +134,23 @@ export const updateItemQuantity = async (userId, productId, quantity) => {
   return cart;
 };
 
-// Removes one product entirely from the cart
-export const removeItemFromCart = async (userId, productId) => {
+export const removeItemFromCart = async (
+  userId,
+  productId,
+  variantId = null,
+) => {
   const cart = await getOrCreateCart(userId);
-  cart.items = cart.items.filter((item) => item.product.toString() !== productId);
+  cart.items = cart.items.filter(
+    (item) =>
+      !(
+        item.product.toString() === productId &&
+        String(item.variantId || "") === String(variantId || "")
+      ),
+  );
   await cart.save();
   return cart;
 };
 
-// Empties the cart entirely (called after successful checkout, or manually by user)
 export const clearCart = async (userId) => {
   const cart = await getOrCreateCart(userId);
   cart.items = [];

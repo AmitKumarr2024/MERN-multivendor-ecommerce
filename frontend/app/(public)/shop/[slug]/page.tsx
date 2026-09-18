@@ -13,9 +13,12 @@ interface ShopMetadata {
     description?: string;
 }
 
-async function getShopBySlug(slug: string): Promise<ShopMetadata | null> {
+async function getShopBySlug(
+    slug: string
+): Promise<ShopMetadata | null> {
     const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL || "http://localhost:3008/api";
+        process.env.NEXT_PUBLIC_API_URL ||
+        "http://localhost:3008/api";
 
     try {
         const response = await fetch(
@@ -33,7 +36,11 @@ async function getShopBySlug(slug: string): Promise<ShopMetadata | null> {
 
         return response.json();
     } catch (error) {
-        console.error("Failed to fetch shop metadata:", error);
+        console.error(
+            "Failed to fetch shop metadata:",
+            error
+        );
+
         return null;
     }
 }
@@ -52,7 +59,7 @@ export async function generateMetadata({
     }
 
     return {
-        title: shop.shopName,
+        title: `${shop.shopName} | Amitora Market`,
         description:
             shop.description ||
             `Shop products from ${shop.shopName} on Amitora Market.`,

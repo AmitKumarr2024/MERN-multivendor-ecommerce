@@ -1,135 +1,146 @@
-/* =========================================================
-   SHARED SUB-TYPES
-   (populated refs come back as objects; unpopulated as ids)
-========================================================= */
-
 export interface ProductCategory {
-    _id: string;
-    name: string;
-    slug: string;
+  _id: string;
+  name: string;
+  slug: string;
 }
 
 export interface ProductShop {
-    _id: string;
-    shopName: string;
-    slug: string;
-    logo?: string;
+  _id: string;
+  shopName: string;
+  slug: string;
+  logo?: string;
 }
 
-/* =========================================================
-   CORE PRODUCT
-   Matches backend/modules/product/models/product.model.js
-========================================================= */
+// 👇 NEW
+export interface ProductVariant {
+  _id: string;
+  color?: string | null;
+  size?: string | null;
+  sku?: string | null;
+  price?: number | null;
+  discountPrice?: number | null;
+  stock: number;
+  images?: string[];
+}
+
+// 👇 NEW
+export interface ProductSpecification {
+  label: string;
+  value: string;
+}
 
 export interface Product {
-    _id: string;
-    shop: ProductShop | string;
-    name: string;
-    description?: string;
-    price: number;
-    discountPrice?: number | null;
-    images: string[];
-    category: ProductCategory | string;
-    stock: number;
-    isActive: boolean;
-    weightKg: number;
+  _id: string;
+  shop: ProductShop | string;
+  name: string;
+  description?: string;
+  specifications?: ProductSpecification[]; // 👈 NEW
+  price: number;
+  discountPrice?: number | null;
+  images: string[];
+  category: ProductCategory | string;
+  stock: number;
+  hasVariants?: boolean; // 👈 NEW
+  variants?: ProductVariant[]; // 👈 NEW
+  averageRating?: number; // 👈 NEW
+  reviewCount?: number; // 👈 NEW
+  isActive: boolean;
+  weightKg: number;
 
-    // Only present on GET /api/products/:id — attached by
-    // pricing.service.js, not stored on the document itself.
-    effectivePrice?: number;
-    discountPercent?: number;
+  effectivePrice?: number;
+  discountPercent?: number;
 
-    createdAt: string;
-    updatedAt: string;
+  createdAt: string;
+  updatedAt: string;
 }
-
-/* =========================================================
-   SORT OPTIONS
-   Must match SORT_OPTIONS keys in product.read.controller.js
-========================================================= */
 
 export type ProductSort =
-    | "newest"
-    | "oldest"
-    | "price_low_to_high"
-    | "price_high_to_low"
-    | "name_a_to_z";
-
-/* =========================================================
-   QUERY PARAMS
-   GET /api/products?category=&search=&minPrice=&maxPrice=&sort=&page=&limit=
-========================================================= */
+  | "newest"
+  | "oldest"
+  | "price_low_to_high"
+  | "price_high_to_low"
+  | "name_a_to_z";
 
 export interface ProductQueryParams {
-    category?: string;
-    search?: string;
-    minPrice?: number;
-    maxPrice?: number;
-    sort?: ProductSort;
-    page?: number;
-    limit?: number;
+  category?: string;
+  search?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  sort?: ProductSort;
+  page?: number;
+  limit?: number;
 }
 
-/* =========================================================
-   API RESPONSE SHAPES
-========================================================= */
-
 export interface GetAllProductsResponse {
-    products: Product[];
-    total: number;
-    page: number;
-    pages: number;
-    sort: ProductSort;
+  products: Product[];
+  total: number;
+  page: number;
+  pages: number;
+  sort: ProductSort;
 }
 
 export interface GetProductsByShopSlugResponse {
-    shop: ProductShop;
-    products: Product[];
+  shop: ProductShop;
+  products: Product[];
 }
 
 export interface MessageResponse {
-    message: string;
+  message: string;
 }
 
 export interface UpdateStockResponse {
-    _id: string;
-    stock: number;
-    isLowStock: boolean;
-    isOutOfStock: boolean;
+  _id: string;
+  stock: number;
+  isLowStock: boolean;
+  isOutOfStock: boolean;
 }
 
 export interface ToggleActiveResponse {
-    _id: string;
-    isActive: boolean;
+  _id: string;
+  isActive: boolean;
 }
 
-/* =========================================================
-   MUTATION PAYLOADS
-   Mirrors backend/modules/product/product.validation.js
-========================================================= */
-
 export interface CreateProductPayload {
-    name: string;
-    description?: string;
-    price: number;
-    discountPrice?: number;
-    images?: string[];
-    /** Category SLUG, not ObjectId — matches backend convention. */
-    category: string;
-    stock?: number;
-    weightKg?: number;
+  name: string;
+  description?: string;
+  specifications?: ProductSpecification[]; // 👈 NEW
+  price: number;
+  discountPrice?: number;
+  images?: string[];
+  category: string;
+  stock?: number;
+  weightKg?: number;
+  hasVariants?: boolean; // 👈 NEW
+  variants?: Omit<ProductVariant, "_id">[]; // 👈 NEW — no _id on create, server assigns it
 }
 
 export type UpdateProductPayload = Partial<CreateProductPayload> & {
-    isActive?: boolean;
+  isActive?: boolean;
 };
 
 export interface UpdateProductArgs {
-    id: string;
-    data: UpdateProductPayload;
+  id: string;
+  data: UpdateProductPayload;
 }
 
 export interface UpdateStockArgs {
-    id: string;
-    stock: number;
+  id: string;
+  stock: number;
+}
+
+// 👇 NEW — variant CRUD payloads
+export interface AddVariantArgs {
+  productId: string;
+  variant: Omit<ProductVariant, "_id">;
+}
+
+export interface UpdateVariantArgs {
+  productId: string;
+  variantId: string;
+  changes: Partial<Omit<ProductVariant, "_id">>;
+}
+
+export interface DeleteVariantArgs {
+  productId: string;
+  variantId: string;
 }

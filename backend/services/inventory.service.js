@@ -1,20 +1,7 @@
 import { BadRequestError } from "../exceptions/ApiError.js";
 
-/**
- * INVENTORY SERVICE
- * ------------------------------------------------------------------
- * Business rules around stock levels. Controller just calls these
- * functions and doesn't need to know the rules itself.
- * ------------------------------------------------------------------
- */
-
 export const LOW_STOCK_THRESHOLD = 5;
 
-/**
- * Sets a product's stock to an exact value, with validation.
- * Returns { product, isLowStock } so the controller/caller can decide
- * whether to trigger a notification.
- */
 export const setStock = async (product, newStock) => {
   if (typeof newStock !== "number" || newStock < 0) {
     throw new BadRequestError("Stock must be a non-negative number");
@@ -30,39 +17,55 @@ export const setStock = async (product, newStock) => {
   };
 };
 
-/**
- * Decrements stock when an order is placed. Throws if not enough stock.
- * This is the function the future Order service will call.
- */
-export const decrementStock = async (product, quantity) => {
+// 👇 NEW - variant-aware. variantId=null means flat-stock product (unchanged behavior)
+export const decrementStock = async (product, quantity, variantId = null) => {
   if (quantity <= 0) {
     throw new BadRequestError("Quantity must be greater than zero");
   }
-  if (product.stock < quantity) {
-    throw new BadRequestError(
-      `Insufficient stock for "${product.name}". Only ${product.stock} left.`,
-    );
+
+  if (product.hasVariants) {
+    const variant = product.getVariantById(variantId);
+    if (!variant) {
+      throw new BadRequestError("Selected variant no longer exists");
+    }
+    if (variant.stock < quantity) {
+      throw new BadRequestError(
+        `Insufficient stock for "${product.name}". Only ${variant.stock} left.`,
+      );
+    }
+    variant.stock -= quantity;
+  } else {
+    if (product.stock < quantity) {
+      throw new BadRequestError(
+        `Insufficient stock for "${product.name}". Only ${product.stock} left.`,
+      );
+    }
+    product.stock -= quantity;
   }
 
-  product.stock -= quantity;
-  await product.save();
-
-  return product;
-};
-
-/**
- * Restores stock, e.g. when an order is cancelled or returned.
- */
-export const restoreStock = async (product, quantity) => {
-  product.stock += quantity;
   await product.save();
   return product;
 };
 
-/**
- * Checks if a product can fulfill a requested quantity, without mutating anything.
- * Useful for cart validation before checkout.
- */
-export const canFulfill = (product, requestedQuantity) => {
-  return product.isActive && product.stock >= requestedQuantity;
+export const restoreStock = async (product, quantity, variantId = null) => {
+  if (product.hasVariants) {
+    const variant = product.getVariantById(variantId);
+    if (variant) variant.stock += quantity;
+  } else {
+    product.stock += quantity;
+  }
+
+  await product.save();
+  return product;
+};
+
+export const canFulfill = (product, requestedQuantity, variantId = null) => {
+  if (!product.isActive) return false;
+
+  if (product.hasVariants) {
+    const variant = product.getVariantById(variantId);
+    return !!variant && variant.stock >= requestedQuantity;
+  }
+
+  return product.stock >= requestedQuantity;
 };

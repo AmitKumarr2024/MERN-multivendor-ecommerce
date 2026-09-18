@@ -7,6 +7,12 @@ const cartItemSchema = new mongoose.Schema(
       ref: "Product",
       required: true,
     },
+    // 👇 NEW - kaunsa color/size select kiya. null = flat-stock product
+    // (hasVariants: false), jaisa ki abhi sab products hain.
+    variantId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
     quantity: {
       type: Number,
       required: true,
@@ -14,7 +20,7 @@ const cartItemSchema = new mongoose.Schema(
       default: 1,
     },
   },
-  { _id: false } // items don't need their own id, product ref is unique enough
+  { _id: false },
 );
 
 const cartSchema = new mongoose.Schema(
@@ -23,11 +29,11 @@ const cartSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true, // one cart per user
+      unique: true,
     },
     items: [cartItemSchema],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Cart = mongoose.model("Cart", cartSchema);

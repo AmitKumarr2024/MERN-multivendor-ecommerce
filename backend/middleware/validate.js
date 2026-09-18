@@ -2,7 +2,7 @@ import { BadRequestError } from "../exceptions/ApiError.js";
 
 /**
  * Wraps a Zod schema into Express middleware. On success, req[source] is
- * replaced with the parsed (and type-coerced) data, so controllers can
+ * populated with the parsed (and type-coerced) data, so controllers can
  * trust the shape/types without re-checking. On failure, throws a single
  * BadRequestError with all validation issues combined into one message.
  *
@@ -36,7 +36,16 @@ const validate =
       return next(new BadRequestError(message));
     }
 
-    req[source] = result.data;
+    // req.query is a getter-only property on newer Node/Express (can't be
+    // reassigned directly, only mutated in place). req.body and req.params
+    // are plain writable objects, so they can still be replaced wholesale.
+    if (source === "query") {
+      Object.keys(req.query).forEach((key) => delete req.query[key]);
+      Object.assign(req.query, result.data);
+    } else {
+      req[source] = result.data;
+    }
+
     next();
   };
 

@@ -49,7 +49,7 @@ export default function ShopBroadcastBanner({ shopSlug }: ShopBroadcastBannerPro
     if (visible.length === 0) return null;
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-2 my-3">
             {visible.map((broadcast) => (
                 <div
                     key={broadcast._id}
