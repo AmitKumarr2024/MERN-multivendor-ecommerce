@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { BadgeCheck, Clock3, MapPin } from "lucide-react";
+import { FollowButton } from "@/features/follow";
 
 import type { Shop } from "../../../types/shop.types";
 
@@ -37,14 +38,14 @@ export default function ShopHeader({ shop }: ShopHeaderProps) {
                 <div className="absolute right-4 top-4 sm:right-5 sm:top-5">
                     <span
                         className={`inline-flex items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold shadow-sm backdrop-blur-sm sm:px-4 ${shop.isOpen
-                                ? "bg-success-bg/95 text-success-text"
-                                : "bg-surface/95 text-secondary"
+                            ? "bg-success-bg/95 text-success-text"
+                            : "bg-surface/95 text-secondary"
                             }`}
                     >
                         <span
                             className={`h-2 w-2 shrink-0 rounded-full ${shop.isOpen
-                                    ? "animate-pulse bg-success-text"
-                                    : "bg-muted"
+                                ? "animate-pulse bg-success-text"
+                                : "bg-muted"
                                 }`}
                         />
 
@@ -99,6 +100,7 @@ export default function ShopHeader({ shop }: ShopHeaderProps) {
                             {shop.description}
                         </p>
                     ) : null}
+                    <div className="mt-3"><FollowButton shopId={shop._id} /></div>
 
                     {/* =================================================
                         META INFORMATION
@@ -121,8 +123,8 @@ export default function ShopHeader({ shop }: ShopHeaderProps) {
 
                         <span
                             className={`inline-flex items-center gap-1.5 font-medium ${shop.isOpen
-                                    ? "text-success-text"
-                                    : "text-muted"
+                                ? "text-success-text"
+                                : "text-muted"
                                 }`}
                         >
                             <Clock3 className="h-4 w-4 shrink-0" />

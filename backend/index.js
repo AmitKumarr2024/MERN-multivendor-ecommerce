@@ -28,6 +28,8 @@ import shopStaffRoutes from "./modules/staff/routes/shopStaff.routes.js";
 import staffRoutes from "./modules/staff/routes/staff.routes.js";
 import shopKhataRoutes from "./modules/khata/routes/shopKhata.routes.js";
 import khataRoutes from "./modules/khata/routes/khata.routes.js";
+import followRoutes from "./modules/follow/routes/follow.routes.js";
+import shopCustomersRoutes from "./modules/follow/routes/shopCustomers.routes.js";
 
 dotenv.config();
 
@@ -91,6 +93,8 @@ app.use("/api/shops/:shopId/staff", shopStaffRoutes);
 app.use("/api/staff", staffRoutes);
 app.use("/api/shops/:shopId/khata", shopKhataRoutes);
 app.use("/api/khata", khataRoutes);
+app.use("/api/shops/:shopId/customers", shopCustomersRoutes);
+app.use("/api/follows", followRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");

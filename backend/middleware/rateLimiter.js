@@ -1,4 +1,4 @@
-import rateLimit from "express-rate-limit";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 
 /**
  * RATE LIMITING
@@ -17,7 +17,13 @@ import rateLimit from "express-rate-limit";
  * public IP behind carrier-grade NAT — pure IP-based limiting would let
  * one heavy user exhaust the quota for everyone else on that network.
  * Falls back to IP when there's no authenticated user yet (e.g. login
- * itself, or public browsing before auth).
+ * itself, or public browsing before auth). The IP fallback goes through
+ * express-rate-limit's own `ipKeyGenerator` helper rather than raw
+ * `req.ip`, since a bare IP string doesn't correctly bucket IPv6
+ * addresses (which can vary per-request within the same /64 block) -
+ * using the raw string would let an IPv6 client trivially dodge the
+ * limit by rotating the suffix. This is what silences the
+ * ERR_ERL_KEY_GEN_IPV6 startup warning.
  * ------------------------------------------------------------------
  */
 
@@ -25,16 +31,18 @@ const isTestEnv = () => process.env.NODE_ENV === "test";
 const isDevEnv = () => process.env.NODE_ENV === "development";
 
 // Shared key generator: prefer authenticated user id, fall back to IP
+// (IPv6-safe via express-rate-limit's own helper)
 const userOrIpKey = (req) => {
   if (req.user?._id) return `user:${req.user._id}`;
   if (req.user?.id) return `user:${req.user.id}`;
-  return `ip:${req.ip}`;
+  return `ip:${ipKeyGenerator(req.ip)}`;
 };
 
 // Strict limiter for auth endpoints prone to brute-force / credential stuffing.
-// Intentionally stays IP-based (keyGenerator not overridden) because at
-// login/register time there IS no req.user yet — that's the whole point
-// of these routes.
+// Intentionally stays IP-based (keyGenerator not overridden to userOrIpKey)
+// because at login/register time there IS no req.user yet — that's the
+// whole point of these routes. Left on express-rate-limit's own default
+// keyGenerator, which is already IPv6-safe out of the box.
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: isDevEnv() ? 300 : 30,

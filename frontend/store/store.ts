@@ -16,6 +16,8 @@ import reviewReducer from "@/features/reviews/store/reviewSlice";
 import searchReducer from "@/features/search/store/searchSlice";
 import { staffReducer } from "@/features/staff";
 import { khataReducer } from "@/features/khata";
+import { followReducer } from "@/features/follow";
+
 
 /**
  * =========================================================
@@ -67,6 +69,7 @@ export const makeStore = () => {
       search: searchReducer,
       staff: staffReducer,
       khata: khataReducer,
+      follow: followReducer
     },
   });
 };

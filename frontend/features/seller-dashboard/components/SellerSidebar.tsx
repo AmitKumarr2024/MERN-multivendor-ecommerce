@@ -29,6 +29,8 @@ const NAV_ITEMS = [
         label: "Messages",
         icon: ChatIcon,
     },
+    { href: "/seller/customers", label: "Customers", icon: StoreIcon },
+
 ] as const;
 
 interface SellerSidebarProps {
