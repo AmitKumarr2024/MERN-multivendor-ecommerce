@@ -25976,3 +25976,51 @@
 {"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 14.578 ms - -\u001b[0m","timestamp":"2026-09-20T17:39:44.992Z"}
 {"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 3.276 ms - -\u001b[0m","timestamp":"2026-09-20T17:39:45.032Z"}
 {"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 3.916 ms - -\u001b[0m","timestamp":"2026-09-20T17:39:45.038Z"}
+{"level":"warn","message":"GET /api/staff/6ab0ce41b0a9f235a0afa8ae/attendance?month=8&year=2026 -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:13.737Z"}
+{"level":"warn","message":"POST /api/staff/6ab0ce41b0a9f235a0afa8b1/attendance -> 403 You do not own this shop","timestamp":"2026-09-21T06:27:13.971Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:18.569Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 Only JPEG, PNG, WEBP, or GIF images are allowed","timestamp":"2026-09-21T06:27:19.062Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 User with this email already exists","timestamp":"2026-09-21T06:27:19.079Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 password: Password must be at least 6 characters","timestamp":"2026-09-21T06:27:19.091Z"}
+{"level":"warn","message":"POST /api/products -> 400 Please create your shop before adding products","timestamp":"2026-09-21T06:27:19.126Z"}
+{"level":"warn","message":"PUT /api/shops/6ab0ce472a53f727a10711f3/loyalty/program -> 400 spendAmount: Too small: expected number to be >=1","timestamp":"2026-09-21T06:27:19.144Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 No image file provided (expected field name 'image')","timestamp":"2026-09-21T06:27:19.197Z"}
+{"level":"warn","message":"PUT /api/shops/6ab0ce472a53f727a10711f3/loyalty/program -> 403 Not authorized for this shop","timestamp":"2026-09-21T06:27:19.279Z"}
+{"level":"warn","message":"GET /api/shops/6ab0ce472a53f727a10711f3/loyalty/customers -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:19.287Z"}
+{"level":"warn","message":"POST /api/products -> 400 Invalid category","timestamp":"2026-09-21T06:27:19.292Z"}
+{"level":"warn","message":"POST /api/shops -> 400 You already have a shop","timestamp":"2026-09-21T06:27:19.350Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 File is too large. Maximum size is 5MB.","timestamp":"2026-09-21T06:27:19.362Z"}
+{"level":"warn","message":"POST /api/shops -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:19.366Z"}
+{"level":"warn","message":"POST /api/follows/shop/6ab0ce4745a11fd8790d34c4 -> 400 You cannot follow your own shop","timestamp":"2026-09-21T06:27:19.375Z"}
+{"level":"warn","message":"POST /api/follows/shop/6ab0ce4745a11fd8790d34c6 -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:19.515Z"}
+{"level":"warn","message":"GET /api/shops/does-not-exist -> 404 Shop not found","timestamp":"2026-09-21T06:27:19.531Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-09-21T06:27:19.553Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-09-21T06:27:19.564Z"}
+{"level":"warn","message":"GET /api/auth/me -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:19.573Z"}
+{"level":"warn","message":"POST /api/follows/shop/not-an-id -> 400 shopId: A valid shop id is required","timestamp":"2026-09-21T06:27:19.636Z"}
+{"level":"warn","message":"POST /api/loyalty/shop/6ab0ce472a53f727a10711f6/redeem -> 400 You need 50 points to redeem this reward","timestamp":"2026-09-21T06:27:19.689Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab0ce472c5aed532b4d4fc0/approve -> 403 Not authorized for this shop","timestamp":"2026-09-21T06:27:19.701Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 Upload error: Unexpected field","timestamp":"2026-09-21T06:27:19.858Z"}
+{"level":"warn","message":"PUT /api/products/6ab0ce478aa91f7880107f32 -> 403 You are not allowed to modify this product","timestamp":"2026-09-21T06:27:19.963Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 No image files provided (expected field name 'images')","timestamp":"2026-09-21T06:27:19.986Z"}
+{"level":"warn","message":"PUT /api/shops/me/slug -> 400 This shop URL is already taken","timestamp":"2026-09-21T06:27:19.991Z"}
+{"level":"warn","message":"POST /api/shops/6ab0ce472a53f727a1071203/loyalty/customers/6ab0ce472a53f727a1071204/adjust -> 400 reason: Invalid input: expected string, received undefined","timestamp":"2026-09-21T06:27:20.068Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Your cart is empty","timestamp":"2026-09-21T06:27:20.106Z"}
+{"level":"warn","message":"GET /api/products/6ab0ce488aa91f7880107f38 -> 404 Product not found","timestamp":"2026-09-21T06:27:20.171Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab0ce482c5aed532b4d4fc7/approve -> 403 Not authorized for this shop","timestamp":"2026-09-21T06:27:20.175Z"}
+{"level":"warn","message":"GET /api/khata/my -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:20.196Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 400 publicId is required","timestamp":"2026-09-21T06:27:20.271Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:20.279Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 403 You are not allowed to delete this image","timestamp":"2026-09-21T06:27:20.400Z"}
+{"level":"warn","message":"POST /api/shops/6ab0ce482c5aed532b4d4fca/khata/apply -> 400 This shop does not offer Khata","timestamp":"2026-09-21T06:27:20.451Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 shippingAddress.street: Invalid input: expected string, received undefined; shippingAddress.city: Invalid input: expected string, received undefined","timestamp":"2026-09-21T06:27:20.452Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab0ce482c5aed532b4d4fcf/reject -> 400 rejectionReason: Invalid input: expected string, received undefined","timestamp":"2026-09-21T06:27:20.702Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-09-21T06:27:20.869Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab0ce482c5aed532b4d4fd4/approve -> 400 creditLimit: Credit limit must be greater than 0","timestamp":"2026-09-21T06:27:20.946Z"}
+{"level":"warn","message":"GET /api/shops/6ab0ce4945a11fd8790d34e6/customers -> 403 Not authorized for this shop","timestamp":"2026-09-21T06:27:21.454Z"}
+{"level":"warn","message":"GET /api/shops/6ab0ce4945a11fd8790d34e6/customers -> 403 Not authorized for this shop","timestamp":"2026-09-21T06:27:21.461Z"}
+{"level":"warn","message":"GET /api/shops/6ab0ce4945a11fd8790d34e6/customers -> 401 Not authorized, no token provided","timestamp":"2026-09-21T06:27:21.465Z"}
+{"level":"warn","message":"PATCH /api/orders/6ab0ce49e402209ca63ceffe/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-09-21T06:27:21.507Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient Khata credit for this order — choose another payment method","timestamp":"2026-09-21T06:27:22.077Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Khata is not available for this shop or your request is not yet approved","timestamp":"2026-09-21T06:27:22.321Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Khata payment is only available when all items in your cart are from the same shop","timestamp":"2026-09-21T06:27:22.683Z"}

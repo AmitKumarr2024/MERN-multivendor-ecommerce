@@ -6,6 +6,9 @@ jest.unstable_mockModule("../../modules/order/models/order.model.js", () => ({
 jest.unstable_mockModule("../../sockets/emit.js", () => ({
   emitOrderStatusUpdate: jest.fn(),
 }));
+jest.unstable_mockModule("../../services/loyalty/loyalty.service.js", () => ({
+  syncLoyaltyForOrder: jest.fn(),
+}));
 
 const { handleShipmentWebhook, selectBestCourier } =
   await import("../../services/logistics/logistics.service.js");

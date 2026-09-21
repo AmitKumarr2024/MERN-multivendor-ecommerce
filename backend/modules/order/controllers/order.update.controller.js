@@ -8,6 +8,7 @@ import {
 import { cancelOrder as cancelOrderService } from "../../../services/order.service.js";
 import { emitOrderStatusUpdate } from "../../../sockets/emit.js";
 import { createNotification } from "../../../services/notification.service.js";
+import { syncLoyaltyForOrder } from "../../../services/loyalty/loyalty.service.js";
 
 const VALID_STATUSES = [
   "pending",
@@ -41,6 +42,7 @@ export const updateOrderStatus = async (req, res, next) => {
 
     order.orderStatus = status;
     await order.save();
+    await syncLoyaltyForOrder(order);
 
     // Push the update to the buyer live - e.g. "Your order has been shipped!"
     emitOrderStatusUpdate(order.buyer, {

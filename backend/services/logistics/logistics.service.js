@@ -4,6 +4,7 @@ import Product from "../../modules/product/models/product.model.js";
 import Shop from "../../modules/shop/models/shop.model.js";
 import { BadRequestError, NotFoundError } from "../../exceptions/ApiError.js";
 import { emitOrderStatusUpdate } from "../../sockets/emit.js";
+import { syncLoyaltyForOrder } from "../loyalty/loyalty.service.js";
 
 /**
  * LOGISTICS SERVICE
@@ -233,6 +234,7 @@ export const handleShipmentWebhook = async (providerName, payload) => {
   }
 
   await order.save();
+  await syncLoyaltyForOrder(order);
 
   emitOrderStatusUpdate(order.buyer, {
     orderId: order._id,

@@ -19,6 +19,7 @@ import ShopHeader from "./sections/ShopHeader";
 import ProductsSection from "./sections/ProductsSection";
 import BusinessHoursCard from "./sidebar/BusinessHoursCard";
 import StaffSection from "./sidebar/StaffSection";
+import { LoyaltyInfoCard } from "@/features/loyalty";
 
 interface PublicShopPageProps {
     slug: string;
@@ -75,6 +76,7 @@ export default function PublicShopPage({ slug }: PublicShopPageProps) {
                 <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
                     <div className="min-w-0 space-y-6">
                         <KhataApplyCard shopId={shop._id} />
+                        <LoyaltyInfoCard shopId={shop._id} />
                         <ProductsSection
                             shopSlug={shop.slug}
                             shopId={shop._id}

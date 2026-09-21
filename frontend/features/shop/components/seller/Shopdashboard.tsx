@@ -14,6 +14,8 @@ import HolidayManager from "./Holidaymanager";
 import { SellerBroadcastForm } from "@/features/messaging";
 import { StaffList } from "@/features/staff";
 import { KhataSettingsToggle, KhataRequestsList } from "@/features/khata";
+import { SellerLoyalty } from "@/features/loyalty";
+
 
 
 
@@ -23,6 +25,7 @@ const NAV_ITEMS = [
     { key: "team", label: "Team", desc: "Staff, attendance, ratings", icon: TeamIcon },
     { key: "khata", label: "Khata", desc: "Credit requests & ledger", icon: KhataIcon },
     { key: "announcements", label: "Announcements", desc: "Live shop broadcasts", icon: MegaphoneIcon },
+    { key: "loyalty", label: "Loyalty", desc: "Points, rewards & customers", icon: KhataIcon },
 ] as const;
 
 type NavKey = (typeof NAV_ITEMS)[number]["key"];
@@ -167,6 +170,7 @@ export default function ShopDashboard() {
                             </div>
                         )}
                         {active === "announcements" && <SellerBroadcastForm />}
+                        {active === "loyalty" && <SellerLoyalty shopId={shop._id} />}
                     </div>
                 </div>
             </div>

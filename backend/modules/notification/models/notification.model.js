@@ -26,6 +26,10 @@ const NOTIFICATION_TYPES = [
   "khata_rejected",
   "khata_suspended",
   "khata_payment_recorded",
+  "loyalty_earned",
+  "loyalty_reversed",
+  "loyalty_redeemed",
+  "loyalty_adjusted",
 ];
 
 const notificationSchema = new mongoose.Schema(

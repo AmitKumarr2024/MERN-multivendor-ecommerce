@@ -25,19 +25,107 @@ anything still unverified from before>
 
 # E-Commerce Marketplace Frontend — Development Status
 
-> **Last updated:** 2026-09-18 (v9 — Digital Khata module built end-to-
-> end: buyer apply/dashboard/statement, seller settings/requests-list
-> (Card+Table)/detail-panel/actions, checkout payment-method
-> integration. Backend fully tested this session (169/169); this
-> module's frontend has zero test coverage, same as staff's.)
+
+> **Last updated:** 2026-09-21 (v11: Shop Loyalty / Reward Points frontend
+> written; NOT yet compiled or manually tested. Backend suite green at
+> 204/204.) Replaces v10.
+
+✅ **NEW since v10: Loyalty (`features/loyalty/`), ⚠️ unverified**
+- Seller: "Loyalty" tab in `Shopdashboard.tsx` -> `SellerLoyalty` with 3 tabs:
+  Program (`LoyaltyProgramForm`: enable, points per ₹, redeem threshold,
+  reward value, optional expiry, live example), Customers (`LoyaltyCustomers`:
+  All/Top, search, sort, pagination, History modal, Adjust modal with
+  mandatory reason), Redeemed rewards (`LoyaltyRedemptions`, "Mark as given").
+- Buyer: `/buyer/loyalty` -> `MyLoyalty` (per-shop balances, drill-down with
+  earned/redeemed/expired, next expiry warning, negative-balance notice,
+  available rewards + Redeem, voucher code, history via shared `TxList`,
+  "My rewards" list).
+- Public shop page: `LoyaltyInfoCard` (shows rules only when program enabled).
+- Redux: new `loyalty` slice, **19 reducers** now. Thunk generics kept on ONE
+  line (paste-corruption lesson). `addMatcher` splits `actionLoading`
+  (saveProgram/adjust/fulfill/redeem) from `loading`.
+- Uses project tokens (`border-default`, `bg-accent`, etc.) and
+  `components/ui/Modal` (with `open` prop).
+
+⚠️ **Wiring checklist (verify, none confirmed yet)**
+- `store.ts`: `loyalty: loyaltyReducer`
+- `app/buyer/loyalty/page.tsx` renders `<MyLoyalty />`
+- `Shopdashboard.tsx`: nav item `loyalty` + `{active === "loyalty" && <SellerLoyalty shopId={shop._id} />}`
+- `PublicShopPage.tsx`: `<LoyaltyInfoCard shopId={shop._id} />` beside `KhataApplyCard`
+- `nav.config.ts`: buyer menu "Loyalty Points" -> `/buyer/loyalty`
+- `notification.types.ts`: add `loyalty_*` (and the missing `khata_*`) to
+  `NotificationType` AND `NOTIFICATION_META`, otherwise `NotificationItem`
+  crashes (`meta` undefined) on those notifications.
+
+❌ **Pending:** run `npx tsc --noEmit` and fix (likely `addMatcher` typing in
+`loyaltySlice.ts`); manual E2E (enable program -> deliver order -> points ->
+redeem -> mark given -> cancel delivered order -> reversal); zero frontend
+tests; no mobile card view for the customers table.
+
+Also update: Master Tracker row 32 "Loyalty" 🟠; Redux section 7 -> 19
+reducers; Route tracker + `/buyer/loyalty`; Immediate next steps #0 ->
+verify loyalty frontend, then fix the `updateOrderStatus` cancel bug.
+
+
+> 2026-09-21 (v10 — Shop Following + Customer
+> Segments built: follow button on shop page, buyer "Followed shops"
+> page, seller Customers page with New/Returning/Regular tabs. Backend
+> suite green at 182/182. This module's frontend has zero tests, same
+> gap as khata and staff.)
 > **Purpose:** Living frontend handoff + date-wise progress tracker.
-> **Note:** This replaces v8 (2026-08-26). See section 0 for what's new.
+> **Note:** This replaces v9 (2026-09-18). See section 0 for what's new.
 
 ---
 
 ## 0. TL;DR — what's actually done right now
 
 If you only read one section, read this one.
+
+✅ **NEW since v9 — Shop Following + Customer Segments (`features/follow/`):**
+
+- **Buyer**:
+  - `FollowButton` — rendered in `ShopHeader.tsx` (public shop page).
+    Shows Follow / Following (`aria-pressed`) plus "N followers · M
+    customers" (public aggregate counts). Guests are redirected to
+    `/login?redirect=...`; the shop owner never sees it
+    (`user.shop === shopId`).
+  - `FollowedShopsList` at **`/buyer/following`** — followed shops with
+    open/closed status, city, follow date, unfollow (optimistic list
+    removal). Linked from the buyer account dropdown as "Followed Shops"
+    (`nav.config.ts`).
+- **Seller**: `SellerCustomers` at **`/seller/customers`** (route now
+  replaces the old ComingSoon page; `SellerCustomersPage` loads the
+  seller's shop first). Summary cards (customers, regular, followers,
+  revenue), tabs New/Returning/Regular/All with counts, debounced
+  search, sort (latest order / most orders / highest spend / oldest),
+  paginated table (name, segment badge, orders, total spent, first
+  order, last order, last activity, "follower" tag) and a footnote with
+  the live rules from the API. "Customers" added to `SellerSidebar`.
+- **Redux**: new `follow` slice (**18 reducers** now). State:
+  `byShop` (per-shop follow status so many buttons coexist),
+  `publicStats`, `followed`, `customers`, `mutatingShopId`, `loading`,
+  `error`. Thunks: `fetchShopPublicStats`, `fetchFollowStatus`,
+  `followShop`, `unfollowShop`, `fetchMyFollowedShops`,
+  `fetchShopCustomers`. Selectors in `followSelectors.ts`.
+- **Rules live on the backend** (`CUSTOMER_RULES`): regular = 3+ orders
+  in 180 days with 2+ delivered; returning = 2+; new = 1; cancelled
+  ignored; following never affects segment. Frontend just displays what
+  `rules` returns.
+- Private customer data is only requested by the seller page; public
+  pages only ever call the counts endpoint.
+
+❌ **Pending from this work:** zero frontend tests for follow; the
+customer table is desktop-first (`min-w-[820px]` with horizontal scroll,
+no mobile card view); thunk `rejected` handlers use `error.message`
+(generic axios text) rather than the backend message; no follower
+notifications (`new_shop`/`new_product` types exist but nothing sends
+them yet).
+
+⚠️ **Wiring checklist (if anything looks missing)**: `store.ts` has
+`follow: followReducer`; `ShopHeader.tsx` renders `<FollowButton>`;
+`nav.config.ts` buyer menu has Followed Shops; `SellerSidebar` has
+Customers; backend `index.js` mounts `/api/follows` and
+`/api/shops/:shopId/customers`.
 
 ✅ **NEW since v8 — Digital Khata module built end-to-end, frontend
 + backend, this session:**
@@ -194,7 +282,7 @@ pending, day-by-day calendar still not built — all unchanged from v8).
 | Application      | Multi-vendor e-commerce marketplace ("Amitora Market")                                                                                                                                                                              |
 | Frontend         | Next.js 16 App Router + TypeScript (Turbopack)                                                                                                                                                                                      |
 | Styling          | Tailwind CSS v4, semantic dark-mode color tokens — confirmed convention: `border-default`, `bg-surface`, `text-secondary`/`text-primary`/`text-muted`, `bg-accent`/`text-accent-foreground` for active/selected states             |
-| State Management | Redux Toolkit — **17 reducers** (16 → 17: `khata` added this session)                                                                                                                                                               |
+| State Management | Redux Toolkit — **18 reducers** (17 → 18: `follow` added 2026-09-21)                                                                                                                                                               |
 | HTTP Client      | Axios (`services/axios.ts`)                                                                                                                                                                                                         |
 | Real-time        | Socket.io client, single global connection (`providers/SocketProvider.tsx` is canonical)                                                                                                                                            |
 | Authentication   | HttpOnly JWT cookie + Redux auth state                                                                                                                                                                                              |
@@ -239,10 +327,11 @@ _(unchanged)_
 |  25 | Related/Similar Products         |   ✅   | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | —                                                                             |
 |  26 | Search (Amazon-style)            |   ✅   | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Real search-analytics for trending (still a proxy)                            |
 |  27 | Seller Settings / Shipping       |   ❌   | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Backend-dependent                                                             |
-| 27b | Seller Analytics / Customers     |   🟠   | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Backend-dependent                                                             |
+| 27b | Seller Analytics / Customers     |   🟠   | **Customers now built** (`/seller/customers`, see row 31). Analytics still ComingSoon/backend-dependent.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Backend-dependent                                                             |
 |  28 | Payment gateway                  |   ⏳   | Explicitly stopped. Khata is not a gateway and does not reopen this.                                                                                                                                                                                                                                                                                                                                                                                                                            | Don't resume unless asked                                                     |
 |  29 | Shop Staff / Team Management     |   🟠   | Unchanged from v8 — day-by-day calendar still not built, zero frontend tests, `StaffRosterCard` decision pending.                                                                                                                                                                                                                                                                                                                                                                              | Build day-by-day calendar; add tests; decide on `StaffRosterCard` consistency |
 |  30 | **Digital Khata (credit ledger)**|   🟠   | **NEW this session.** Full buyer + seller UI built and wired (apply, approve/reject/suspend/reactivate, credit limit, record payment, statements, close-month, Card/Table requests list with pagination), plus checkout integration. Backend fully tested; **frontend has zero tests**.                                                                                                                                                                                                     | Add frontend test coverage; spot-check `Modal.tsx`'s actual portal/scroll-lock behavior |
+|  31 | **Shop Following + Customers**   |   🟠   | **NEW 2026-09-21.** FollowButton, Followed Shops page, seller Customers page (segments/search/sort/pagination). Backend tested (13 tests); frontend has zero tests. | Add frontend tests; mobile card view for customers table |
 
 ---
 
@@ -347,6 +436,7 @@ frontend/
 
 | URL              |  Status  |
 | ---------------- | :------: |
+| `/buyer/following` | ✅ NEW 2026-09-21 — renders `<FollowedShopsList />` |
 | `/buyer/khata`   | ✅ NEW — renders `<MyKhatasList />` |
 | `/buyer/checkout`| ✅ — now includes the khata payment option (single-shop carts only) |
 | _(rest unchanged from v8)_ | |
@@ -355,6 +445,7 @@ frontend/
 
 | URL                                                                                                                              |                                Status                                |
 | -------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------: |
+| `/seller/customers` | ✅ NEW 2026-09-21 — `SellerCustomersPage` (replaced ComingSoon) |
 | `/seller/shop`                                                                                                                    | ✅ — now has a "Khata" nav item alongside Details/Hours/Team/Announcements |
 | _(rest unchanged from v8)_                                                                                                        |                                                                        |
 
@@ -365,6 +456,10 @@ _(unchanged)_
 ---
 
 ## 7. Redux Store — UPDATED
+
+**18 reducers as of 2026-09-21**: `follow: followReducer` (from
+`@/features/follow`) added after `khata`; see section 0 for its state
+shape and thunks.
 
 **17 reducers** (was 16): `khata: khataReducer` added, imported from
 `@/features/khata`'s barrel export. `khataSlice.ts` handles apply/
@@ -409,6 +504,11 @@ from `Navbar.tsx`/`ShopDashboard.tsx`, not by re-deriving them).
 ## 11. Immediate Next Steps — UPDATED
 
 ```text
+0. Add frontend tests for features/follow (and mobile card view for
+   the seller customers table) — same gap as khata/staff.
+
+        ↓
+
 1. Add frontend test coverage for the Khata module
    └── Backend is fully tested (169/169). Frontend has zero tests,
        same gap as Staff's frontend — now two modules with this gap.
@@ -467,6 +567,13 @@ from `Navbar.tsx`/`ShopDashboard.tsx`, not by re-deriving them).
 
 ## 12. Continuation Prompt
 
+> **2026-09-21 addition**: Redux now has **18 reducers** (`follow` added).
+> `features/follow/` provides `FollowButton` (shop header), `FollowedShopsList`
+> (`/buyer/following`) and `SellerCustomers` (`/seller/customers`). Customer
+> segments are derived server-side from Order history (never from following);
+> the frontend only renders them. Public pages must only call the counts
+> endpoint, never the customers list.
+>
 > This is a Next.js 16 (Turbopack) multi-vendor e-commerce marketplace
 > frontend ("Amitora Market") using TypeScript, Tailwind CSS v4, Redux
 > Toolkit (**17 reducers**), Axios, HttpOnly JWT authentication,
@@ -781,7 +888,7 @@ sessions unverified**, treat with real suspicion).
 |  25 | Related/Similar Products         |   ✅   | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | —                                                                             |
 |  26 | Search (Amazon-style)            |   ✅   | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Real search-analytics for trending (still a proxy)                            |
 |  27 | Seller Settings / Shipping       |   ❌   | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Backend-dependent                                                             |
-| 27b | Seller Analytics / Customers     |   🟠   | Unchanged.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Backend-dependent                                                             |
+| 27b | Seller Analytics / Customers     |   🟠   | **Customers now built** (`/seller/customers`, see row 31). Analytics still ComingSoon/backend-dependent.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | Backend-dependent                                                             |
 |  28 | Payment gateway                  |   ⏳   | Explicitly stopped.                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | Don't resume unless asked                                                     |
 |  29 | **Shop Staff / Team Management** |   🟠   | **Major UI redesign this session.** Card/Table view toggle, Add/Edit/Attendance now open in a shared `Modal` dialog (portal-based, mobile bottom-sheet), public `StaffCard`→`StaffProfileModal` click flow fixed and confirmed wired, several visual bugs fixed (dropdown clipping, dark-token mismatch, label clipping, literal-string bug). Day-by-day calendar grid still not built. Zero frontend tests. `StaffRosterCard` interaction pattern not yet aligned with the rest of the module. | Build day-by-day calendar; add tests; decide on `StaffRosterCard` consistency |
 

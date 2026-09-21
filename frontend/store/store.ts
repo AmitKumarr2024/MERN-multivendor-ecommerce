@@ -17,7 +17,7 @@ import searchReducer from "@/features/search/store/searchSlice";
 import { staffReducer } from "@/features/staff";
 import { khataReducer } from "@/features/khata";
 import { followReducer } from "@/features/follow";
-
+import { loyaltyReducer } from "@/features/loyalty";
 
 /**
  * =========================================================
@@ -69,7 +69,8 @@ export const makeStore = () => {
       search: searchReducer,
       staff: staffReducer,
       khata: khataReducer,
-      follow: followReducer
+      follow: followReducer,
+      loyalty: loyaltyReducer,
     },
   });
 };

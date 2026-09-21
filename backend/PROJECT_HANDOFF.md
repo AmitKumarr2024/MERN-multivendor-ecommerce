@@ -6,12 +6,165 @@ Paste this entire document at the start of a new chat to continue exactly where 
 
 Paste this entire document at the start of a new chat to continue exactly where I left off.
 
-**Last updated:** 2026-09-18. Since the 2026-08-26 handoff, backend work
-resumed with a full new module: **Digital Khata (shop-specific buyer
-credit ledger)**, plus order-checkout integration for "pay with khata"
-and a batch of real bugs found and fixed via the test suite. See below
-for full detail. Everything from 2026-08-26 and earlier is otherwise
+**Last updated:** 2026-09-21 (later session). New module: **Shop Loyalty /
+Reward Points (`modules/loyalty`)**. Full suite green: **18 suites / 204
+tests** (182 -> 204; +18 service tests, +4 HTTP tests).
+
+---
+
+## 🆕 2026-09-21 (later) SESSION — Shop Loyalty / Reward Points (backend built + tested)
+
+**Concept**: each seller can enable a shop-specific loyalty program. Buyers
+earn points on delivered orders and redeem them for rewards. Points are
+shop-specific (Shop A points never work at Shop B). No payment-gateway link.
+
+**Design decisions**
+- Earn on `orderStatus === "delivered"` only, and only if the program is
+  enabled at that moment. Formula: `floor(itemsSubtotal / spendAmount) * pointsPerUnit`
+  (tax and shipping excluded).
+- Idempotency: unique sparse `dedupeKey` on the ledger (`earn:<orderId>`,
+  `reversal:<orderId>`). Repeated webhook / repeated status update / parallel
+  calls never double-award. The tx row is inserted BEFORE the balance moves.
+- Cancelled or refunded after earning -> one reversal. If points were already
+  spent the balance goes negative and redemption is blocked until recovered.
+- Redeem = whole multiples of `minRedeemPoints`, each worth `rewardValue` (₹),
+  issues a voucher code (`RWD-XXXXXXXX`); seller marks it fulfilled. Balance
+  decrement is a guarded atomic `$inc` (`balance >= cost`), so concurrent
+  redeems cannot overspend (tested).
+- Optional expiry: each earn is a "lot" (`remaining`, `expiresAt`), spent
+  oldest-first, expired lazily on read/redeem/adjust (writes an `expire` row).
+- Adjustments: shop owner or admin, mandatory reason, seller cap ±10,000 per
+  adjustment (admin bypasses), cannot push balance below zero, always a
+  ledger row with `createdBy`.
+- Owner-only: save program, fulfill redemption. Owner or admin: view
+  customers, top customers, history, adjust.
+
+**New files**
+- `modules/loyalty/models/`: `loyaltyProgram.model.js` (one per shop),
+  `loyaltyAccount.model.js` (unique `(shop, buyer)`), `loyaltyTransaction.model.js`
+  (append-only, types earn/redeem/reversal/expire/adjust), `loyaltyRedemption.model.js`
+- `modules/loyalty/loyalty.validation.js`, `controllers/loyalty.controller.js`,
+  `routes/shopLoyalty.routes.js` (mounted `/api/shops/:shopId/loyalty`),
+  `routes/loyalty.routes.js` (mounted `/api/loyalty`)
+- `services/loyalty/loyalty.service.js`: `calculatePoints` (pure),
+  `writeEntry` (the ONLY place balances change), `earnForOrder`,
+  `reverseForOrder`, `syncLoyaltyForOrder` (single idempotent entry point,
+  never throws), seller/buyer functions
+- Tests: `tests/services/loyalty.service.test.js` (18),
+  `tests/modules/loyalty.test.js` (4)
+
+**Endpoints**
+| Method | Route | Access |
+| --- | --- | --- |
+| GET | `/api/shops/:shopId/loyalty/program/public` | Public, rules only |
+| GET/PUT | `/api/shops/:shopId/loyalty/program` | Owner/admin view, owner save |
+| GET | `/api/shops/:shopId/loyalty/customers` (`?search&sort&page`) | Owner/admin |
+| GET | `/api/shops/:shopId/loyalty/customers/top` | Owner/admin |
+| GET | `/api/shops/:shopId/loyalty/customers/:buyerId/transactions` | Owner/admin |
+| POST | `/api/shops/:shopId/loyalty/customers/:buyerId/adjust` | Owner/admin |
+| GET | `/api/shops/:shopId/loyalty/redemptions` | Owner/admin |
+| PATCH | `/api/shops/:shopId/loyalty/redemptions/:id/fulfill` | Owner only |
+| GET | `/api/loyalty/my`, `/my/redemptions` | Buyer |
+| GET | `/api/loyalty/shop/:shopId`, `/shop/:shopId/transactions` | Buyer |
+| POST | `/api/loyalty/shop/:shopId/redeem` | Buyer |
+
+**Wiring done**
+- `index.js`: mounts both loyalty routers
+- `notification.model.js` enum gained `loyalty_earned`, `loyalty_reversed`,
+  `loyalty_redeemed`, `loyalty_adjusted` (same enum-bug lesson as khata)
+- `order.update.controller.js` `updateOrderStatus` and
+  `logistics.service.js` `handleShipmentWebhook` call `syncLoyaltyForOrder(order)`
+  after `order.save()`. `cancelMyOrder` needs no hook (only pending/confirmed
+  can be cancelled there, so nothing was earned yet)
+- `logistics.service.test.js` mocks `loyalty.service.js` (else it pulls in
+  notification/emit)
+
+**Gotchas / open items**
+- `validate(schema, "params")` REPLACES req.params, so each params schema must
+  list every param its route uses or Zod strips it.
+- Mongoose deprecation warning: `{ new: true }` -> `returnDocument: "after"`.
+  Harmless, also present in older code.
+- Khata-paid orders also earn points on delivery (decision: yes).
+- No void/refund of an issued reward yet (would be a positive ledger row).
+- Lot bookkeeping is not in a multi-doc transaction (standalone Mongo).
+- ⚠️ EXISTING BUG (not fixed): `updateOrderStatus` -> `cancelled` does not
+  restore stock or reverse a Khata charge. Loyalty handles it, stock/khata
+  do not. Route it through `cancelOrder` in `order.service.js`.
+
+  
+ 2026-09-21. Since the 2026-09-18 handoff, backend gained
+a new module: **Shop Following + Customer Segments (`modules/follow`)**.
+Full suite is green: **16 suites / 182 tests** (169 -> 182, +13 new
+follow tests). Everything from 2026-09-18 (Khata) and earlier is
 unchanged and preserved further down.
+
+---
+
+## 🆕 2026-09-21 SESSION — Shop Following + Customer Segments (backend built + tested)
+
+**Concept**: buyers follow/favorite local shops; sellers see customers
+split into New / Returning / Regular. **Following never decides
+segment** — segments come from real Order history.
+
+**Architecture decision (inspected first)**: wishlist is product-only and
+`Notification.model.js` only mentions shop followers in a comment, so no
+follow mechanism existed to extend. Added ONE small collection
+(`ShopFollow`). Customer data is **derived from `Order`** (aggregation),
+no separate customer table to keep in sync.
+
+**New files** (mirrors khata layout: `services/khata/` -> `services/follow/`):
+- `modules/follow/models/shopFollow.model.js` — `{user, shop}`, unique
+  compound index `(user, shop)`
+- `modules/follow/follow.validation.js` — Zod: `shopIdParamSchema`,
+  `followedShopsQuerySchema`, `customersQuerySchema`
+- `modules/follow/controllers/follow.controller.js` — thin `wrap()` helper
+  returning `{ success, data }`
+- `modules/follow/routes/follow.routes.js` (mounted `/api/follows`) and
+  `modules/follow/routes/shopCustomers.routes.js` (mounted
+  `/api/shops/:shopId/customers`, `mergeParams: true`)
+- `services/follow/follow.service.js` — follow (idempotent, E11000 caught;
+  owner cannot follow own shop -> 400; inactive shop -> 404), unfollow,
+  status, `getMyFollowedShops` (hides deactivated shops, adds computed
+  `isOpen`, strips hours), `getPublicShopStats` (counts only)
+- `services/follow/customerStats.service.js` — `CUSTOMER_RULES`,
+  pure `classifyCustomer()`, `getShopCustomers()` (ownership-over-role
+  check, then `$group` by buyer, in-memory segment/search/sort/paginate)
+- `tests/modules/follow.test.js` — 13 tests (5 pure classifier, 5
+  follow/unfollow/public-stats, 3 seller customers/authorization)
+
+**Segment rules** (qualifying = `orderStatus != "cancelled"`):
+- new: exactly 1 order · returning: 2+ orders
+- regular: 3+ orders in last 180 days AND at least 2 of those delivered
+- Tunable in `CUSTOMER_RULES` (WINDOW_DAYS 180, REGULAR_MIN_ORDERS 3,
+  REGULAR_MIN_DELIVERED 2). Verified by test: a follower with no orders
+  is NOT a customer.
+
+**Endpoints**:
+| Method | Route | Access |
+| --- | --- | --- |
+| GET | `/api/follows/shop/:shopId/stats` | Public — `{followerCount, customerCount}` only |
+| GET | `/api/follows/me` | Buyer — followed shops, paginated |
+| GET | `/api/follows/shop/:shopId/status` | Buyer — `{following, followerCount}` |
+| POST | `/api/follows/shop/:shopId` | Buyer — follow (201, idempotent) |
+| DELETE | `/api/follows/shop/:shopId` | Buyer — unfollow |
+| GET | `/api/shops/:shopId/customers` | Shop owner only — `?segment&search&sort&page&limit`, returns `items, summary, rules, total, page, pages` |
+
+Seller item fields: `buyerId, name, email, segment, orderCount,
+totalSpent, firstOrderAt, lastOrderAt, lastActivityAt, isFollower`
+(`lastActivityAt` = max of last order `updatedAt` and follow date).
+Private data is seller-only; other sellers/buyers get 403, guests 401.
+
+**Wired into `index.js`**: `app.use("/api/shops/:shopId/customers",
+shopCustomersRoutes)` and `app.use("/api/follows", followRoutes)`.
+
+**Gotchas**: (1) `validate(schema, "params")` works because params is a
+plain writable object; `"query"` uses the in-place mutation fix. (2)
+Customer list is computed in memory after the `$group` — fine at shop
+scale, revisit with `$facet`/pagination in the pipeline if a shop reaches
+tens of thousands of buyers. (3) No notifications are sent for follows
+(no new Notification enum values needed).
+
+**Frontend**: see frontend handoff v10 (`features/follow/`).
 
 ---
 
@@ -553,6 +706,7 @@ backend/
 ├── middleware/ authMiddleware.js, errorHandler.js, httpLogger.js,
 │ rateLimiter.js, upload.js, validate.js ⚠️ query-source bug fixed 2026-08-20
 ├── modules/
+│ ├── follow/ models/shopFollow.model.js, controllers/, routes/ (follow, shopCustomers), follow.validation.js  ← NEW 2026-09-21
 │ ├── admin/ controllers/ (..., review.controller.js), routes/admin.routes.js
 │ ├── auth/ models/, controllers/, routes/, auth.validation.js
 │ ├── cart/ models/, controllers/, routes/, cart.validation.js
@@ -604,6 +758,10 @@ search fallback tradeoff, `product.routes.index.js` staleness incident,
 staff module's rating/eligibility patterns)_
 
 ## Test status
+
+**Latest confirmed full-suite run: 182/182 tests, 16/16 suites,
+2026-09-21** (includes 13 new `follow.test.js` tests). Older notes below
+kept for history.
 
 **Last confirmed full-suite run: 124/124 tests, 13/13 suites,
 2026-08-20.** No backend test run occurred this session (2026-08-26 was
