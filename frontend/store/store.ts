@@ -18,6 +18,7 @@ import { staffReducer } from "@/features/staff";
 import { khataReducer } from "@/features/khata";
 import { followReducer } from "@/features/follow";
 import { loyaltyReducer } from "@/features/loyalty";
+import {offerReducer} from "@/features/offers";
 
 /**
  * =========================================================
@@ -71,6 +72,7 @@ export const makeStore = () => {
       khata: khataReducer,
       follow: followReducer,
       loyalty: loyaltyReducer,
+      offers: offerReducer
     },
   });
 };

@@ -8,6 +8,7 @@ const shippingAddressSchema = z.object({
   state: z.string().trim().optional(),
   pincode: z.string().trim().optional(),
   country: z.string().trim().optional(),
+  couponCode: z.string().trim().min(1).optional(),
 });
 
 export const checkoutSchema = z.object({

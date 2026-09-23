@@ -6,7 +6,141 @@ Paste this entire document at the start of a new chat to continue exactly where 
 
 Paste this entire document at the start of a new chat to continue exactly where I left off.
 
-**Last updated:** 2026-09-21 (later session). New module: **Shop Loyalty /
+**Last updated:** 2026-09-22. New module: **Seller Offers / Coupons (`modules/offer`)**.
+
+---
+
+## 🆕 2026-09-22 SESSION — Seller Offers & Coupons (backend built + tested)
+
+**Concept**: shop-scoped promotional codes. Percentage or fixed discount,
+optional min order value, optional max discount cap (percentage only),
+scoped to the whole shop / one category / specific products, optional
+start/end dates, optional total usage limit, and a per-customer limit
+(default 1). Extends `pricing.service.js`'s existing `couponDiscount`
+concept (already accepted by `calculateOrderTotal`) rather than building a
+second pricing system.
+
+**Design decisions** (same shape as Khata's ledger pattern):
+- `Offer.usedCount` is the only denormalized counter, and it is *only* ever
+  touched via `redeemOffer()`'s guarded atomic `$inc` (`usageLimit` acts as
+  a `$lt` filter on the update) — concurrent checkouts cannot oversell a
+  limited-run coupon.
+- `OfferRedemption` is an append-only audit row per `(offer, order)` —
+  unique compound index prevents double-redeeming the same order.
+  Per-customer limit is counted live from non-reversed redemption rows,
+  not a second counter — same "count from the ledger, don't trust a
+  cached number" principle as Khata's outstanding balance.
+- Cancelling an order calls `reverseOfferRedemption(order._id)`, which
+  sets `reversedAt` (never deletes the row) and decrements `usedCount` —
+  mirrors `reverseKhataCharge`. History is permanent, same rule as
+  `KhataTransaction`.
+- `validateCoupon()` is the single server-side source of truth. It's
+  called twice: once for the buyer's checkout-page preview
+  (`POST /api/shops/:shopId/offers/validate-coupon`, reading their live
+  cart), and again — **never trusted from the frontend** — inside
+  `checkoutCart()` right before the `Order` is created, using the same
+  per-shop-group items just priced for the order.
+- Coupons, like Khata, are shop-specific — a multi-vendor cart with a
+  `couponCode` is rejected with the same "same shop" message pattern
+  used for Khata payment.
+- `Order.discount` (field already existed, was previously always 0) is
+  now actually populated; `grandTotal` is computed as
+  `Math.max(itemsSubtotal + tax - discount, 0)` — guarded so it can
+  never go negative even with a misconfigured fixed-amount coupon.
+
+**New files**
+- `modules/offer/models/offer.model.js` — unique compound index
+  `(shop, code)`; `isWithinDateWindow()` instance method
+- `modules/offer/models/offerRedemption.model.js` — unique compound
+  index `(offer, order)`; `reversedAt` marks cancellation instead of
+  deleting
+- `modules/offer/offer.validation.js` — Zod schemas with cross-field
+  refinements (percentage ≤ 100, endDate > startDate, scope-specific
+  arrays required)
+- `modules/offer/controllers/offer.controller.js` (seller CRUD +
+  public list), `controllers/coupon.controller.js` (buyer
+  validate-against-cart)
+- `modules/offer/routes/shopOffer.routes.js` — mounted
+  `/api/shops/:shopId/offers`, route-order discipline followed
+  (`/public` before the generic `/:id`)
+- `services/offer/offer.service.js` — `calculateOfferDiscount` (pure,
+  no DB — mirrors `pricing.service.js`'s style), `validateCoupon`,
+  `redeemOffer`, `reverseOfferRedemption`, seller CRUD
+  (`createOffer`/`updateOffer`/`deleteOffer`/`listShopOffers`/
+  `getOfferForOwner`), `getPublicShopOffers`
+- Tests: `tests/services/offer.service.test.js` (16 tests — discount
+  math, ownership, duplicate codes, expiry, minimum order, product
+  scoping, usage limits, per-customer limits, redeem/reverse
+  round-trip, exhausted-limit rejection)
+
+**Endpoints**
+| Method | Route | Access |
+| --- | --- | --- |
+| GET | `/api/shops/:shopId/offers/public` | Public — active, in-date-window, not-exhausted offers only |
+| POST | `/api/shops/:shopId/offers/validate-coupon` | Buyer — validates a code against their live cart for this shop |
+| GET | `/api/shops/:shopId/offers` | Owner — list all offers (including inactive/expired) |
+| POST | `/api/shops/:shopId/offers` | Owner — create |
+| GET | `/api/shops/:shopId/offers/:id` | Owner — single offer detail |
+| PUT | `/api/shops/:shopId/offers/:id` | Owner — update |
+| DELETE | `/api/shops/:shopId/offers/:id` | Owner — delete |
+
+**Order integration**
+- `order.validation.js`'s `checkoutSchema` gained `couponCode` (optional
+  string).
+- `Order.model.js` gained `couponCode` (String, default null) and
+  `offer` (ObjectId ref "Offer", default null).
+- `order.service.js`'s `checkoutCart()`:
+  - rejects `couponCode` on a multi-shop cart, same as Khata
+  - re-validates the coupon per shop group (never trusts the earlier
+    preview call) against the exact line items being priced
+  - applies `discount` to `grandTotal` with the negative-total guard
+  - calls `redeemOffer()` immediately after the `Order.create()` for
+    that shop group succeeds
+  - on any later failure in the same checkout (e.g. a second shop
+    group's stock check fails, or Khata charging fails), the coupon
+    redemption is rolled back via `reverseOfferRedemption()` in the
+    same `catch` block that already rolls back stock and Khata charges
+- `order.service.js`'s `cancelOrder()` calls `reverseOfferRedemption()`
+  unconditionally (no-op if the order had no offer) — mirrors how it
+  already conditionally reverses a Khata charge.
+- `order.create.controller.js` passes `req.body.couponCode` through to
+  `checkoutCart()` — one-line addition.
+
+**Wired into `index.js`**: `app.use("/api/shops/:shopId/offers",
+shopOfferRoutes)`.
+
+**Gotchas / open items**
+- `maxDiscountAmount` only makes sense for `discountType: "percentage"`.
+  Validation does **not** hard-block setting it on a `fixed` offer — it's
+  simply ignored by `calculateOfferDiscount` since the cap logic only
+  runs in the percentage branch. Consider a stricter Zod refine
+  (`discountType === "fixed" → maxDiscountAmount must be undefined`) if
+  this proves confusing in the seller UI.
+- No coupon "stacking" — one `couponCode` per checkout call, by design.
+  If a future request wants multiple simultaneous discounts, that's a
+  new scope decision, not a bug in this implementation.
+- Coupon + Khata can be used together in the same checkout — the coupon
+  discount reduces `grandTotal` *before* `chargeKhataForOrder()` is
+  called with that reduced total, so the buyer's Khata balance is only
+  charged the post-discount amount. This is intentional but not yet
+  covered by a dedicated combined-flow test — worth adding if this
+  combination turns out to be common.
+- Same enum-registration lesson as every prior module: if a future
+  session adds offer-related notifications (e.g. "your coupon is about
+  to expire"), the new `type` string **must** be added to
+  `Notification.model.js`'s enum in the same change, or
+  `createNotification()` will throw and silently fail whatever service
+  call triggered it (this has bitten Staff, Khata, and Loyalty in past
+  sessions — see their sections above).
+- Offer deletion (`deleteOffer`) is a hard delete, unlike Staff's
+  soft-delete pattern (`removedAt`). This is deliberate — unlike staff
+  members, a deleted offer has no ongoing attendance/feedback history
+  tied to it that needs preserving; its `OfferRedemption` rows remain
+  intact independently (they don't reference the offer's mutable
+  fields, just its `_id`), so deleting the `Offer` document does not
+  corrupt historical order/redemption data.
+
+2026-09-21 (later session). New module: **Shop Loyalty /
 Reward Points (`modules/loyalty`)**. Full suite green: **18 suites / 204
 tests** (182 -> 204; +18 service tests, +4 HTTP tests).
 

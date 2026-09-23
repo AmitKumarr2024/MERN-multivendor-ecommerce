@@ -27007,3 +27007,894 @@
 {"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.614 ms - -\u001b[0m","timestamp":"2026-09-21T10:30:54.323Z"}
 {"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.045 ms - -\u001b[0m","timestamp":"2026-09-21T10:30:54.331Z"}
 {"level":"debug","message":"Socket disconnected: user 6a86e318c640cdbe4bdd6fc5","timestamp":"2026-09-21T10:31:51.100Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-09-22T05:03:00.611Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-09-22T05:03:00.635Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-09-22T05:03:00.640Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-09-22T05:03:00.690Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:03:54.906Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 User with this email already exists","timestamp":"2026-09-22T05:03:56.148Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 password: Password must be at least 6 characters","timestamp":"2026-09-22T05:03:56.173Z"}
+{"level":"warn","message":"GET /api/staff/6ab20c3c05810f48b0fe2b94/attendance?month=8&year=2026 -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:03:56.292Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 Only JPEG, PNG, WEBP, or GIF images are allowed","timestamp":"2026-09-22T05:03:56.303Z"}
+{"level":"warn","message":"POST /api/products -> 400 Please create your shop before adding products","timestamp":"2026-09-22T05:03:56.436Z"}
+{"level":"warn","message":"PUT /api/shops/6ab20c3cefcdeb9eaba335c0/loyalty/program -> 400 spendAmount: Too small: expected number to be >=1","timestamp":"2026-09-22T05:03:56.451Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 No image file provided (expected field name 'image')","timestamp":"2026-09-22T05:03:56.572Z"}
+{"level":"warn","message":"POST /api/follows/shop/6ab20c3cc9d848740d3ecb99 -> 400 You cannot follow your own shop","timestamp":"2026-09-22T05:03:56.641Z"}
+{"level":"warn","message":"PUT /api/shops/6ab20c3cefcdeb9eaba335c0/loyalty/program -> 403 Not authorized for this shop","timestamp":"2026-09-22T05:03:56.749Z"}
+{"level":"warn","message":"GET /api/shops/6ab20c3cefcdeb9eaba335c0/loyalty/customers -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:03:56.766Z"}
+{"level":"warn","message":"POST /api/products -> 400 Invalid category","timestamp":"2026-09-22T05:03:56.827Z"}
+{"level":"warn","message":"POST /api/staff/6ab20c3c05810f48b0fe2b97/attendance -> 403 You do not own this shop","timestamp":"2026-09-22T05:03:56.870Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 File is too large. Maximum size is 5MB.","timestamp":"2026-09-22T05:03:56.952Z"}
+{"level":"warn","message":"POST /api/follows/shop/6ab20c3cc9d848740d3ecb9b -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:03:56.985Z"}
+{"level":"warn","message":"POST /api/shops -> 400 You already have a shop","timestamp":"2026-09-22T05:03:56.999Z"}
+{"level":"warn","message":"POST /api/shops -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:03:57.026Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-09-22T05:03:57.242Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-09-22T05:03:57.267Z"}
+{"level":"warn","message":"POST /api/follows/shop/not-an-id -> 400 shopId: A valid shop id is required","timestamp":"2026-09-22T05:03:57.272Z"}
+{"level":"warn","message":"GET /api/auth/me -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:03:57.286Z"}
+{"level":"warn","message":"GET /api/shops/does-not-exist -> 404 Shop not found","timestamp":"2026-09-22T05:03:57.369Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab20c3de584c042b0b52c0c/approve -> 403 Not authorized for this shop","timestamp":"2026-09-22T05:03:57.556Z"}
+{"level":"warn","message":"POST /api/loyalty/shop/6ab20c3defcdeb9eaba335c3/redeem -> 400 You need 50 points to redeem this reward","timestamp":"2026-09-22T05:03:57.616Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 Upload error: Unexpected field","timestamp":"2026-09-22T05:03:58.113Z"}
+{"level":"warn","message":"PUT /api/products/6ab20c3d3e75af3a4c4472ff -> 403 You are not allowed to modify this product","timestamp":"2026-09-22T05:03:58.299Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Your cart is empty","timestamp":"2026-09-22T05:03:58.371Z"}
+{"level":"warn","message":"PUT /api/shops/me/slug -> 400 This shop URL is already taken","timestamp":"2026-09-22T05:03:58.380Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 No image files provided (expected field name 'images')","timestamp":"2026-09-22T05:03:58.415Z"}
+{"level":"warn","message":"POST /api/shops/6ab20c3eefcdeb9eaba335d0/loyalty/customers/6ab20c3eefcdeb9eaba335d1/adjust -> 400 reason: Invalid input: expected string, received undefined","timestamp":"2026-09-22T05:03:58.451Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab20c3ee584c042b0b52c13/approve -> 403 Not authorized for this shop","timestamp":"2026-09-22T05:03:58.559Z"}
+{"level":"warn","message":"GET /api/khata/my -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:03:58.595Z"}
+{"level":"warn","message":"GET /api/products/6ab20c3e3e75af3a4c447305 -> 404 Product not found","timestamp":"2026-09-22T05:03:58.726Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 400 publicId is required","timestamp":"2026-09-22T05:03:58.978Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:03:58.993Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 shippingAddress.street: Invalid input: expected string, received undefined; shippingAddress.city: Invalid input: expected string, received undefined","timestamp":"2026-09-22T05:03:59.064Z"}
+{"level":"warn","message":"POST /api/shops/6ab20c3ee584c042b0b52c16/khata/apply -> 400 This shop does not offer Khata","timestamp":"2026-09-22T05:03:59.189Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 403 You are not allowed to delete this image","timestamp":"2026-09-22T05:03:59.269Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab20c3fe584c042b0b52c1b/reject -> 400 rejectionReason: Invalid input: expected string, received undefined","timestamp":"2026-09-22T05:03:59.670Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-09-22T05:03:59.877Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab20c40e584c042b0b52c20/approve -> 400 creditLimit: Credit limit must be greater than 0","timestamp":"2026-09-22T05:04:00.041Z"}
+{"level":"warn","message":"PATCH /api/orders/6ab20c40c413dd98a53dfeb5/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-09-22T05:04:00.752Z"}
+{"level":"warn","message":"GET /api/shops/6ab20c40c9d848740d3ecbbb/customers -> 403 Not authorized for this shop","timestamp":"2026-09-22T05:04:00.782Z"}
+{"level":"warn","message":"GET /api/shops/6ab20c40c9d848740d3ecbbb/customers -> 403 Not authorized for this shop","timestamp":"2026-09-22T05:04:00.789Z"}
+{"level":"warn","message":"GET /api/shops/6ab20c40c9d848740d3ecbbb/customers -> 401 Not authorized, no token provided","timestamp":"2026-09-22T05:04:00.793Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient Khata credit for this order — choose another payment method","timestamp":"2026-09-22T05:04:01.312Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Khata is not available for this shop or your request is not yet approved","timestamp":"2026-09-22T05:04:01.513Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Khata payment is only available when all items in your cart are from the same shop","timestamp":"2026-09-22T05:04:01.849Z"}
+{"level":"warn","message":"GET /api/staff/6ab252228ffa3097e5422753/attendance?month=8&year=2026 -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:10.289Z"}
+{"level":"warn","message":"POST /api/staff/6ab252228ffa3097e5422756/attendance -> 403 You do not own this shop","timestamp":"2026-09-22T10:02:10.777Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:17.457Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 User with this email already exists","timestamp":"2026-09-22T10:02:18.081Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 password: Password must be at least 6 characters","timestamp":"2026-09-22T10:02:18.112Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 Only JPEG, PNG, WEBP, or GIF images are allowed","timestamp":"2026-09-22T10:02:18.432Z"}
+{"level":"warn","message":"PUT /api/shops/6ab2522a1e570ca9060261bc/loyalty/program -> 400 spendAmount: Too small: expected number to be >=1","timestamp":"2026-09-22T10:02:18.597Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 No image file provided (expected field name 'image')","timestamp":"2026-09-22T10:02:18.711Z"}
+{"level":"warn","message":"POST /api/products -> 400 Please create your shop before adding products","timestamp":"2026-09-22T10:02:18.756Z"}
+{"level":"warn","message":"POST /api/follows/shop/6ab2522ab489a82d5ed148eb -> 400 You cannot follow your own shop","timestamp":"2026-09-22T10:02:18.844Z"}
+{"level":"warn","message":"PUT /api/shops/6ab2522a1e570ca9060261bc/loyalty/program -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:02:18.891Z"}
+{"level":"warn","message":"GET /api/shops/6ab2522a1e570ca9060261bc/loyalty/customers -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:18.904Z"}
+{"level":"warn","message":"POST /api/shops -> 400 You already have a shop","timestamp":"2026-09-22T10:02:19.012Z"}
+{"level":"warn","message":"POST /api/shops -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:19.078Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 File is too large. Maximum size is 5MB.","timestamp":"2026-09-22T10:02:19.085Z"}
+{"level":"warn","message":"POST /api/products -> 400 Invalid category","timestamp":"2026-09-22T10:02:19.193Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-09-22T10:02:19.202Z"}
+{"level":"warn","message":"POST /api/follows/shop/6ab2522bb489a82d5ed148ed -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:19.222Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-09-22T10:02:19.232Z"}
+{"level":"warn","message":"GET /api/auth/me -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:19.256Z"}
+{"level":"warn","message":"GET /api/shops/does-not-exist -> 404 Shop not found","timestamp":"2026-09-22T10:02:19.463Z"}
+{"level":"warn","message":"POST /api/follows/shop/not-an-id -> 400 shopId: A valid shop id is required","timestamp":"2026-09-22T10:02:19.513Z"}
+{"level":"warn","message":"POST /api/loyalty/shop/6ab2522b1e570ca9060261bf/redeem -> 400 You need 50 points to redeem this reward","timestamp":"2026-09-22T10:02:19.822Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab2522bdbe92f971f91d3e8/approve -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:02:19.925Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 Upload error: Unexpected field","timestamp":"2026-09-22T10:02:20.219Z"}
+{"level":"warn","message":"PUT /api/shops/me/slug -> 400 This shop URL is already taken","timestamp":"2026-09-22T10:02:20.407Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 No image files provided (expected field name 'images')","timestamp":"2026-09-22T10:02:20.491Z"}
+{"level":"warn","message":"POST /api/shops/6ab2522c1e570ca9060261cc/loyalty/customers/6ab2522c1e570ca9060261cd/adjust -> 400 reason: Invalid input: expected string, received undefined","timestamp":"2026-09-22T10:02:20.587Z"}
+{"level":"warn","message":"PUT /api/products/6ab2522c422b468526191caf -> 403 You are not allowed to modify this product","timestamp":"2026-09-22T10:02:20.611Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Your cart is empty","timestamp":"2026-09-22T10:02:20.691Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab2522cdbe92f971f91d3ef/approve -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:02:20.855Z"}
+{"level":"warn","message":"GET /api/khata/my -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:20.884Z"}
+{"level":"warn","message":"GET /api/products/6ab2522c422b468526191cb5 -> 404 Product not found","timestamp":"2026-09-22T10:02:20.971Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 400 publicId is required","timestamp":"2026-09-22T10:02:21.033Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:21.051Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 403 You are not allowed to delete this image","timestamp":"2026-09-22T10:02:21.326Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 shippingAddress.street: Invalid input: expected string, received undefined; shippingAddress.city: Invalid input: expected string, received undefined","timestamp":"2026-09-22T10:02:21.394Z"}
+{"level":"warn","message":"POST /api/shops/6ab2522ddbe92f971f91d3f2/khata/apply -> 400 This shop does not offer Khata","timestamp":"2026-09-22T10:02:21.513Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab2522ddbe92f971f91d3f7/reject -> 400 rejectionReason: Invalid input: expected string, received undefined","timestamp":"2026-09-22T10:02:21.927Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-09-22T10:02:22.216Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab2522edbe92f971f91d3fc/approve -> 400 creditLimit: Credit limit must be greater than 0","timestamp":"2026-09-22T10:02:22.479Z"}
+{"level":"warn","message":"GET /api/shops/6ab2522eb489a82d5ed1490d/customers -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:02:23.237Z"}
+{"level":"warn","message":"GET /api/shops/6ab2522eb489a82d5ed1490d/customers -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:02:23.246Z"}
+{"level":"warn","message":"GET /api/shops/6ab2522eb489a82d5ed1490d/customers -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:02:23.250Z"}
+{"level":"warn","message":"PATCH /api/orders/6ab2522f0704180203dfe25b/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-09-22T10:02:23.381Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient Khata credit for this order — choose another payment method","timestamp":"2026-09-22T10:02:24.109Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Khata is not available for this shop or your request is not yet approved","timestamp":"2026-09-22T10:02:24.540Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Khata payment is only available when all items in your cart are from the same shop","timestamp":"2026-09-22T10:02:25.180Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:06.947Z"}
+{"level":"warn","message":"GET /api/staff/6ab2530fd82094bae60c622d/attendance?month=8&year=2026 -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:07.392Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 User with this email already exists","timestamp":"2026-09-22T10:06:08.134Z"}
+{"level":"warn","message":"POST /api/staff/6ab2530fd82094bae60c6230/attendance -> 403 You do not own this shop","timestamp":"2026-09-22T10:06:08.153Z"}
+{"level":"warn","message":"POST /api/auth/register -> 400 password: Password must be at least 6 characters","timestamp":"2026-09-22T10:06:08.163Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 Only JPEG, PNG, WEBP, or GIF images are allowed","timestamp":"2026-09-22T10:06:08.214Z"}
+{"level":"warn","message":"POST /api/products -> 400 Please create your shop before adding products","timestamp":"2026-09-22T10:06:08.432Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 No image file provided (expected field name 'image')","timestamp":"2026-09-22T10:06:08.585Z"}
+{"level":"warn","message":"PUT /api/shops/6ab25310183fe09edca06b96/loyalty/program -> 400 spendAmount: Too small: expected number to be >=1","timestamp":"2026-09-22T10:06:08.758Z"}
+{"level":"warn","message":"POST /api/products -> 400 Invalid category","timestamp":"2026-09-22T10:06:08.829Z"}
+{"level":"warn","message":"POST /api/upload/shop-logo -> 400 File is too large. Maximum size is 5MB.","timestamp":"2026-09-22T10:06:08.979Z"}
+{"level":"warn","message":"POST /api/shops -> 400 You already have a shop","timestamp":"2026-09-22T10:06:09.044Z"}
+{"level":"warn","message":"PUT /api/shops/6ab25310183fe09edca06b96/loyalty/program -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:06:09.061Z"}
+{"level":"warn","message":"POST /api/shops -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:09.072Z"}
+{"level":"warn","message":"GET /api/shops/6ab25310183fe09edca06b96/loyalty/customers -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:09.077Z"}
+{"level":"warn","message":"POST /api/follows/shop/6ab25311b7039c3f74e8a64f -> 400 You cannot follow your own shop","timestamp":"2026-09-22T10:06:09.130Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-09-22T10:06:09.439Z"}
+{"level":"warn","message":"POST /api/auth/login -> 401 Invalid email or password","timestamp":"2026-09-22T10:06:09.462Z"}
+{"level":"warn","message":"POST /api/follows/shop/6ab25311b7039c3f74e8a651 -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:09.478Z"}
+{"level":"warn","message":"GET /api/auth/me -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:09.482Z"}
+{"level":"warn","message":"GET /api/shops/does-not-exist -> 404 Shop not found","timestamp":"2026-09-22T10:06:09.492Z"}
+{"level":"warn","message":"POST /api/follows/shop/not-an-id -> 400 shopId: A valid shop id is required","timestamp":"2026-09-22T10:06:09.801Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab2531161dcc04407a11507/approve -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:06:09.849Z"}
+{"level":"warn","message":"POST /api/loyalty/shop/6ab25311183fe09edca06b99/redeem -> 400 You need 50 points to redeem this reward","timestamp":"2026-09-22T10:06:10.045Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 Upload error: Unexpected field","timestamp":"2026-09-22T10:06:10.296Z"}
+{"level":"warn","message":"PUT /api/products/6ab25312cfca369ad10c0472 -> 403 You are not allowed to modify this product","timestamp":"2026-09-22T10:06:10.456Z"}
+{"level":"warn","message":"POST /api/upload/product-images -> 400 No image files provided (expected field name 'images')","timestamp":"2026-09-22T10:06:10.606Z"}
+{"level":"warn","message":"PUT /api/shops/me/slug -> 400 This shop URL is already taken","timestamp":"2026-09-22T10:06:10.637Z"}
+{"level":"warn","message":"GET /api/products/6ab25312cfca369ad10c0478 -> 404 Product not found","timestamp":"2026-09-22T10:06:10.867Z"}
+{"level":"warn","message":"POST /api/shops/6ab25312183fe09edca06ba6/loyalty/customers/6ab25312183fe09edca06ba7/adjust -> 400 reason: Invalid input: expected string, received undefined","timestamp":"2026-09-22T10:06:10.892Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab2531261dcc04407a1150e/approve -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:06:10.945Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Your cart is empty","timestamp":"2026-09-22T10:06:10.980Z"}
+{"level":"warn","message":"GET /api/khata/my -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:10.981Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 400 publicId is required","timestamp":"2026-09-22T10:06:11.183Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:11.194Z"}
+{"level":"warn","message":"DELETE /api/upload/image -> 403 You are not allowed to delete this image","timestamp":"2026-09-22T10:06:11.425Z"}
+{"level":"warn","message":"POST /api/shops/6ab2531361dcc04407a11511/khata/apply -> 400 This shop does not offer Khata","timestamp":"2026-09-22T10:06:11.523Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 shippingAddress.street: Invalid input: expected string, received undefined; shippingAddress.city: Invalid input: expected string, received undefined","timestamp":"2026-09-22T10:06:11.586Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab2531361dcc04407a11516/reject -> 400 rejectionReason: Invalid input: expected string, received undefined","timestamp":"2026-09-22T10:06:11.957Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient stock for \"Test Product\". Only 1 left.","timestamp":"2026-09-22T10:06:12.238Z"}
+{"level":"warn","message":"PATCH /api/khata/6ab2531461dcc04407a1151b/approve -> 400 creditLimit: Credit limit must be greater than 0","timestamp":"2026-09-22T10:06:12.328Z"}
+{"level":"warn","message":"PATCH /api/orders/6ab25315b924fa06990cbe8f/cancel -> 403 You are not allowed to cancel this order","timestamp":"2026-09-22T10:06:13.372Z"}
+{"level":"warn","message":"GET /api/shops/6ab25315b7039c3f74e8a671/customers -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:06:13.455Z"}
+{"level":"warn","message":"GET /api/shops/6ab25315b7039c3f74e8a671/customers -> 403 Not authorized for this shop","timestamp":"2026-09-22T10:06:13.463Z"}
+{"level":"warn","message":"GET /api/shops/6ab25315b7039c3f74e8a671/customers -> 401 Not authorized, no token provided","timestamp":"2026-09-22T10:06:13.467Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Insufficient Khata credit for this order — choose another payment method","timestamp":"2026-09-22T10:06:14.122Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Khata is not available for this shop or your request is not yet approved","timestamp":"2026-09-22T10:06:14.460Z"}
+{"level":"warn","message":"POST /api/orders/checkout -> 400 Khata payment is only available when all items in your cart are from the same shop","timestamp":"2026-09-22T10:06:14.949Z"}
+{"level":"info","message":"Starting server on port 3008...","timestamp":"2026-09-22T10:06:54.545Z"}
+{"level":"info","message":"Socket.io initialized","timestamp":"2026-09-22T10:06:54.576Z"}
+{"level":"info","message":"Server running on port 3008 (HTTP + WebSocket)","timestamp":"2026-09-22T10:06:54.584Z"}
+{"level":"info","message":"MongoDB Connected: 127.0.0.1","timestamp":"2026-09-22T10:06:54.646Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[32m200\u001b[0m 157.102 ms - 37\u001b[0m","timestamp":"2026-09-22T10:07:58.439Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/me \u001b[32m200\u001b[0m 254.038 ms - 682\u001b[0m","timestamp":"2026-09-22T10:07:58.463Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 11.048 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:58.479Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 7.920 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:58.493Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 9.473 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:58.511Z"}
+{"level":"debug","message":"Socket connected: user 6a86e318c640cdbe4bdd6fc5","timestamp":"2026-09-22T10:07:58.776Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 229.463 ms - 11\u001b[0m","timestamp":"2026-09-22T10:07:58.814Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/conversations \u001b[32m200\u001b[0m 230.887 ms - 2\u001b[0m","timestamp":"2026-09-22T10:07:58.825Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/me \u001b[32m200\u001b[0m 39.484 ms - 703\u001b[0m","timestamp":"2026-09-22T10:07:58.836Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[32m200\u001b[0m 82.929 ms - 37\u001b[0m","timestamp":"2026-09-22T10:07:58.894Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[32m200\u001b[0m 311.792 ms - 59\u001b[0m","timestamp":"2026-09-22T10:07:58.937Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 14.339 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:58.975Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 28.396 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:58.984Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 16.359 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.005Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 26.219 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.021Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 48.598 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.063Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 23.407 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.128Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 22.956 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.166Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 19.294 ms - 11\u001b[0m","timestamp":"2026-09-22T10:07:59.232Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 49.261 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.306Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[32m200\u001b[0m 59.658 ms - 59\u001b[0m","timestamp":"2026-09-22T10:07:59.324Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 34.641 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.364Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 22.576 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.395Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 19.575 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.427Z"}
+{"level":"debug","message":"Socket connected: user 6a86e2e4c640cdbe4bdd6fc3","timestamp":"2026-09-22T10:07:59.547Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/conversations \u001b[32m200\u001b[0m 417.208 ms - 462\u001b[0m","timestamp":"2026-09-22T10:07:59.652Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[32m200\u001b[0m 54.591 ms - 201\u001b[0m","timestamp":"2026-09-22T10:07:59.754Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 9.759 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.784Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[32m200\u001b[0m 159.588 ms - 1766\u001b[0m","timestamp":"2026-09-22T10:07:59.851Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[32m200\u001b[0m 155.328 ms - 1229\u001b[0m","timestamp":"2026-09-22T10:07:59.859Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 31.415 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.893Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 35.093 ms - -\u001b[0m","timestamp":"2026-09-22T10:07:59.901Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[32m200\u001b[0m 77.889 ms - 48\u001b[0m","timestamp":"2026-09-22T10:08:00.165Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 10.721 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:00.178Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 10.602 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:00.191Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 9.957 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:00.203Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 9.451 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:00.215Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 9.557 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:00.230Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[32m200\u001b[0m 339.153 ms - 446\u001b[0m","timestamp":"2026-09-22T10:08:00.492Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 24.975 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:00.520Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[32m200\u001b[0m 16.785 ms - 201\u001b[0m","timestamp":"2026-09-22T10:08:00.885Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[32m200\u001b[0m 64.014 ms - 1766\u001b[0m","timestamp":"2026-09-22T10:08:00.899Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 16.576 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:00.925Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[32m200\u001b[0m 76.245 ms - 1229\u001b[0m","timestamp":"2026-09-22T10:08:00.965Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 67.953 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:00.988Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 30.139 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:01.008Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[32m200\u001b[0m 12.402 ms - 48\u001b[0m","timestamp":"2026-09-22T10:08:01.431Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 12.511 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:01.446Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 13.856 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:01.469Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 14.755 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:01.492Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 20.403 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:01.517Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[32m200\u001b[0m 10.477 ms - 446\u001b[0m","timestamp":"2026-09-22T10:08:01.537Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 20.028 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:01.541Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 12.348 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:01.561Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[32m200\u001b[0m 24.067 ms - 1297\u001b[0m","timestamp":"2026-09-22T10:08:16.487Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 10.729 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:16.514Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/me \u001b[32m200\u001b[0m 71.377 ms - 1513\u001b[0m","timestamp":"2026-09-22T10:08:16.540Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff \u001b[32m200\u001b[0m 29.815 ms - 599\u001b[0m","timestamp":"2026-09-22T10:08:16.563Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/me \u001b[36m304\u001b[0m 38.768 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:16.587Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff \u001b[36m304\u001b[0m 31.173 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:16.600Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[32m200\u001b[0m 154.903 ms - 1287\u001b[0m","timestamp":"2026-09-22T10:08:16.631Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 32.663 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:16.666Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 32.317 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:21.171Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 32.413 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:21.214Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.586 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:29.035Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.569 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:29.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.136 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:29.274Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.442 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:29.284Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/me \u001b[36m304\u001b[0m 23.452 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:30.900Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/me \u001b[36m304\u001b[0m 22.762 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:30.944Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 9.117 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:38.257Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 11.730 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:38.271Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[32m200\u001b[0m 10.158 ms - 26\u001b[0m","timestamp":"2026-09-22T10:08:41.108Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[36m304\u001b[0m 11.858 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:41.124Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.373 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:59.042Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.312 ms - -\u001b[0m","timestamp":"2026-09-22T10:08:59.047Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.450 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:00.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.814 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:00.046Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.145 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:29.036Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.092 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:29.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.343 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:30.034Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.470 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:30.038Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.572 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:59.030Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.281 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:59.035Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 2.853 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:59.276Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.159 ms - -\u001b[0m","timestamp":"2026-09-22T10:09:59.285Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.645 ms - -\u001b[0m","timestamp":"2026-09-22T10:10:29.037Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.652 ms - -\u001b[0m","timestamp":"2026-09-22T10:10:29.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.044 ms - -\u001b[0m","timestamp":"2026-09-22T10:10:30.039Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.321 ms - -\u001b[0m","timestamp":"2026-09-22T10:10:30.046Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.348 ms - -\u001b[0m","timestamp":"2026-09-22T10:10:59.031Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.052 ms - -\u001b[0m","timestamp":"2026-09-22T10:10:59.035Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.995 ms - -\u001b[0m","timestamp":"2026-09-22T10:10:59.285Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.253 ms - -\u001b[0m","timestamp":"2026-09-22T10:10:59.291Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 2.722 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:29.037Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.206 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:29.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 2.545 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:29.271Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.214 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:29.280Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[32m204\u001b[0m 0.426 ms - 0\u001b[0m","timestamp":"2026-09-22T10:11:35.356Z"}
+{"level":"http","message":"\u001b[0mPOST /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[32m201\u001b[0m 37.529 ms - 557\u001b[0m","timestamp":"2026-09-22T10:11:35.399Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/shops/6a86e463c640cdbe4bdd6fcb/offers/6ab2545755286e6dce5882fb \u001b[32m204\u001b[0m 0.074 ms - 0\u001b[0m","timestamp":"2026-09-22T10:11:39.563Z"}
+{"level":"http","message":"\u001b[0mPUT /api/shops/6a86e463c640cdbe4bdd6fcb/offers/6ab2545755286e6dce5882fb \u001b[32m200\u001b[0m 18.164 ms - 558\u001b[0m","timestamp":"2026-09-22T10:11:39.584Z"}
+{"level":"debug","message":"Socket disconnected: user 6a86e318c640cdbe4bdd6fc5","timestamp":"2026-09-22T10:11:43.985Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/me \u001b[36m304\u001b[0m 5.395 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.556Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 6.000 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.565Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 4.845 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.572Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 5.545 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.580Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 5.241 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.587Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 14.684 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.627Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/conversations \u001b[36m304\u001b[0m 23.351 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.645Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 19.488 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.650Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 15.342 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.652Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.858 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.660Z"}
+{"level":"debug","message":"Socket connected: user 6a86e318c640cdbe4bdd6fc5","timestamp":"2026-09-22T10:11:45.663Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 12.611 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.679Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 11.244 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.692Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 31.829 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.817Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 53.003 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.831Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 9.730 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.837Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 35.667 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.845Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 21.935 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.861Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 15.964 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.867Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 7.697 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.984Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 6.393 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:45.992Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 6.265 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:46.000Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 9.188 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:46.011Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 9.311 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:46.023Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 17.240 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:46.036Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 11.596 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:46.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 15.397 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:46.058Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 8.754 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:51.517Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 13.758 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:51.558Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1 \u001b[32m200\u001b[0m 26.493 ms - 1229\u001b[0m","timestamp":"2026-09-22T10:11:51.566Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1 \u001b[36m304\u001b[0m 18.870 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:51.601Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 7.253 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:51.678Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 8.376 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:51.707Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[32m200\u001b[0m 44.446 ms - 1382\u001b[0m","timestamp":"2026-09-22T10:11:53.770Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[32m200\u001b[0m 44.788 ms - 1382\u001b[0m","timestamp":"2026-09-22T10:11:53.776Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[32m200\u001b[0m 56.001 ms - 2831\u001b[0m","timestamp":"2026-09-22T10:11:53.797Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[36m304\u001b[0m 22.304 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:53.811Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[36m304\u001b[0m 23.024 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:53.828Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[32m200\u001b[0m 26.041 ms - 26\u001b[0m","timestamp":"2026-09-22T10:11:54.038Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 21.353 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:54.078Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[36m304\u001b[0m 8.286 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:54.089Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 7.791 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:54.100Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[32m200\u001b[0m 173.839 ms - 61\u001b[0m","timestamp":"2026-09-22T10:11:54.163Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[36m304\u001b[0m 13.310 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:54.181Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[32m200\u001b[0m 294.454 ms - 60\u001b[0m","timestamp":"2026-09-22T10:11:54.290Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[36m304\u001b[0m 11.479 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:54.303Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[32m200\u001b[0m 309.962 ms - 28\u001b[0m","timestamp":"2026-09-22T10:11:54.341Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[36m304\u001b[0m 8.086 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:54.350Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[32m200\u001b[0m 335.791 ms - 288\u001b[0m","timestamp":"2026-09-22T10:11:54.382Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[36m304\u001b[0m 7.731 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:54.392Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[32m200\u001b[0m 408.400 ms - 424\u001b[0m","timestamp":"2026-09-22T10:11:54.408Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 12.927 ms - -\u001b[0m","timestamp":"2026-09-22T10:11:54.422Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.285 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:00.039Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.288 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:00.046Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.112 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:15.636Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.954 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:15.643Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/passkey \u001b[32m200\u001b[0m 14.684 ms - 154\u001b[0m","timestamp":"2026-09-22T10:12:16.014Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/passkey \u001b[36m304\u001b[0m 11.757 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:16.030Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 4.400 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.086Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 19.944 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.119Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 21.081 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.124Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 41.872 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.138Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 11.400 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.146Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 31.382 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.152Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 22.427 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.171Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 22.631 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.181Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 5.846 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.341Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 4.834 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:20.348Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.810 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.033Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 9.023 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[36m304\u001b[0m 9.754 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.087Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[36m304\u001b[0m 16.429 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.107Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[36m304\u001b[0m 21.943 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.111Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[36m304\u001b[0m 14.272 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.127Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[36m304\u001b[0m 14.854 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.278Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[36m304\u001b[0m 17.835 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.292Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[36m304\u001b[0m 17.695 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.312Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 19.306 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.330Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[36m304\u001b[0m 38.095 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.338Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[36m304\u001b[0m 37.116 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.342Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[36m304\u001b[0m 40.672 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.346Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 63.756 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.349Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[36m304\u001b[0m 22.383 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.374Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[36m304\u001b[0m 43.321 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.376Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 18.850 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.379Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[36m304\u001b[0m 28.700 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.392Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[36m304\u001b[0m 28.671 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.397Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 36.639 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:30.407Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 28.465 ms - 1748\u001b[0m","timestamp":"2026-09-22T10:12:42.734Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[36m304\u001b[0m 14.402 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:42.753Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/related \u001b[32m200\u001b[0m 47.192 ms - 2\u001b[0m","timestamp":"2026-09-22T10:12:42.955Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/related \u001b[36m304\u001b[0m 10.714 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:42.970Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews/eligibility \u001b[32m200\u001b[0m 96.616 ms - 39\u001b[0m","timestamp":"2026-09-22T10:12:43.000Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews?page=1&sort=newest \u001b[32m200\u001b[0m 122.738 ms - 93\u001b[0m","timestamp":"2026-09-22T10:12:43.014Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews/eligibility \u001b[36m304\u001b[0m 13.418 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:43.017Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews?page=1&sort=newest \u001b[36m304\u001b[0m 8.228 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:43.027Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.220 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:45.647Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.137 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:45.650Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=20 \u001b[32m200\u001b[0m 10.585 ms - 1766\u001b[0m","timestamp":"2026-09-22T10:12:49.150Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=20 \u001b[36m304\u001b[0m 15.278 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:49.169Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 13.734 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:56.694Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 7.505 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:56.710Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1 \u001b[32m200\u001b[0m 26.997 ms - 1229\u001b[0m","timestamp":"2026-09-22T10:12:56.716Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1 \u001b[36m304\u001b[0m 21.658 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:56.742Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 8.060 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:56.892Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 7.942 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:56.903Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[32m200\u001b[0m 6.583 ms - 1382\u001b[0m","timestamp":"2026-09-22T10:12:57.883Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[32m200\u001b[0m 19.673 ms - 1382\u001b[0m","timestamp":"2026-09-22T10:12:58.077Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[32m200\u001b[0m 35.033 ms - 2831\u001b[0m","timestamp":"2026-09-22T10:12:58.105Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[36m304\u001b[0m 22.083 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.109Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[36m304\u001b[0m 18.056 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.130Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[32m200\u001b[0m 29.516 ms - 61\u001b[0m","timestamp":"2026-09-22T10:12:58.225Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[32m200\u001b[0m 28.970 ms - 61\u001b[0m","timestamp":"2026-09-22T10:12:58.228Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[32m200\u001b[0m 16.690 ms - 26\u001b[0m","timestamp":"2026-09-22T10:12:58.248Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 20.499 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.271Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[32m200\u001b[0m 41.894 ms - 28\u001b[0m","timestamp":"2026-09-22T10:12:58.277Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[32m200\u001b[0m 70.905 ms - 58\u001b[0m","timestamp":"2026-09-22T10:12:58.287Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[32m200\u001b[0m 39.970 ms - 288\u001b[0m","timestamp":"2026-09-22T10:12:58.295Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[36m304\u001b[0m 42.959 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.306Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[36m304\u001b[0m 24.188 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.313Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[36m304\u001b[0m 59.497 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.339Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 54.640 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.370Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[36m304\u001b[0m 51.764 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.385Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[36m304\u001b[0m 45.197 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.402Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 69.626 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:58.416Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.985 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:59.272Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.050 ms - -\u001b[0m","timestamp":"2026-09-22T10:12:59.281Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 18.516 ms - 1748\u001b[0m","timestamp":"2026-09-22T10:13:07.914Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[36m304\u001b[0m 14.559 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:07.932Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews?page=1&sort=newest \u001b[32m200\u001b[0m 10.258 ms - 93\u001b[0m","timestamp":"2026-09-22T10:13:08.002Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews?page=1&sort=newest \u001b[36m304\u001b[0m 16.309 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:08.032Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews/eligibility \u001b[32m200\u001b[0m 38.829 ms - 39\u001b[0m","timestamp":"2026-09-22T10:13:08.035Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/related \u001b[32m200\u001b[0m 24.512 ms - 2\u001b[0m","timestamp":"2026-09-22T10:13:08.038Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/related \u001b[36m304\u001b[0m 13.214 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:08.057Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews/eligibility \u001b[36m304\u001b[0m 19.296 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:08.059Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/cart/items \u001b[32m204\u001b[0m 0.079 ms - 0\u001b[0m","timestamp":"2026-09-22T10:13:09.509Z"}
+{"level":"http","message":"\u001b[0mPOST /api/cart/items \u001b[32m201\u001b[0m 29.433 ms - 1057\u001b[0m","timestamp":"2026-09-22T10:13:09.541Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[32m200\u001b[0m 20.643 ms - 1057\u001b[0m","timestamp":"2026-09-22T10:13:11.560Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 20.879 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:11.583Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.168 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:16.027Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.348 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:16.031Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m204\u001b[0m 0.060 ms - 0\u001b[0m","timestamp":"2026-09-22T10:13:18.237Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 15.642 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:18.256Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 10.699 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:18.972Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.848 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:19.443Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 10.245 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:19.867Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 11.375 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:20.277Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 12.232 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:20.758Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.257 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:21.442Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 31.745 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:24.468Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[32m200\u001b[0m 38.906 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:24.485Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 37.032 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:24.513Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 29.549 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:24.528Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 2.903 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:29.274Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 2.769 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:29.282Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/shops/6a86e463c640cdbe4bdd6fcb/offers/validate-coupon \u001b[32m204\u001b[0m 0.092 ms - 0\u001b[0m","timestamp":"2026-09-22T10:13:41.963Z"}
+{"level":"http","message":"\u001b[0mPOST /api/shops/6a86e463c640cdbe4bdd6fcb/offers/validate-coupon \u001b[32m200\u001b[0m 7.137 ms - 63\u001b[0m","timestamp":"2026-09-22T10:13:41.975Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.010 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:46.030Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 2.820 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:46.033Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 20.750 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:51.144Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 18.341 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:51.164Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m204\u001b[0m 0.077 ms - 0\u001b[0m","timestamp":"2026-09-22T10:13:53.100Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 11.459 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:53.115Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.463 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:53.466Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.969 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:53.685Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 11.034 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:53.869Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.882 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:54.058Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 8.457 ms - 1059\u001b[0m","timestamp":"2026-09-22T10:13:54.244Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.606 ms - 1057\u001b[0m","timestamp":"2026-09-22T10:13:54.404Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/cart/items/6a8d0fbb9fa88adb326a8253?variantId=6a8db46f32d20b1dbdd0d0db \u001b[32m204\u001b[0m 0.061 ms - 0\u001b[0m","timestamp":"2026-09-22T10:13:56.736Z"}
+{"level":"http","message":"\u001b[0mDELETE /api/cart/items/6a8d0fbb9fa88adb326a8253?variantId=6a8db46f32d20b1dbdd0d0db \u001b[32m200\u001b[0m 5.364 ms - 59\u001b[0m","timestamp":"2026-09-22T10:13:56.744Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 6.544 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.137Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 21.444 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.161Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 13.343 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.165Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 16.758 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.191Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 19.011 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.197Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 40.338 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.208Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 40.617 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.211Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 13.115 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.226Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 4.728 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.273Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 4.748 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:58.279Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.352 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:59.272Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.570 ms - -\u001b[0m","timestamp":"2026-09-22T10:13:59.284Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 9.147 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:00.917Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 10.522 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:00.930Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[32m200\u001b[0m 5.793 ms - 560\u001b[0m","timestamp":"2026-09-22T10:14:01.883Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[36m304\u001b[0m 6.573 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:01.891Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/shops/6a86e463c640cdbe4bdd6fcb/offers/6ab2545755286e6dce5882fb \u001b[32m204\u001b[0m 0.058 ms - 0\u001b[0m","timestamp":"2026-09-22T10:14:07.851Z"}
+{"level":"http","message":"\u001b[0mPUT /api/shops/6a86e463c640cdbe4bdd6fcb/offers/6ab2545755286e6dce5882fb \u001b[32m200\u001b[0m 6.153 ms - 557\u001b[0m","timestamp":"2026-09-22T10:14:07.860Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 12.814 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:12.834Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 11.849 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:12.864Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1 \u001b[36m304\u001b[0m 45.850 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:12.895Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1 \u001b[36m304\u001b[0m 25.673 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:12.925Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 7.782 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:12.970Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 9.437 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:12.982Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[32m200\u001b[0m 5.357 ms - 1382\u001b[0m","timestamp":"2026-09-22T10:14:13.925Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[36m304\u001b[0m 9.275 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:13.994Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[36m304\u001b[0m 14.326 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.011Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[36m304\u001b[0m 20.063 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.015Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[36m304\u001b[0m 18.366 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.037Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[36m304\u001b[0m 28.631 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.176Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[36m304\u001b[0m 55.622 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.208Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[32m200\u001b[0m 36.343 ms - 559\u001b[0m","timestamp":"2026-09-22T10:14:14.218Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 25.641 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.237Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[36m304\u001b[0m 51.804 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.239Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[36m304\u001b[0m 47.128 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.242Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 84.723 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.246Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[33m429\u001b[0m 2.144 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:14.262Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[33m429\u001b[0m 3.735 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:14.269Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[33m429\u001b[0m 2.546 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:14.274Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[36m304\u001b[0m 44.696 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.277Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[33m429\u001b[0m 0.833 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:14.281Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[33m429\u001b[0m 1.008 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:14.287Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[36m304\u001b[0m 36.554 ms - -\u001b[0m","timestamp":"2026-09-22T10:14:14.291Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.379 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:15.629Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.611 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:15.631Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.252 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:29.266Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.318 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:29.280Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[33m429\u001b[0m 0.659 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:32.348Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1 \u001b[33m429\u001b[0m 0.706 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:32.352Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[33m429\u001b[0m 0.715 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:32.371Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1 \u001b[33m429\u001b[0m 0.681 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:32.383Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[33m429\u001b[0m 1.224 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:32.531Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[33m429\u001b[0m 0.997 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:32.534Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[33m429\u001b[0m 0.931 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:33.204Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[33m429\u001b[0m 0.780 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:33.207Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[33m429\u001b[0m 1.183 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:33.211Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[33m429\u001b[0m 2.131 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:33.221Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.272 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:45.629Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.295 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:45.634Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[33m429\u001b[0m 0.969 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:49.933Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[33m429\u001b[0m 0.889 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:49.957Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=20 \u001b[33m429\u001b[0m 0.787 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:52.078Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=20 \u001b[33m429\u001b[0m 0.861 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:52.086Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[33m429\u001b[0m 0.700 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:53.081Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[33m429\u001b[0m 0.595 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:53.088Z"}
+{"level":"debug","message":"Socket disconnected: user 6a86e318c640cdbe4bdd6fc5","timestamp":"2026-09-22T10:14:55.183Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/me \u001b[33m429\u001b[0m 1.087 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:56.133Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[33m429\u001b[0m 1.167 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:56.139Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[33m429\u001b[0m 0.824 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:56.151Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[33m429\u001b[0m 1.094 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:56.155Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[33m429\u001b[0m 0.627 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:56.169Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[33m429\u001b[0m 0.496 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:56.265Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[33m429\u001b[0m 0.763 ms - 72\u001b[0m","timestamp":"2026-09-22T10:14:56.268Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.289 ms - 72\u001b[0m","timestamp":"2026-09-22T10:15:00.038Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.288 ms - 72\u001b[0m","timestamp":"2026-09-22T10:15:00.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.255 ms - 72\u001b[0m","timestamp":"2026-09-22T10:15:29.278Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.303 ms - 72\u001b[0m","timestamp":"2026-09-22T10:15:29.280Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.398 ms - 72\u001b[0m","timestamp":"2026-09-22T10:15:59.269Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.267 ms - 72\u001b[0m","timestamp":"2026-09-22T10:15:59.284Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.291 ms - 72\u001b[0m","timestamp":"2026-09-22T10:16:30.027Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.302 ms - 72\u001b[0m","timestamp":"2026-09-22T10:16:30.028Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.303 ms - 72\u001b[0m","timestamp":"2026-09-22T10:17:00.027Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.374 ms - 72\u001b[0m","timestamp":"2026-09-22T10:17:00.031Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.344 ms - 72\u001b[0m","timestamp":"2026-09-22T10:17:30.027Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.276 ms - 72\u001b[0m","timestamp":"2026-09-22T10:17:30.029Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.325 ms - 72\u001b[0m","timestamp":"2026-09-22T10:18:00.032Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.298 ms - 72\u001b[0m","timestamp":"2026-09-22T10:18:00.034Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.414 ms - 72\u001b[0m","timestamp":"2026-09-22T10:18:30.038Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.388 ms - 72\u001b[0m","timestamp":"2026-09-22T10:18:30.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.312 ms - 72\u001b[0m","timestamp":"2026-09-22T10:19:00.035Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.306 ms - 72\u001b[0m","timestamp":"2026-09-22T10:19:00.037Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.270 ms - 72\u001b[0m","timestamp":"2026-09-22T10:19:30.026Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.291 ms - 72\u001b[0m","timestamp":"2026-09-22T10:19:30.027Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.259 ms - 72\u001b[0m","timestamp":"2026-09-22T10:20:00.030Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.294 ms - 72\u001b[0m","timestamp":"2026-09-22T10:20:00.032Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.328 ms - 72\u001b[0m","timestamp":"2026-09-22T10:20:30.026Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.372 ms - 72\u001b[0m","timestamp":"2026-09-22T10:20:30.028Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.341 ms - 72\u001b[0m","timestamp":"2026-09-22T10:21:00.030Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.368 ms - 72\u001b[0m","timestamp":"2026-09-22T10:21:00.032Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.637 ms - 72\u001b[0m","timestamp":"2026-09-22T10:21:58.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.388 ms - 72\u001b[0m","timestamp":"2026-09-22T10:21:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.486 ms - 72\u001b[0m","timestamp":"2026-09-22T10:22:58.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[33m429\u001b[0m 0.373 ms - 72\u001b[0m","timestamp":"2026-09-22T10:22:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 5.315 ms - 11\u001b[0m","timestamp":"2026-09-22T10:23:58.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.576 ms - -\u001b[0m","timestamp":"2026-09-22T10:23:58.055Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.674 ms - -\u001b[0m","timestamp":"2026-09-22T10:24:58.044Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.283 ms - -\u001b[0m","timestamp":"2026-09-22T10:24:58.049Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.188 ms - -\u001b[0m","timestamp":"2026-09-22T10:25:58.029Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.718 ms - -\u001b[0m","timestamp":"2026-09-22T10:25:58.036Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.051 ms - -\u001b[0m","timestamp":"2026-09-22T10:26:58.036Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.376 ms - -\u001b[0m","timestamp":"2026-09-22T10:26:58.042Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.424 ms - -\u001b[0m","timestamp":"2026-09-22T10:27:58.037Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.203 ms - -\u001b[0m","timestamp":"2026-09-22T10:27:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.446 ms - -\u001b[0m","timestamp":"2026-09-22T10:28:58.039Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.444 ms - -\u001b[0m","timestamp":"2026-09-22T10:28:58.046Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.379 ms - -\u001b[0m","timestamp":"2026-09-22T10:29:58.038Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.207 ms - -\u001b[0m","timestamp":"2026-09-22T10:29:58.045Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.749 ms - -\u001b[0m","timestamp":"2026-09-22T10:30:58.045Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.836 ms - -\u001b[0m","timestamp":"2026-09-22T10:30:58.051Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.546 ms - -\u001b[0m","timestamp":"2026-09-22T10:31:58.044Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.337 ms - -\u001b[0m","timestamp":"2026-09-22T10:31:58.049Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.232 ms - -\u001b[0m","timestamp":"2026-09-22T10:32:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.686 ms - -\u001b[0m","timestamp":"2026-09-22T10:32:58.049Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.616 ms - -\u001b[0m","timestamp":"2026-09-22T10:33:58.031Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.467 ms - -\u001b[0m","timestamp":"2026-09-22T10:33:58.037Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.557 ms - -\u001b[0m","timestamp":"2026-09-22T10:34:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.911 ms - -\u001b[0m","timestamp":"2026-09-22T10:34:58.049Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.112 ms - -\u001b[0m","timestamp":"2026-09-22T10:35:58.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.774 ms - -\u001b[0m","timestamp":"2026-09-22T10:35:58.055Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.510 ms - -\u001b[0m","timestamp":"2026-09-22T10:36:58.039Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.392 ms - -\u001b[0m","timestamp":"2026-09-22T10:36:58.047Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.377 ms - -\u001b[0m","timestamp":"2026-09-22T10:37:58.044Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.330 ms - -\u001b[0m","timestamp":"2026-09-22T10:37:58.051Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.831 ms - -\u001b[0m","timestamp":"2026-09-22T10:38:58.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.430 ms - -\u001b[0m","timestamp":"2026-09-22T10:38:58.047Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.713 ms - -\u001b[0m","timestamp":"2026-09-22T10:39:58.034Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.586 ms - -\u001b[0m","timestamp":"2026-09-22T10:39:58.039Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.770 ms - -\u001b[0m","timestamp":"2026-09-22T10:40:58.034Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.035 ms - -\u001b[0m","timestamp":"2026-09-22T10:40:58.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.727 ms - -\u001b[0m","timestamp":"2026-09-22T10:41:58.044Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.193 ms - -\u001b[0m","timestamp":"2026-09-22T10:41:58.050Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.041 ms - -\u001b[0m","timestamp":"2026-09-22T10:42:58.037Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.786 ms - -\u001b[0m","timestamp":"2026-09-22T10:42:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.770 ms - -\u001b[0m","timestamp":"2026-09-22T10:43:58.042Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.772 ms - -\u001b[0m","timestamp":"2026-09-22T10:43:58.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.022 ms - -\u001b[0m","timestamp":"2026-09-22T10:44:58.045Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.737 ms - -\u001b[0m","timestamp":"2026-09-22T10:44:58.051Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.602 ms - -\u001b[0m","timestamp":"2026-09-22T10:45:58.034Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.832 ms - -\u001b[0m","timestamp":"2026-09-22T10:45:58.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.606 ms - -\u001b[0m","timestamp":"2026-09-22T10:46:58.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.116 ms - -\u001b[0m","timestamp":"2026-09-22T10:46:58.053Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.988 ms - -\u001b[0m","timestamp":"2026-09-22T10:47:58.047Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.159 ms - -\u001b[0m","timestamp":"2026-09-22T10:47:58.056Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.325 ms - -\u001b[0m","timestamp":"2026-09-22T10:48:58.033Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.216 ms - -\u001b[0m","timestamp":"2026-09-22T10:48:58.039Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.490 ms - -\u001b[0m","timestamp":"2026-09-22T10:49:58.034Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.937 ms - -\u001b[0m","timestamp":"2026-09-22T10:49:58.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.777 ms - -\u001b[0m","timestamp":"2026-09-22T10:50:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.316 ms - -\u001b[0m","timestamp":"2026-09-22T10:50:58.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.736 ms - -\u001b[0m","timestamp":"2026-09-22T10:51:58.045Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.934 ms - -\u001b[0m","timestamp":"2026-09-22T10:51:58.051Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.122 ms - -\u001b[0m","timestamp":"2026-09-22T10:52:58.041Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.415 ms - -\u001b[0m","timestamp":"2026-09-22T10:52:58.047Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.997 ms - -\u001b[0m","timestamp":"2026-09-22T10:53:58.039Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.450 ms - -\u001b[0m","timestamp":"2026-09-22T10:53:58.044Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.161 ms - -\u001b[0m","timestamp":"2026-09-22T10:54:58.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.355 ms - -\u001b[0m","timestamp":"2026-09-22T10:54:58.045Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.729 ms - -\u001b[0m","timestamp":"2026-09-22T10:55:58.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.715 ms - -\u001b[0m","timestamp":"2026-09-22T10:55:58.046Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.884 ms - -\u001b[0m","timestamp":"2026-09-22T10:56:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.894 ms - -\u001b[0m","timestamp":"2026-09-22T10:56:58.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.627 ms - -\u001b[0m","timestamp":"2026-09-22T10:57:58.058Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.529 ms - -\u001b[0m","timestamp":"2026-09-22T10:57:58.065Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.793 ms - -\u001b[0m","timestamp":"2026-09-22T10:58:58.042Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.198 ms - -\u001b[0m","timestamp":"2026-09-22T10:58:58.049Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.125 ms - -\u001b[0m","timestamp":"2026-09-22T10:59:58.044Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.049 ms - -\u001b[0m","timestamp":"2026-09-22T10:59:58.050Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.130 ms - -\u001b[0m","timestamp":"2026-09-22T11:00:58.047Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.243 ms - -\u001b[0m","timestamp":"2026-09-22T11:00:58.054Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.716 ms - -\u001b[0m","timestamp":"2026-09-22T11:01:58.056Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.501 ms - -\u001b[0m","timestamp":"2026-09-22T11:01:58.062Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.240 ms - -\u001b[0m","timestamp":"2026-09-22T11:02:58.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.753 ms - -\u001b[0m","timestamp":"2026-09-22T11:02:58.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.428 ms - -\u001b[0m","timestamp":"2026-09-22T11:03:58.047Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.413 ms - -\u001b[0m","timestamp":"2026-09-22T11:03:58.053Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.534 ms - -\u001b[0m","timestamp":"2026-09-22T11:04:58.052Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.018 ms - -\u001b[0m","timestamp":"2026-09-22T11:04:58.058Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.353 ms - -\u001b[0m","timestamp":"2026-09-22T11:05:58.056Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.578 ms - -\u001b[0m","timestamp":"2026-09-22T11:05:58.061Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.656 ms - -\u001b[0m","timestamp":"2026-09-22T11:06:59.889Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.680 ms - -\u001b[0m","timestamp":"2026-09-22T11:06:59.897Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 8.235 ms - -\u001b[0m","timestamp":"2026-09-22T11:07:58.052Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.494 ms - -\u001b[0m","timestamp":"2026-09-22T11:07:58.061Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 12.224 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:42.234Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 37.023 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:42.277Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/me \u001b[32m200\u001b[0m 19.442 ms - 682\u001b[0m","timestamp":"2026-09-22T11:08:43.232Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[32m200\u001b[0m 17.744 ms - 37\u001b[0m","timestamp":"2026-09-22T11:08:43.237Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 6.627 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.249Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 5.972 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.258Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 5.653 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.270Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 18.454 ms - 11\u001b[0m","timestamp":"2026-09-22T11:08:43.328Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/conversations \u001b[36m304\u001b[0m 25.252 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.344Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 34.036 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.355Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 17.577 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.364Z"}
+{"level":"debug","message":"Socket connected: user 6a86e318c640cdbe4bdd6fc5","timestamp":"2026-09-22T11:08:43.369Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.980 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.379Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.491 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.388Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 8.602 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.400Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 21.840 ms - 1748\u001b[0m","timestamp":"2026-09-22T11:08:43.431Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253 \u001b[36m304\u001b[0m 10.782 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.444Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews?page=1&sort=newest \u001b[36m304\u001b[0m 21.372 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.565Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 29.234 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.569Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/related \u001b[36m304\u001b[0m 36.554 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.597Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews?page=1&sort=newest \u001b[36m304\u001b[0m 15.987 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.599Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews/eligibility \u001b[36m304\u001b[0m 48.026 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.605Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 23.192 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.614Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/related \u001b[36m304\u001b[0m 25.667 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.633Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 19.815 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.641Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/6a8d0fbb9fa88adb326a8253/reviews/eligibility \u001b[36m304\u001b[0m 27.755 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.644Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 9.009 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:43.655Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/cart/items \u001b[32m204\u001b[0m 0.141 ms - 0\u001b[0m","timestamp":"2026-09-22T11:08:47.467Z"}
+{"level":"http","message":"\u001b[0mPOST /api/cart/items \u001b[32m201\u001b[0m 15.648 ms - 1057\u001b[0m","timestamp":"2026-09-22T11:08:47.507Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[32m200\u001b[0m 10.524 ms - 1057\u001b[0m","timestamp":"2026-09-22T11:08:49.495Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 12.075 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:49.508Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[32m200\u001b[0m 11.009 ms - 424\u001b[0m","timestamp":"2026-09-22T11:08:51.309Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 22.049 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:51.342Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 26.207 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:51.350Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 25.960 ms - -\u001b[0m","timestamp":"2026-09-22T11:08:51.389Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 19.770 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:02.756Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 27.370 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:02.786Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m204\u001b[0m 0.083 ms - 0\u001b[0m","timestamp":"2026-09-22T11:09:04.455Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.514 ms - 1059\u001b[0m","timestamp":"2026-09-22T11:09:04.479Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 12.689 ms - 1059\u001b[0m","timestamp":"2026-09-22T11:09:04.867Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.671 ms - 1059\u001b[0m","timestamp":"2026-09-22T11:09:05.168Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 10.134 ms - 1059\u001b[0m","timestamp":"2026-09-22T11:09:05.488Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 10.397 ms - 1059\u001b[0m","timestamp":"2026-09-22T11:09:05.920Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 9.373 ms - 1059\u001b[0m","timestamp":"2026-09-22T11:09:06.119Z"}
+{"level":"http","message":"\u001b[0mPUT /api/cart/items/6a8d0fbb9fa88adb326a8253 \u001b[32m200\u001b[0m 8.865 ms - 1059\u001b[0m","timestamp":"2026-09-22T11:09:06.303Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 9.999 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:09.491Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[32m200\u001b[0m 16.385 ms - 1059\u001b[0m","timestamp":"2026-09-22T11:09:09.505Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 12.987 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:09.507Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 13.999 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:09.523Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 10.303 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:13.336Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 5.299 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:13.343Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/shops/6a86e463c640cdbe4bdd6fcb/offers/validate-coupon \u001b[32m204\u001b[0m 0.072 ms - 0\u001b[0m","timestamp":"2026-09-22T11:09:14.001Z"}
+{"level":"http","message":"\u001b[0mPOST /api/shops/6a86e463c640cdbe4bdd6fcb/offers/validate-coupon \u001b[32m200\u001b[0m 27.600 ms - 626\u001b[0m","timestamp":"2026-09-22T11:09:14.032Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/orders/checkout \u001b[32m204\u001b[0m 0.048 ms - 0\u001b[0m","timestamp":"2026-09-22T11:09:32.553Z"}
+{"level":"http","message":"\u001b[0mPOST /api/orders/checkout \u001b[32m201\u001b[0m 102.540 ms - 1216\u001b[0m","timestamp":"2026-09-22T11:09:32.659Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/me \u001b[32m200\u001b[0m 43.065 ms - 2765\u001b[0m","timestamp":"2026-09-22T11:09:34.473Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/me \u001b[36m304\u001b[0m 19.357 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:34.497Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 9.641 ms - 11\u001b[0m","timestamp":"2026-09-22T11:09:42.276Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.561 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:42.287Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.228 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:44.029Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.001 ms - -\u001b[0m","timestamp":"2026-09-22T11:09:44.033Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 7.810 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:00.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 6.307 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:00.051Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[32m200\u001b[0m 6.107 ms - 1382\u001b[0m","timestamp":"2026-09-22T11:10:07.560Z"}
+{"level":"debug","message":"Socket disconnected: user 6a86e2e4c640cdbe4bdd6fc3","timestamp":"2026-09-22T11:10:07.577Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/me \u001b[36m304\u001b[0m 10.533 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.163Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 12.616 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.168Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 7.218 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.179Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 5.074 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.186Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 7.536 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.196Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 10.088 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.240Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 11.255 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.257Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/conversations \u001b[36m304\u001b[0m 22.423 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.265Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[32m200\u001b[0m 7.196 ms - 59\u001b[0m","timestamp":"2026-09-22T11:10:09.574Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 10.139 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.597Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 8.472 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.610Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[32m200\u001b[0m 20.038 ms - 1382\u001b[0m","timestamp":"2026-09-22T11:10:09.633Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 22.513 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.638Z"}
+{"level":"debug","message":"Socket connected: user 6a86e2e4c640cdbe4bdd6fc3","timestamp":"2026-09-22T11:10:09.643Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[32m200\u001b[0m 38.198 ms - 2831\u001b[0m","timestamp":"2026-09-22T11:10:09.660Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/freshmart-general-store \u001b[36m304\u001b[0m 17.740 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.670Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/shop/freshmart-general-store \u001b[36m304\u001b[0m 15.402 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.682Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[32m200\u001b[0m 17.150 ms - 61\u001b[0m","timestamp":"2026-09-22T11:10:09.745Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[36m304\u001b[0m 19.910 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.749Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[32m200\u001b[0m 12.968 ms - 559\u001b[0m","timestamp":"2026-09-22T11:10:09.760Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 24.875 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.765Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[36m304\u001b[0m 12.578 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.767Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[32m200\u001b[0m 10.968 ms - 446\u001b[0m","timestamp":"2026-09-22T11:10:09.783Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[36m304\u001b[0m 16.878 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.786Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/stats \u001b[36m304\u001b[0m 26.906 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.805Z"}
+{"level":"http","message":"\u001b[0mGET /api/follows/shop/6a86e463c640cdbe4bdd6fcb/status \u001b[36m304\u001b[0m 26.557 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.814Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers/public \u001b[36m304\u001b[0m 15.151 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.822Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/khata/status \u001b[36m304\u001b[0m 39.712 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.834Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 10.058 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.836Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/loyalty/program/public \u001b[36m304\u001b[0m 21.801 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.838Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/broadcasts/shop/freshmart-general-store \u001b[36m304\u001b[0m 16.924 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.840Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 7.714 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.862Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 7.767 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:09.872Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications?page=1&limit=10 \u001b[32m200\u001b[0m 8.120 ms - 1140\u001b[0m","timestamp":"2026-09-22T11:10:12.537Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/notifications/6ab261ec55286e6dce5883b3/read \u001b[32m204\u001b[0m 0.050 ms - 0\u001b[0m","timestamp":"2026-09-22T11:10:13.865Z"}
+{"level":"http","message":"\u001b[0mPATCH /api/notifications/6ab261ec55286e6dce5883b3/read \u001b[32m200\u001b[0m 7.109 ms - 362\u001b[0m","timestamp":"2026-09-22T11:10:13.876Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 8.320 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:14.054Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 11.847 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:14.068Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[32m200\u001b[0m 11.689 ms - 2521\u001b[0m","timestamp":"2026-09-22T11:10:14.270Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 14.395 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:14.286Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 7.985 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:26.890Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 9.677 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:26.902Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[32m200\u001b[0m 5.052 ms - 559\u001b[0m","timestamp":"2026-09-22T11:10:27.803Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[36m304\u001b[0m 6.084 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:27.811Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff \u001b[36m304\u001b[0m 12.249 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:37.861Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 11.325 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:37.875Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/me \u001b[32m200\u001b[0m 43.514 ms - 1513\u001b[0m","timestamp":"2026-09-22T11:10:37.937Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 21.495 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:37.943Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff \u001b[36m304\u001b[0m 38.142 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:37.948Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 51.844 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:37.955Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/me \u001b[36m304\u001b[0m 23.087 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:37.974Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 23.620 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:37.984Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 3.521 ms - 11\u001b[0m","timestamp":"2026-09-22T11:10:39.252Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.203 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:39.256Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 27.021 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:40.141Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 21.764 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:40.164Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/orders/6ab261ec55286e6dce5883b2/status \u001b[32m204\u001b[0m 0.048 ms - 0\u001b[0m","timestamp":"2026-09-22T11:10:42.818Z"}
+{"level":"http","message":"\u001b[0mPATCH /api/orders/6ab261ec55286e6dce5883b2/status \u001b[32m200\u001b[0m 9.370 ms - 60\u001b[0m","timestamp":"2026-09-22T11:10:42.852Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 4.150 ms - 11\u001b[0m","timestamp":"2026-09-22T11:10:44.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.780 ms - -\u001b[0m","timestamp":"2026-09-22T11:10:44.045Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/orders/6ab261ec55286e6dce5883b2/status \u001b[32m204\u001b[0m 0.049 ms - 0\u001b[0m","timestamp":"2026-09-22T11:10:54.161Z"}
+{"level":"http","message":"\u001b[0mPATCH /api/orders/6ab261ec55286e6dce5883b2/status \u001b[32m200\u001b[0m 7.810 ms - 58\u001b[0m","timestamp":"2026-09-22T11:10:54.190Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[32m200\u001b[0m 12.282 ms - 2521\u001b[0m","timestamp":"2026-09-22T11:11:03.582Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.030 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:10.043Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.058 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:10.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 4.437 ms - 11\u001b[0m","timestamp":"2026-09-22T11:11:13.327Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.530 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:13.333Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications?page=1&limit=10 \u001b[32m200\u001b[0m 4.710 ms - 1195\u001b[0m","timestamp":"2026-09-22T11:11:16.757Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/notifications/6ab2623e55286e6dce5883bd/read \u001b[32m204\u001b[0m 0.074 ms - 0\u001b[0m","timestamp":"2026-09-22T11:11:18.273Z"}
+{"level":"http","message":"\u001b[0mPATCH /api/notifications/6ab2623e55286e6dce5883bd/read \u001b[32m200\u001b[0m 10.429 ms - 374\u001b[0m","timestamp":"2026-09-22T11:11:18.286Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2 \u001b[32m200\u001b[0m 17.590 ms - 1390\u001b[0m","timestamp":"2026-09-22T11:11:19.070Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2 \u001b[36m304\u001b[0m 16.438 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:19.088Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2/tracking \u001b[32m200\u001b[0m 24.226 ms - 228\u001b[0m","timestamp":"2026-09-22T11:11:19.254Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2/tracking \u001b[36m304\u001b[0m 23.246 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:19.280Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.312 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:40.035Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.847 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:40.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 5.248 ms - 11\u001b[0m","timestamp":"2026-09-22T11:11:43.334Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.492 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:43.340Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications?page=1&limit=10 \u001b[32m200\u001b[0m 5.140 ms - 1194\u001b[0m","timestamp":"2026-09-22T11:11:48.748Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/notifications/6ab2623255286e6dce5883bc/read \u001b[32m204\u001b[0m 0.074 ms - 0\u001b[0m","timestamp":"2026-09-22T11:11:49.937Z"}
+{"level":"http","message":"\u001b[0mPATCH /api/notifications/6ab2623255286e6dce5883bc/read \u001b[32m200\u001b[0m 6.115 ms - 376\u001b[0m","timestamp":"2026-09-22T11:11:49.957Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications?page=1&limit=10 \u001b[32m200\u001b[0m 7.300 ms - 1193\u001b[0m","timestamp":"2026-09-22T11:11:51.471Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/notifications/6ab2623e55286e6dce5883bd/read \u001b[32m204\u001b[0m 0.066 ms - 0\u001b[0m","timestamp":"2026-09-22T11:11:52.031Z"}
+{"level":"http","message":"\u001b[0mPATCH /api/notifications/6ab2623e55286e6dce5883bd/read \u001b[32m200\u001b[0m 6.416 ms - 374\u001b[0m","timestamp":"2026-09-22T11:11:52.039Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/me \u001b[32m200\u001b[0m 17.328 ms - 2765\u001b[0m","timestamp":"2026-09-22T11:11:55.288Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/me \u001b[36m304\u001b[0m 18.216 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:55.309Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2 \u001b[36m304\u001b[0m 14.183 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:58.948Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2 \u001b[36m304\u001b[0m 14.676 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:58.965Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2/tracking \u001b[36m304\u001b[0m 16.736 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:59.091Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2/tracking \u001b[36m304\u001b[0m 17.095 ms - -\u001b[0m","timestamp":"2026-09-22T11:11:59.111Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.645 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:10.048Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.474 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:10.054Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 3.008 ms - 11\u001b[0m","timestamp":"2026-09-22T11:12:14.026Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.251 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:14.031Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 21.122 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:14.752Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 13.888 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:14.768Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/customers?sort=lastOrder&page=1 \u001b[32m200\u001b[0m 104.780 ms - 511\u001b[0m","timestamp":"2026-09-22T11:12:14.817Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/customers?sort=lastOrder&page=1 \u001b[36m304\u001b[0m 30.432 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:14.849Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 10.862 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:22.232Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 11.996 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:22.247Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[36m304\u001b[0m 6.047 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:23.130Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[36m304\u001b[0m 6.868 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:23.137Z"}
+{"level":"debug","message":"Socket disconnected: user 6a86e2e4c640cdbe4bdd6fc3","timestamp":"2026-09-22T11:12:25.119Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/me \u001b[36m304\u001b[0m 7.795 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.105Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 9.586 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.118Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 7.809 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.129Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 6.562 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.137Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 7.106 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.150Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 15.192 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.154Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 8.676 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.166Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 10.137 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.180Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 12.432 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.198Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/conversations \u001b[36m304\u001b[0m 36.429 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.219Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[36m304\u001b[0m 26.049 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.226Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 21.322 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.228Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 12.201 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.243Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 10.402 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:26.255Z"}
+{"level":"debug","message":"Socket connected: user 6a86e2e4c640cdbe4bdd6fc3","timestamp":"2026-09-22T11:12:26.329Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[36m304\u001b[0m 6.080 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:27.730Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/offers \u001b[36m304\u001b[0m 7.130 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:27.738Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 23.634 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:39.284Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 25.690 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:39.311Z"}
+{"level":"http","message":"\u001b[0mOPTIONS /api/orders/6ab261ec55286e6dce5883b2/status \u001b[32m204\u001b[0m 0.075 ms - 0\u001b[0m","timestamp":"2026-09-22T11:12:42.481Z"}
+{"level":"http","message":"\u001b[0mPATCH /api/orders/6ab261ec55286e6dce5883b2/status \u001b[32m200\u001b[0m 11.597 ms - 60\u001b[0m","timestamp":"2026-09-22T11:12:42.503Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[32m200\u001b[0m 3.506 ms - 11\u001b[0m","timestamp":"2026-09-22T11:12:44.038Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.677 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:44.043Z"}
+{"level":"debug","message":"Socket disconnected: user 6a86e318c640cdbe4bdd6fc5","timestamp":"2026-09-22T11:12:47.536Z"}
+{"level":"http","message":"\u001b[0mGET /api/auth/me \u001b[36m304\u001b[0m 12.936 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.712Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 11.870 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.715Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 5.314 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.722Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 6.034 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.732Z"}
+{"level":"http","message":"\u001b[0mGET /api/products/search/trending \u001b[36m304\u001b[0m 5.218 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.740Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 22.271 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.805Z"}
+{"level":"http","message":"\u001b[0mGET /api/messages/conversations \u001b[36m304\u001b[0m 21.864 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.818Z"}
+{"level":"http","message":"\u001b[0mGET /api/cart \u001b[32m200\u001b[0m 22.824 ms - 59\u001b[0m","timestamp":"2026-09-22T11:12:48.823Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 17.820 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.832Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 11.672 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.846Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 11.583 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.860Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 10.172 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.872Z"}
+{"level":"debug","message":"Socket connected: user 6a86e318c640cdbe4bdd6fc5","timestamp":"2026-09-22T11:12:48.882Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2 \u001b[32m200\u001b[0m 16.793 ms - 1392\u001b[0m","timestamp":"2026-09-22T11:12:48.911Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2 \u001b[36m304\u001b[0m 17.650 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:48.932Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2/tracking \u001b[36m304\u001b[0m 12.324 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:49.014Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2/tracking \u001b[36m304\u001b[0m 14.031 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:49.030Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.634 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:57.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.457 ms - -\u001b[0m","timestamp":"2026-09-22T11:12:57.044Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 14.637 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:01.595Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/customers?sort=lastOrder&page=1 \u001b[32m200\u001b[0m 33.285 ms - 511\u001b[0m","timestamp":"2026-09-22T11:13:01.605Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/me \u001b[36m304\u001b[0m 13.492 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:01.613Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/customers?sort=lastOrder&page=1 \u001b[36m304\u001b[0m 21.593 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:01.631Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 7.414 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.842Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[32m200\u001b[0m 20.139 ms - 1766\u001b[0m","timestamp":"2026-09-22T11:13:12.846Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 4.683 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.852Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 21.284 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.857Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 14.965 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.869Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 11.314 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.873Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 6.080 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.899Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 6.220 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.907Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 5.674 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.914Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 7.434 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.923Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 10.016 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.935Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 7.828 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.939Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 5.045 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.950Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 12.078 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:12.953Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[32m200\u001b[0m 35.117 ms - 2523\u001b[0m","timestamp":"2026-09-22T11:13:17.958Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop \u001b[36m304\u001b[0m 31.916 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:17.992Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.629 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:19.030Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.430 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:19.036Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/shop?status=delivered \u001b[32m200\u001b[0m 11.294 ms - 1277\u001b[0m","timestamp":"2026-09-22T11:13:23.887Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.179 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:26.177Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.691 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:26.181Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 12.622 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:32.998Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[32m200\u001b[0m 38.780 ms - 1766\u001b[0m","timestamp":"2026-09-22T11:13:33.021Z"}
+{"level":"http","message":"\u001b[0mGET /api/categories \u001b[36m304\u001b[0m 14.474 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.028Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 45.490 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.034Z"}
+{"level":"http","message":"\u001b[0mGET /api/products?sort=newest&page=1&limit=50 \u001b[36m304\u001b[0m 32.187 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.070Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops?page=1&limit=8 \u001b[36m304\u001b[0m 32.717 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.074Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 7.798 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.193Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 6.464 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.201Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 6.378 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.209Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 7.418 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.218Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 7.178 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.227Z"}
+{"level":"http","message":"\u001b[0mGET /api/wishlist \u001b[36m304\u001b[0m 6.560 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.235Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[32m200\u001b[0m 5.692 ms - 446\u001b[0m","timestamp":"2026-09-22T11:13:33.247Z"}
+{"level":"http","message":"\u001b[0mGET /api/shops/6a86e463c640cdbe4bdd6fcb/staff/public \u001b[36m304\u001b[0m 4.914 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:33.254Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/me \u001b[32m200\u001b[0m 14.162 ms - 2767\u001b[0m","timestamp":"2026-09-22T11:13:35.948Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/me \u001b[36m304\u001b[0m 13.916 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:35.963Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2 \u001b[36m304\u001b[0m 13.328 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:40.028Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2 \u001b[36m304\u001b[0m 16.502 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:40.047Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2/tracking \u001b[36m304\u001b[0m 16.638 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:40.192Z"}
+{"level":"http","message":"\u001b[0mGET /api/orders/6ab261ec55286e6dce5883b2/tracking \u001b[36m304\u001b[0m 22.359 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:40.217Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.514 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:48.788Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.425 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:48.792Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 2.964 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:57.034Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.474 ms - -\u001b[0m","timestamp":"2026-09-22T11:13:57.038Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 4.724 ms - -\u001b[0m","timestamp":"2026-09-22T11:14:19.031Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.869 ms - -\u001b[0m","timestamp":"2026-09-22T11:14:19.036Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.126 ms - -\u001b[0m","timestamp":"2026-09-22T11:14:27.031Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.563 ms - -\u001b[0m","timestamp":"2026-09-22T11:14:27.035Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 2.833 ms - -\u001b[0m","timestamp":"2026-09-22T11:14:49.027Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.429 ms - -\u001b[0m","timestamp":"2026-09-22T11:14:49.031Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.600 ms - -\u001b[0m","timestamp":"2026-09-22T11:14:57.031Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.820 ms - -\u001b[0m","timestamp":"2026-09-22T11:14:57.035Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.580 ms - -\u001b[0m","timestamp":"2026-09-22T11:15:19.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.807 ms - -\u001b[0m","timestamp":"2026-09-22T11:15:19.044Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.988 ms - -\u001b[0m","timestamp":"2026-09-22T11:15:27.040Z"}
+{"level":"http","message":"\u001b[0mGET /api/notifications/unread-count \u001b[36m304\u001b[0m 3.957 ms - -\u001b[0m","timestamp":"2026-09-22T11:15:27.045Z"}

@@ -18,6 +18,7 @@ import type { PaymentMethod, ShippingAddress } from "../types/order.types";
 // NEW: shipping cost / delivery-days preview before placing the order
 import { DeliveryEstimate } from "@/features/logistics";
 import { KhataPaymentOption } from "@/features/khata";
+import { CouponApplyBox } from "@/features/offers";
 
 const emptyAddress: ShippingAddress = {
     fullName: "",
@@ -61,6 +62,8 @@ export default function CheckoutPage() {
 
     const [address, setAddress] = useState<ShippingAddress>(emptyAddress);
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod");
+    const [couponCode, setCouponCode] = useState<string | null>(null);
+    const [discount, setDiscount] = useState(0);
     const [localError, setLocalError] = useState<string | null>(null);
     const [placed, setPlaced] = useState(false);
 
@@ -108,11 +111,12 @@ export default function CheckoutPage() {
             return;
         }
 
-        const result = await dispatch(checkout({ shippingAddress: address, paymentMethod }));
+        const result = await dispatch(checkout({ shippingAddress: address, paymentMethod, couponCode: couponCode ?? undefined }));
         if (checkout.fulfilled.match(result)) {
             setPlaced(true);
             setTimeout(() => router.push("/buyer/orders"), 1500);
         }
+
     };
 
     if (placed) {
@@ -285,6 +289,19 @@ export default function CheckoutPage() {
                         </div>
                     </div>
 
+                    {isSingleShopCart && (
+                        <div className="rounded-2xl border border-default bg-surface p-4 shadow-sm sm:p-6">
+                            <h2 className="mb-3 text-base font-semibold text-primary">Have a coupon?</h2>
+                            <CouponApplyBox
+                                shopId={uniqueShopIds[0]}
+                                onApplied={(code, amount) => {
+                                    setCouponCode(code);
+                                    setDiscount(amount);
+                                }}
+                            />
+                        </div>
+                    )}
+
                     {/* NEW: shipping cost / delivery-time preview, one per
                         distinct shop in the cart (backend splits checkout into
                         one order per shop, so shipping is quoted per shop too). */}
@@ -314,9 +331,15 @@ export default function CheckoutPage() {
                         ))}
                     </ul>
                     <div className="mt-3 border-t border-default pt-3">
+                        {discount > 0 && (
+                            <div className="mb-2 flex justify-between text-sm text-secondary">
+                                <span>Coupon discount</span>
+                                <span className="text-emerald-600 dark:text-emerald-400">-{formatPrice(discount)}</span>
+                            </div>
+                        )}
                         <div className="flex justify-between text-base font-semibold text-primary">
                             <span>Total</span>
-                            <span>{formatPrice(cartTotal)}</span>
+                            <span>{formatPrice(Math.max(cartTotal - discount, 0))}</span>
                         </div>
                     </div>
 

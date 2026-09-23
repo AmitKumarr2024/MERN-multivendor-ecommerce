@@ -32,6 +32,7 @@ import followRoutes from "./modules/follow/routes/follow.routes.js";
 import shopCustomersRoutes from "./modules/follow/routes/shopCustomers.routes.js";
 import shopLoyaltyRoutes from "./modules/loyalty/routes/shopLoyalty.routes.js";
 import loyaltyRoutes from "./modules/loyalty/routes/loyalty.routes.js";
+import shopOfferRoutes from "./modules/offer/routes/shopOffer.routes.js";
 
 dotenv.config();
 
@@ -99,6 +100,7 @@ app.use("/api/shops/:shopId/customers", shopCustomersRoutes);
 app.use("/api/follows", followRoutes);
 app.use("/api/shops/:shopId/loyalty", shopLoyaltyRoutes);
 app.use("/api/loyalty", loyaltyRoutes);
+app.use("/api/shops/:shopId/offers", shopOfferRoutes);
 
 app.get("/", (req, res) => {
   res.send("API is running...");

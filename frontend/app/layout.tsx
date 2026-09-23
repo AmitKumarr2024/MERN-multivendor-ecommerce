@@ -42,7 +42,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
           <Navbar />
           {children}
           <Footer />
-          <Toaster position="top-center" richColors closeButton />
+          <Toaster position="top-left" richColors closeButton />
         </AppProvider>
       </body>
     </html>

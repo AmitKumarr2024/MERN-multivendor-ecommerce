@@ -105,6 +105,12 @@ const orderSchema = new mongoose.Schema(
         },
       ],
     },
+    couponCode: { type: String, default: null },
+    offer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Offer",
+      default: null,
+    },
 
     cancelReason: { type: String, default: null },
     // Tracks whether stock has already been restored for this order (set true

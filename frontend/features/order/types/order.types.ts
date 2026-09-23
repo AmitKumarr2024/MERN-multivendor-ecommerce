@@ -108,6 +108,7 @@ export interface CheckoutResponse {
 export interface CheckoutPayload {
   shippingAddress: ShippingAddress;
   paymentMethod?: PaymentMethod;
+  couponCode?: string;
 }
 
 export interface UpdateOrderStatusArgs {

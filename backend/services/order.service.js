@@ -12,10 +12,14 @@ import {
   chargeKhataForOrder,
   reverseKhataCharge,
 } from "./khata/khata.service.js";
+import {
+  validateCoupon,
+  redeemOffer,
+  reverseOfferRedemption,
+} from "./offer/offer.service.js";
 
 const groupItemsByShop = (cartItems) => {
   const groups = new Map();
-
   for (const item of cartItems) {
     const product = item.product;
     if (!product || !product.isActive) {
@@ -23,20 +27,17 @@ const groupItemsByShop = (cartItems) => {
         `A product in your cart is no longer available`,
       );
     }
-
     const shopId = product.shop._id.toString();
-    if (!groups.has(shopId)) {
+    if (!groups.has(shopId))
       groups.set(shopId, { shop: product.shop, items: [] });
-    }
     groups.get(shopId).items.push(item);
   }
-
   return groups;
 };
 
 export const checkoutCart = async (
   userId,
-  { shippingAddress, paymentMethod = "cod" } = {},
+  { shippingAddress, paymentMethod = "cod", couponCode } = {},
 ) => {
   if (
     !shippingAddress ||
@@ -52,32 +53,37 @@ export const checkoutCart = async (
   const cart = await Cart.findOne({ user: userId }).populate({
     path: "items.product",
     select:
-      "name images price discountPrice stock isActive shop hasVariants variants",
+      "name images price discountPrice stock isActive shop hasVariants variants category",
     populate: { path: "shop", select: "_id shopName" },
   });
 
-  if (!cart || cart.items.length === 0) {
+  if (!cart || cart.items.length === 0)
     throw new BadRequestError("Your cart is empty");
-  }
 
   const shopGroups = groupItemsByShop(cart.items);
 
-  // Khata is shop-specific credit, so it only makes sense when the entire
-  // cart belongs to a single shop. A multi-vendor cart paid via "khata"
-  // would have no single shop's ledger to charge against.
   if (paymentMethod === "khata" && shopGroups.size > 1) {
     throw new BadRequestError(
       "Khata payment is only available when all items in your cart are from the same shop",
     );
   }
+  // Coupons are shop-specific ledgers, same reasoning as Khata — a code
+  // can't be split proportionally across a multi-vendor cart.
+  if (couponCode && shopGroups.size > 1) {
+    throw new BadRequestError(
+      "Coupon codes can only be applied when all items in your cart are from the same shop",
+    );
+  }
 
   const createdOrders = [];
-  const decrementedForRollback = []; // { product, quantity, variantId }
-  const khataChargedForRollback = []; // { shopId, buyerId, orderId } — for reversal if a later shop-group fails
+  const decrementedForRollback = [];
+  const khataChargedForRollback = [];
+  let redeemedOfferOrderId = null;
 
   try {
     for (const [shopId, group] of shopGroups) {
       const orderItems = [];
+      const couponItems = []; // { productId, categoryId, subtotal } for offer eligibility
       let itemsSubtotal = 0;
       let tax = 0;
 
@@ -118,16 +124,40 @@ export const checkoutCart = async (
           quantity: cartItem.quantity,
           subtotal: lineTotal.subtotal,
         });
+        couponItems.push({
+          productId: product._id,
+          categoryId: product.category,
+          subtotal: lineTotal.subtotal,
+        });
       }
 
       const shippingCost = 0;
+
+      // Coupon validation is re-run here — the LAST gate before the order
+      // is created — never trusted from whatever the frontend previewed.
+      let couponResult = null;
+      if (couponCode) {
+        couponResult = await validateCoupon({
+          shopId,
+          buyerId: userId,
+          code: couponCode,
+          items: couponItems,
+          itemsSubtotal: Number(itemsSubtotal.toFixed(2)),
+        });
+        if (!couponResult.eligible) {
+          throw new BadRequestError(
+            "This coupon can no longer be applied to your order (" +
+              (couponResult.reason || "not eligible") +
+              ")",
+          );
+        }
+      }
+
+      const discount = couponResult ? couponResult.discountAmount : 0;
       const grandTotal = Number(
-        (itemsSubtotal + tax + shippingCost).toFixed(2),
+        Math.max(itemsSubtotal + tax + shippingCost - discount, 0).toFixed(2),
       );
 
-      // Khata eligibility must be re-checked here (not just at UI level) —
-      // stock decrements above can shift timing, and this is the last point
-      // before the order + ledger entry are actually created.
       if (paymentMethod === "khata") {
         const eligibility = await canUseKhata(shopId, userId, grandTotal);
         if (!eligibility.eligible) {
@@ -146,20 +176,27 @@ export const checkoutCart = async (
         itemsSubtotal: Number(itemsSubtotal.toFixed(2)),
         tax: Number(tax.toFixed(2)),
         shippingCost,
+        discount,
+        couponCode: couponResult ? couponResult.offer.code : null,
+        offer: couponResult ? couponResult.offer._id : null,
         grandTotal,
         shippingAddress,
         paymentMethod,
-        // COD and online stay "pending" as before. Khata orders are
-        // considered settled against the buyer's credit line immediately —
-        // there is no separate gateway confirmation step for khata.
         paymentStatus: paymentMethod === "khata" ? "khata_pending" : "pending",
       });
 
       createdOrders.push(order);
 
-      // Only ever reached when paymentMethod === "khata" — COD and online
-      // payment paths never call chargeKhataForOrder, per the hard rule
-      // that Khata debt is created only on explicit buyer/seller selection.
+      if (couponResult) {
+        await redeemOffer({
+          offer: couponResult.offer,
+          buyerId: userId,
+          orderId: order._id,
+          discountAmount: discount,
+        });
+        redeemedOfferOrderId = order._id;
+      }
+
       if (paymentMethod === "khata") {
         await chargeKhataForOrder({
           shopId: group.shop._id,
@@ -186,6 +223,9 @@ export const checkoutCart = async (
     for (const { shopId, buyerId, orderId } of khataChargedForRollback) {
       await reverseKhataCharge({ shopId, buyerId, orderId }).catch(() => {});
     }
+    if (redeemedOfferOrderId) {
+      await reverseOfferRedemption(redeemedOfferOrderId).catch(() => {});
+    }
     await Order.deleteMany({ _id: { $in: createdOrders.map((o) => o._id) } });
     throw error;
   }
@@ -201,14 +241,10 @@ export const cancelOrder = async (order, reason) => {
   const Product = mongoose.model("Product");
   for (const item of order.items) {
     const product = await Product.findById(item.product);
-    if (product) {
+    if (product)
       await restoreStock(product, item.quantity, item.variantId || null);
-    }
   }
 
-  // If this order was paid via Khata, cancelling it must also reverse the
-  // ledger entry — otherwise the buyer's outstanding balance stays charged
-  // for an order that no longer exists.
   if (
     order.paymentMethod === "khata" &&
     order.paymentStatus === "khata_pending"
@@ -218,6 +254,9 @@ export const cancelOrder = async (order, reason) => {
       buyerId: order.buyer,
       orderId: order._id,
     }).catch(() => {});
+  }
+  if (order.offer) {
+    await reverseOfferRedemption(order._id).catch(() => {});
   }
 
   order.orderStatus = "cancelled";

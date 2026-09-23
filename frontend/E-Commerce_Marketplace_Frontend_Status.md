@@ -24,9 +24,94 @@ anything still unverified from before>
 ============================================================ -->
 
 # E-Commerce Marketplace Frontend — Development Status
+**Last updated:** 2026-09-22 (v11). New feature: **Seller Offers & Coupons (`features/offers/`)**.
+
+---
+
+## 🆕 2026-09-22 SESSION — Seller Offers & Coupons (frontend built)
+
+**Concept**: buyer-facing coupon display + apply flow, and seller-facing
+offer CRUD, built on top of the new backend `modules/offer`. Follows the
+same feature-folder shape as Khata/Loyalty (`store/`, `components/`,
+`types/`, `index.ts` barrel).
+
+**New files** — `features/offers/`:
+- `types/offer.types.ts` — `Offer`, `DiscountType`, `OfferScope`,
+  `CreateOfferPayload`, `UpdateOfferPayload`, `CouponValidationResult`
+- `store/offerSlice.ts` — thunks: `fetchShopOffers` (seller list),
+  `fetchPublicOffers` (shop page, keyed by shopId in
+  `publicOffersByShop`), `createOffer`, `updateOffer`, `deleteOffer`,
+  `validateCoupon` (checkout preview). Separate `loading` (list fetch),
+  `mutating` (CRUD), and `validating` (coupon check) flags — same
+  three-way split pattern as Khata's `loading`/`actionLoading`.
+- `store/offerSelectors.ts`
+- `components/ShopOffersList.tsx` — buyer-facing, renders active offers
+  on the public shop page (code, discount, description, min order,
+  scope badge). Returns `null` if the shop has no active offers —
+  same "don't render an empty section" pattern as `StaffSection`.
+- `components/CouponApplyBox.tsx` — checkout coupon input. Calls
+  `validateCoupon`, shows a per-`reason` error message map
+  (`not_found`, `expired`, `usage_limit_reached`,
+  `per_customer_limit_reached`, `below_minimum_order`,
+  `no_eligible_items`, `inactive`) rather than a generic failure
+  string, so the buyer understands exactly why a code didn't work.
+  Reports back to the parent via `onApplied(code, discountAmount)` so
+  `CheckoutPage` owns the actual total math.
+- `components/SellerOffersManager.tsx` — create form + list with
+  active/inactive toggle and delete, mounted as a new "Offers" tab in
+  the seller shop dashboard.
+- `index.ts` barrel
+
+**Wiring into existing files**:
+- `store/store.ts` — added `offers: offerReducer` to the root reducer.
+- `features/order/types/order.types.ts` — `CheckoutPayload` gained
+  optional `couponCode`.
+- `features/order/components/Checkoutpage.tsx` — added `couponCode`/
+  `discount` local state; renders `<CouponApplyBox>` **only when
+  `isSingleShopCart`** (identical guard to `KhataPaymentOption`, since
+  coupons are shop-specific same as Khata credit); passes `couponCode`
+  into the `checkout()` dispatch; order summary now shows a "Coupon
+  discount" line and the total is `Math.max(cartTotal - discount, 0)`.
+- `features/shop/components/seller/Shopdashboard.tsx` — new `NAV_ITEMS`
+  entry `{ key: "offers", label: "Offers", desc: "Coupons & discounts" }`
+  and a render branch for `active === "offers"` →
+  `<SellerOffersManager shopId={shop._id} />`.
+- `features/shop/components/public/PublicShopPage.tsx` — renders
+  `<ShopOffersList shopId={shop._id} />` in the left column, alongside
+  `<KhataApplyCard>` and `<LoyaltyInfoCard>`.
+
+**Gotchas / open items**
+- `CouponApplyBox` keeps its own `applied` local state separately from
+  Redux's `couponResult` — if the buyer changes their cart contents
+  after applying a coupon, the box does **not** auto-revalidate; the
+  backend re-validates at actual checkout time regardless (server-side
+  is the real gate), but the displayed discount could go stale until
+  the buyer removes/reapplies. Worth wiring a cart-change listener to
+  auto-clear `applied` in a future session, same class of issue as
+  Khata's `isSingleShopCart` cart-change effect in `Checkoutpage.tsx`.
+- No coupon UI on the cart page itself (`Cartpage.tsx`/`CartSummary.tsx`)
+  — intentionally checkout-only for now, matching the backend's
+  design (`validateCoupon` needs a shipping-independent but
+  cart-dependent read, and checkout is the natural single place to
+  apply it before `grandTotal` is finalized).
+- `SellerOffersManager`'s create form does not yet expose
+  product/category pickers for `scope: "product"` / `"category"` —
+  those offers can currently only be created with an empty
+  `applicableProducts`/`applicableCategories` array from this UI,
+  which the backend's Zod refinement will reject (`createOfferSchema`
+  requires at least one entry for those scopes). **This is the one
+  functional gap**: until a product/category multi-select is added to
+  the form, sellers can only successfully create `scope: "shop"`
+  offers from the UI (product/category-scoped offers are fully
+  supported by the API and can be created via direct API calls or a
+  future form addition).
+- No frontend test coverage added this session for `features/offers/`
+  (consistent with the project's general pattern — Khata/Loyalty also
+  shipped without frontend tests, only backend services are tested).
 
 
-> **Last updated:** 2026-09-21 (v11: Shop Loyalty / Reward Points frontend
+
+>  2026-09-21 (v11: Shop Loyalty / Reward Points frontend
 > written; NOT yet compiled or manually tested. Backend suite green at
 > 204/204.) Replaces v10.
 
