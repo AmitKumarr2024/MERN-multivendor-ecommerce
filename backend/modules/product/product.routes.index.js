@@ -33,6 +33,8 @@ import {
   addVariantSchema,
   updateVariantSchema,
 } from "../product.validation.js";
+import { toggleProductReservation } from "../../reservation/controllers/reservation.controller.js";
+import { toggleProductReservationSchema } from "../../reservation/reservation.validation.js";
 
 const router = express.Router();
 
@@ -72,5 +74,11 @@ router.put(
   updateVariant,
 );
 router.delete("/:id/variants/:variantId", protect, deleteVariant);
+router.patch(
+  "/:id/toggle-reservation",
+  protect,
+  validate(toggleProductReservationSchema),
+  toggleProductReservation,
+);
 
 export default router;

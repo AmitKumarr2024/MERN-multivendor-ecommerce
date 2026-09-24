@@ -44,6 +44,7 @@ import SpecificationsTable from "./SpecificationsTable";
 import RelatedProducts from "./RelatedProducts";
 
 import RatingStars from "@/features/reviews/components/RatingStars";
+import { ReserveForPickupButton } from "@/features/reservation";
 
 interface ProductDetailProps {
     productId: string;
@@ -235,6 +236,24 @@ export default function ProductDetail({
         ? (selectedVariant?.stock ?? 0)
         : product.stock;
 
+    console.log("[Reservation Debug] ProductDetail", {
+        productId: product._id,
+        productName: product.name,
+
+        shop: product.shop,
+        shopId:
+            typeof product.shop === "string"
+                ? product.shop
+                : product.shop?._id,
+
+        productReservationEnabled: product.reservationEnabled,
+
+        hasVariants: product.hasVariants,
+        selectedVariantId,
+        currentStock,
+
+        fullProduct: product,
+    });
     const loginRedirect = `/login?redirect=${encodeURIComponent(
         `/products/${productId}`,
     )}`;
@@ -446,7 +465,7 @@ export default function ProductDetail({
                                         hover:text-primary
                                     "
                                 >
-                                    <span className="max-w-[220px] truncate">
+                                    <span className="max-w-55 truncate">
                                         {shop.shopName}
                                     </span>
 
@@ -583,7 +602,16 @@ export default function ProductDetail({
                                                     !canAddToCart
                                                 }
                                             />
+
                                         </div>
+
+                                        <ReserveForPickupButton
+                                            shopId={typeof product.shop === "string" ? product.shop : product.shop._id}
+                                            productId={product._id}
+                                            reservationEnabled={Boolean((product as any).reservationEnabled)}
+                                            variantId={selectedVariantId}
+                                            maxQuantity={currentStock}
+                                        />
 
                                         <WishlistButton
                                             productId={product._id}

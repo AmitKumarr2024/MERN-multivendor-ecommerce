@@ -15,6 +15,15 @@ const shopSchema = new mongoose.Schema(
       trim: true,
     },
     khataEnabled: { type: Boolean, default: false },
+    reservationsEnabled: { type: Boolean, default: false },
+    reservationExpiryHours: { type: Number, default: 24, min: 1, max: 168 }, // pending -> auto-expire
+    pickupWindowHours: { type: Number, default: 48, min: 1, max: 336 }, // confirmed -> must collect by
+    pickupInstructions: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+      default: "",
+    },
     // Ye slug hi custom dukan URL banata hai -> /shop/:slug
     slug: {
       type: String,

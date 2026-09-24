@@ -16,6 +16,7 @@ import { StaffList } from "@/features/staff";
 import { KhataSettingsToggle, KhataRequestsList } from "@/features/khata";
 import { SellerLoyalty } from "@/features/loyalty";
 import { SellerOffersManager } from "@/features/offers";
+import { ReservationSettingsToggle, SellerReservationsList } from "@/features/reservation";
 
 
 
@@ -27,7 +28,9 @@ const NAV_ITEMS = [
     { key: "khata", label: "Khata", desc: "Credit requests & ledger", icon: KhataIcon },
     { key: "announcements", label: "Announcements", desc: "Live shop broadcasts", icon: MegaphoneIcon },
     { key: "loyalty", label: "Loyalty", desc: "Points, rewards & customers", icon: KhataIcon },
-    { key: "offers", label: "Offers", desc: "Coupons & discounts", icon: KhataIcon }
+    { key: "offers", label: "Offers", desc: "Coupons & discounts", icon: KhataIcon },
+    { key: "reservations", label: "Reservations", desc: "Pickup requests", icon: KhataIcon },
+
 ] as const;
 
 type NavKey = (typeof NAV_ITEMS)[number]["key"];
@@ -174,6 +177,12 @@ export default function ShopDashboard() {
                         {active === "announcements" && <SellerBroadcastForm />}
                         {active === "loyalty" && <SellerLoyalty shopId={shop._id} />}
                         {active === "offers" && <SellerOffersManager shopId={shop._id} />}
+                        {active === "reservations" && (
+                            <div className="space-y-4">
+                                <ReservationSettingsToggle shopId={shop._id} />
+                                <SellerReservationsList shopId={shop._id} />
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -83,7 +83,8 @@ export const ROLE_NAV_CONFIG: Record<NavRole, RoleNavConfig> = {
         label: "Khata",
         href: "/buyer/khata",
       },
-      { label: "Followed Shops", href: "/buyer/following" }
+      { label: "Followed Shops", href: "/buyer/following" },
+      { label: "Reservations", href: "/buyer/reservations" },
     ],
 
     cta: {

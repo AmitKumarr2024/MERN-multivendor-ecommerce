@@ -11,6 +11,7 @@ const variantSchema = new mongoose.Schema(
     discountPrice: { type: Number, min: 0, default: null },
     stock: { type: Number, required: true, default: 0, min: 0 },
     images: [{ type: String }], // color-specific images
+    reservedStock: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }, // _id auto milta hai, variant select karne ke liye chahiye
 );
@@ -86,6 +87,8 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0.5,
     },
+    reservationEnabled: { type: Boolean, default: false },
+    reservedStock: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true },
 );
@@ -100,6 +103,15 @@ productSchema.index(
 productSchema.methods.getTotalStock = function () {
   if (!this.hasVariants) return this.stock;
   return this.variants.reduce((sum, v) => sum + v.stock, 0);
+};
+
+// new instance methods, next to getTotalStock/getVariantById
+productSchema.methods.getAvailableStock = function (variantId = null) {
+  if (this.hasVariants) {
+    const v = this.getVariantById(variantId);
+    return v ? Math.max(0, v.stock - v.reservedStock) : 0;
+  }
+  return Math.max(0, this.stock - this.reservedStock);
 };
 
 // Ek specific variant dhoondhta hai uski _id se - cart/order me baar baar

@@ -30,6 +30,13 @@ const NOTIFICATION_TYPES = [
   "loyalty_reversed",
   "loyalty_redeemed",
   "loyalty_adjusted",
+  "reservation_requested",
+  "reservation_confirmed",
+  "reservation_rejected",
+  "reservation_ready",
+  "reservation_collected",
+  "reservation_cancelled",
+  "reservation_expired",
 ];
 
 const notificationSchema = new mongoose.Schema(
