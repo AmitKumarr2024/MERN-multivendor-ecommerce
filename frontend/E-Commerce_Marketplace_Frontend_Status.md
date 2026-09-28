@@ -24,7 +24,73 @@ anything still unverified from before>
 ============================================================ -->
 
 # E-Commerce Marketplace Frontend — Development Status
-**Last updated:** 2026-09-22 (v11). New feature: **Seller Offers & Coupons (`features/offers/`)**.
+
+
+# E-Commerce Marketplace Frontend — Development Status
+**Last updated:** 2026-09-28 (v12). New feature: **Pickup Reservations (`features/reservation/`)**. Backend green at 251/251; frontend NOT yet compiled/tested.
+
+---
+
+## 🆕 2026-09-28 SESSION — Pickup Reservations (frontend) ⚠️ unverified
+
+**Buyer**
+- `ReserveForPickupButton` (product detail): shown only when
+  `shopStatus.reservationsEnabled && reservationEligible && productActive && maxQuantity > 0`.
+  Props: `shopId, productId, reservationEligible, productActive, variantId, maxQuantity`.
+  Frontend checks are UX only; backend re-validates everything.
+- `MyReservationsList` at `/buyer/reservations`: status badge, deadlines, cancel. When
+  `status === "ready"` it shows the **Pickup Code** card (`r.pickupCode`). The code is never
+  put in URLs or logs.
+
+**Seller**
+- `ReservationSettingsToggle` (shop master switch + pickup instructions).
+- `SellerReservationsList`: tabs Pending/Confirmed/Ready/Collected/Cancelled/All. Ready
+  reservations show **Verify Pickup** (old "Mark collected" REMOVED).
+- NEW `PickupVerificationPanel` (inline, not Modal): 6-digit numeric input dispatching
+  `verifyPickupCode`; the backend alone decides success.
+
+**Redux (`reservation` slice)**
+- Thunks: fetchShopReservationStatus, createReservation, fetchMyReservations,
+  fetchShopReservations, confirm/reject/markReady, **verifyPickupCode** (replaces
+  markReservationCollected), cancelReservation, updateShopReservationSettings,
+  toggleProductReservation (→ `PATCH /products/:id/reservation-eligibility`,
+  returns `{ _id, reservationEligible }`).
+- `verifyPickupCode` sits in the shared `applyUpdate` list, so ready→collected patches
+  both my/shop lists locally.
+
+**Types**: `Reservation.pickupCode?` (buyer, ready only), `pickupLockedUntil?`,
+`VerifyPickupPayload { id, pickupCode }`.
+
+**Wiring checklist (verify, none confirmed)**
+- `store.ts`: `reservation: reservationReducer`
+- `app/buyer/reservations/page.tsx` renders `<MyReservationsList />` (page.tsx exists)
+- `Shopdashboard.tsx`: Reservations tab → `<ReservationSettingsToggle/>` + `<SellerReservationsList/>`
+- `productDetail.tsx`: passes `reservationEligible={product.reservationEligible !== false}`
+  and `productActive={product.isActive}`; `product.types.ts` has `reservationEligible?: boolean`
+- `nav.config.ts`: buyer menu "My Reservations"
+- `notification.types.ts`: add `reservation_*` to `NotificationType` AND `NOTIFICATION_META`
+  (else NotificationItem crashes, same as khata/loyalty)
+- `features/reservation/index.ts`: export `PickupVerificationPanel`
+
+🐛 **Fixed this session**
+- Slice: mangled `toggleProductReservation` formatting cleaned; response read as `data.data?._id`.
+- Button no longer references `product.reservationEnabled`.
+
+❌ **Pending**
+- **Seller UI to exclude a product** (per-product "Available for pickup reservation" toggle,
+  default ON). The thunk exists but no control in the product list/form yet.
+- Zero frontend tests. Run `npx tsc --noEmit` and `npm run build`.
+- `selectReservationError` is global, so a stale error can show in the reserve form
+  (the verify panel clears it on mount; the button doesn't).
+- No lock-countdown UI for `pickupLockedUntil` (only the backend error text).
+- Manual E2E: reserve → confirm → ready → buyer sees code → wrong code (no change) →
+  right code → collected, stock down once.
+
+Also update: Master Tracker new row "Pickup Reservations" 🟠; Redux reducer count +1;
+Route tracker `/buyer/reservations`; Immediate next steps #0 → run tsc/build, then add
+the per-product exclusion toggle.
+
+ 2026-09-22 (v11). New feature: **Seller Offers & Coupons (`features/offers/`)**.
 
 ---
 

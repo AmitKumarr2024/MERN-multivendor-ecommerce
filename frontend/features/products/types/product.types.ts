@@ -49,8 +49,7 @@ export interface Product {
 
   effectivePrice?: number;
   discountPercent?: number;
-  reservationEnabled?: boolean;
-
+  reservationEligible?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -145,5 +144,3 @@ export interface DeleteVariantArgs {
   productId: string;
   variantId: string;
 }
-
-

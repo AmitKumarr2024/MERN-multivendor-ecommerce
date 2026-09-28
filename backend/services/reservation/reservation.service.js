@@ -1,3 +1,4 @@
+import crypto from "crypto";
 import mongoose from "mongoose";
 import Reservation from "../../modules/reservation/models/reservation.model.js";
 import Product from "../../modules/product/models/product.model.js";
@@ -7,6 +8,9 @@ import { createNotification } from "../notification.service.js";
 import { getEffectivePriceForVariant } from "../pricing.service.js";
 
 const HOLDING_STATUSES = ["pending", "confirmed", "ready"];
+
+const MAX_PICKUP_ATTEMPTS = 5;
+const PICKUP_LOCK_MINUTES = 15;
 
 // ---- ownership-over-role, same pattern as khata.service.js / staff.service.js ----
 async function assertShopOwnership(shopId, userId) {
@@ -25,6 +29,55 @@ const paging = ({ page = 1, limit = 20 } = {}) => {
 };
 
 /* ============================================================
+   PICKUP CODE - derived, never stored.
+   code = HMAC-SHA256(secret, "<reservationId>:<issuedAtMs>") -> 6 digits
+   Stable for a reservation (issuedAt is set once), recomputable by the
+   server for the buyer, and useless to anyone with only DB access.
+   ============================================================ */
+
+function getPickupSecret() {
+  const secret = process.env.PICKUP_CODE_SECRET || process.env.JWT_SECRET;
+  if (!secret) {
+    throw new ApiError(500, "Pickup verification is not configured");
+  }
+  return secret;
+}
+
+export function derivePickupCode(reservation) {
+  const issuedAt = new Date(reservation.pickupCodeIssuedAt).getTime();
+  const digest = crypto
+    .createHmac("sha256", getPickupSecret())
+    .update(`${reservation._id}:${issuedAt}`)
+    .digest();
+  return String(digest.readUInt32BE(0) % 1_000_000).padStart(6, "0");
+}
+
+// Reservations that were already "ready" before this feature shipped have no
+// issuedAt yet - issue it lazily (atomic: only one writer can set it).
+async function ensurePickupCodeIssued(reservation) {
+  if (reservation.pickupCodeIssuedAt) return;
+  await Reservation.updateOne(
+    { _id: reservation._id, pickupCodeIssuedAt: null },
+    { pickupCodeIssuedAt: new Date() },
+  );
+  const fresh = await Reservation.findById(reservation._id).select(
+    "pickupCodeIssuedAt",
+  );
+  reservation.pickupCodeIssuedAt = fresh.pickupCodeIssuedAt;
+}
+
+// Buyer-facing view: only a READY reservation carries the code.
+// toJSON() already strips issuedAt / attempts (see model transform).
+async function toBuyerView(reservation) {
+  const obj = reservation.toJSON();
+  if (reservation.status === "ready") {
+    await ensurePickupCodeIssued(reservation);
+    obj.pickupCode = derivePickupCode(reservation);
+  }
+  return obj;
+}
+
+/* ============================================================
    STOCK HOLD - guarded atomic updates so concurrent reservations
    can never hold more than is actually available. Mirrors
    writeLedgerEntry's guarded $inc pattern from khata.service.js.
@@ -34,14 +87,22 @@ const paging = ({ page = 1, limit = 20 } = {}) => {
 // throws if there isn't enough (stock - reservedStock) available.
 async function placeHold(productId, variantId, quantity) {
   if (variantId) {
-    // Pipeline update (Mongo 4.2+) - only bumps the matching variant's
+    // Pipeline update (MongoDB 4.2+) - only bumps the matching variant's
     // reservedStock if stock - reservedStock >= quantity for THAT variant.
+
     const before = await Product.findById(productId).select("variants");
+
     const variant = before?.variants?.id(variantId);
-    if (!variant) throw new ApiError(400, "Selected variant no longer exists");
+
+    if (!variant) {
+      throw new ApiError(400, "Selected variant no longer exists");
+    }
 
     const result = await Product.updateOne(
-      { _id: productId, "variants._id": variantId },
+      {
+        _id: productId,
+        "variants._id": variantId,
+      },
       [
         {
           $set: {
@@ -53,10 +114,14 @@ async function placeHold(productId, variantId, quantity) {
                   $cond: [
                     {
                       $and: [
-                        { $eq: ["$$v._id", variant._id] },
+                        {
+                          $eq: ["$$v._id", variant._id],
+                        },
                         {
                           $gte: [
-                            { $subtract: ["$$v.stock", "$$v.reservedStock"] },
+                            {
+                              $subtract: ["$$v.stock", "$$v.reservedStock"],
+                            },
                             quantity,
                           ],
                         },
@@ -80,27 +145,47 @@ async function placeHold(productId, variantId, quantity) {
           },
         },
       ],
+      {
+        updatePipeline: true,
+      },
     );
+
     if (result.modifiedCount === 0) {
       throw new ApiError(
         400,
         "Not enough stock available to reserve this option right now",
       );
     }
+
     return Product.findById(productId);
   }
 
   const updated = await Product.findOneAndUpdate(
     {
       _id: productId,
-      $expr: { $gte: [{ $subtract: ["$stock", "$reservedStock"] }, quantity] },
+      $expr: {
+        $gte: [
+          {
+            $subtract: ["$stock", "$reservedStock"],
+          },
+          quantity,
+        ],
+      },
     },
-    { $inc: { reservedStock: quantity } },
-    { new: true },
+    {
+      $inc: {
+        reservedStock: quantity,
+      },
+    },
+    {
+      new: true,
+    },
   );
+
   if (!updated) {
     throw new ApiError(400, "Not enough stock available to reserve right now");
   }
+
   return updated;
 }
 
@@ -224,7 +309,7 @@ export async function toggleProductReservation(productId, sellerId, enabled) {
   if (!shop || String(product.shop) !== String(shop._id)) {
     throw new ApiError(403, "You are not allowed to modify this product");
   }
-  product.reservationEnabled = enabled;
+  product.reservationEligible = enabled;
   await product.save();
   return product;
 }
@@ -253,14 +338,17 @@ export async function createReservation(
   const product = await Product.findById(productId);
   if (!product || !product.isActive)
     throw new ApiError(404, "Product not found");
-  if (!product.reservationEnabled) {
-    throw new ApiError(400, "This product is not available for reservation");
-  }
 
   const shop = await Shop.findById(product.shop);
   if (!shop || !shop.isActive) throw new ApiError(404, "Shop not found");
   if (!shop.reservationsEnabled) {
     throw new ApiError(400, "This shop does not offer pickup reservations");
+  }
+  if (!product.reservationEligible) {
+    throw new ApiError(
+      400,
+      "This product is not available for pickup reservation",
+    );
   }
 
   if (product.hasVariants && !variantId) {
@@ -324,7 +412,7 @@ export async function getMyReservations(buyerId, { status, page, limit } = {}) {
   await expireDueForFilter({ buyer: buyerId });
   const { safeLimit, currentPage, skip } = paging({ page, limit });
   const filter = { buyer: buyerId, ...(status ? { status } : {}) };
-  const [items, total] = await Promise.all([
+  const [docs, total] = await Promise.all([
     Reservation.find(filter)
       .populate("shop", "shopName slug logo")
       .sort({ createdAt: -1 })
@@ -332,6 +420,8 @@ export async function getMyReservations(buyerId, { status, page, limit } = {}) {
       .limit(safeLimit),
     Reservation.countDocuments(filter),
   ]);
+  // Buyer sees the pickup code, but only on READY reservations.
+  const items = await Promise.all(docs.map(toBuyerView));
   return {
     items,
     total,
@@ -357,6 +447,7 @@ export async function getShopReservations(
       .limit(safeLimit),
     Reservation.countDocuments(filter),
   ]);
+  // Seller list never includes the code.
   return {
     items,
     total,
@@ -375,10 +466,12 @@ export async function getReservationById(id, userId, isSeller) {
   const reservation = await getReservationOr404(id);
   if (isSeller) {
     await assertShopOwnership(reservation.shop, userId);
-  } else if (String(reservation.buyer) !== String(userId)) {
+    return reservation;
+  }
+  if (String(reservation.buyer) !== String(userId)) {
     throw new ApiError(403, "Not authorized");
   }
-  return reservation;
+  return toBuyerView(reservation);
 }
 
 /* ============================================================
@@ -448,13 +541,17 @@ export async function markReady(id, sellerId) {
   }
   reservation.status = "ready";
   reservation.readyAt = new Date();
+  // The code is issued exactly once, here. It is derived, not stored.
+  reservation.pickupCodeIssuedAt = new Date();
+  reservation.pickupFailedAttempts = 0;
+  reservation.pickupLockedUntil = null;
   await reservation.save();
 
   await createNotification({
     recipient: reservation.buyer,
     type: "reservation_ready",
     title: "Ready for pickup",
-    message: `"${reservation.productName}" is ready for pickup at the shop.`,
+    message: `"${reservation.productName}" is ready for pickup. Show your pickup code to the seller.`,
     link: `/buyer/reservations`,
     relatedId: reservation._id,
     relatedModel: null,
@@ -463,34 +560,106 @@ export async function markReady(id, sellerId) {
   return reservation;
 }
 
-export async function markCollected(id, sellerId) {
+/**
+ * The ONLY path to "collected". Replaces the old markCollected.
+ *
+ * Order of operations matters:
+ *  1. ownership + status + lock checks
+ *  2. constant-time code comparison (wrong code changes nothing except the
+ *     failed-attempt counter)
+ *  3. ATOMIC claim ready -> collected. Only one concurrent request can win
+ *     this, so stock is committed once and the notification is sent once.
+ *  4. commitHold; if it fails, the claim is rolled back.
+ */
+export async function verifyPickupCode(id, sellerId, pickupCode) {
+  // Make sure an overdue reservation is expired before we look at it.
+  await expireDueForFilter({ _id: id });
+
   const reservation = await getReservationOr404(id);
   await assertShopOwnership(reservation.shop, sellerId);
+
   if (reservation.status !== "ready") {
-    throw new ApiError(400, "Only a ready reservation can be marked collected");
+    throw new ApiError(400, "Only a ready reservation can be collected");
   }
-  // The one place actual stock is permanently reduced for a reservation.
-  await commitHold(
-    reservation.product,
-    reservation.variantId,
-    reservation.quantity,
+
+  if (
+    reservation.pickupLockedUntil &&
+    reservation.pickupLockedUntil > new Date()
+  ) {
+    throw new ApiError(
+      429,
+      "Too many incorrect attempts. Please try again later.",
+    );
+  }
+
+  await ensurePickupCodeIssued(reservation);
+
+  const supplied = Buffer.from(String(pickupCode ?? ""));
+  const expected = Buffer.from(derivePickupCode(reservation));
+  const matches =
+    supplied.length === expected.length &&
+    crypto.timingSafeEqual(supplied, expected);
+
+  if (!matches) {
+    const bumped = await Reservation.findOneAndUpdate(
+      { _id: reservation._id, status: "ready" },
+      { $inc: { pickupFailedAttempts: 1 } },
+      { new: true },
+    );
+    if (bumped && bumped.pickupFailedAttempts >= MAX_PICKUP_ATTEMPTS) {
+      await Reservation.updateOne(
+        { _id: reservation._id },
+        {
+          pickupLockedUntil: new Date(
+            Date.now() + PICKUP_LOCK_MINUTES * 60 * 1000,
+          ),
+          pickupFailedAttempts: 0,
+        },
+      );
+    }
+    throw new ApiError(400, "Invalid pickup code");
+  }
+
+  // Atomic claim - a second concurrent request gets null here.
+  const claimed = await Reservation.findOneAndUpdate(
+    { _id: reservation._id, status: "ready", holdsStock: true },
+    {
+      status: "collected",
+      collectedAt: new Date(),
+      holdsStock: false,
+      pickupFailedAttempts: 0,
+      pickupLockedUntil: null,
+    },
+    { new: true },
   );
-  reservation.holdsStock = false;
-  reservation.status = "collected";
-  reservation.collectedAt = new Date();
-  await reservation.save();
+  if (!claimed) {
+    throw new ApiError(400, "Only a ready reservation can be collected");
+  }
+
+  try {
+    // The one place actual stock is permanently reduced for a reservation.
+    await commitHold(claimed.product, claimed.variantId, claimed.quantity);
+  } catch (err) {
+    // Roll the claim back so the reservation isn't stuck "collected" with
+    // stock never committed.
+    await Reservation.updateOne(
+      { _id: claimed._id },
+      { status: "ready", collectedAt: null, holdsStock: true },
+    );
+    throw err;
+  }
 
   await createNotification({
-    recipient: reservation.buyer,
+    recipient: claimed.buyer,
     type: "reservation_collected",
     title: "Pickup complete",
-    message: `Thanks for picking up "${reservation.productName}"!`,
+    message: `Thanks for picking up "${claimed.productName}"!`,
     link: `/buyer/reservations`,
-    relatedId: reservation._id,
+    relatedId: claimed._id,
     relatedModel: null,
   }).catch(() => {});
 
-  return reservation;
+  return claimed;
 }
 
 // Buyer OR seller can cancel while it's still pending/confirmed/ready.

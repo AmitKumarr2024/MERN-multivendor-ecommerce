@@ -16,8 +16,15 @@ export const cancelReservationSchema = z.object({
   reason: z.string().trim().max(300).optional(),
 });
 
-export const toggleProductReservationSchema = z.object({
+export const productReservationEligibilitySchema = z.object({
   enabled: z.boolean(),
+});
+
+export const verifyPickupSchema = z.object({
+  pickupCode: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Pickup code must be exactly 6 digits"),
 });
 
 export const shopReservationSettingsSchema = z.object({

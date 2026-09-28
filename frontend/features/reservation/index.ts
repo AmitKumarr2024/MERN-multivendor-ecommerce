@@ -4,7 +4,7 @@ export { default as ReserveForPickupButton } from "./components/buyer/ReserveFor
 export { default as MyReservationsList } from "./components/buyer/MyReservationsList";
 export { default as SellerReservationsList } from "./components/seller/SellerReservationsList";
 export { default as ReservationSettingsToggle } from "./components/seller/ReservationSettingsToggle";
-
+export { default as PickupVerificationPanel } from "./components/seller/PickupVerificationPanel";
 // Store
 export { default as reservationReducer } from "./store/reservationSlice";
 export * from "./store/reservationSlice";

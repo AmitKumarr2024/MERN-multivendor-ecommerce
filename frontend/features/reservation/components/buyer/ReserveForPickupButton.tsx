@@ -19,7 +19,8 @@ interface ReserveForPickupButtonProps {
 
     // Kept for backward compatibility with ProductDetail.
     // Reservation availability is controlled by the shop setting.
-    reservationEnabled: boolean;
+    reservationEligible: boolean;
+    productActive: boolean;
 
     variantId?: string | null;
     maxQuantity: number;
@@ -28,6 +29,8 @@ interface ReserveForPickupButtonProps {
 export default function ReserveForPickupButton({
     shopId,
     productId,
+    reservationEligible,
+    productActive,
     variantId = null,
     maxQuantity,
 }: ReserveForPickupButtonProps) {
@@ -65,6 +68,8 @@ export default function ReserveForPickupButton({
     if (
         !shopStatus ||
         !shopStatus.reservationsEnabled ||
+        !reservationEligible ||
+        !productActive ||
         maxQuantity <= 0
     ) {
         return null;

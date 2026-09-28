@@ -1,11 +1,13 @@
 import express from "express";
 import { protect } from "../../../middleware/authMiddleware.js";
+import { apiLimiter } from "../../../middleware/rateLimiter.js";
 import validate from "../../../middleware/validate.js";
 import * as ctrl from "../controllers/reservation.controller.js";
 import {
   createReservationSchema,
   rejectReservationSchema,
   cancelReservationSchema,
+  verifyPickupSchema,
   listReservationsQuerySchema,
 } from "../reservation.validation.js";
 
@@ -32,6 +34,13 @@ router.patch(
   ctrl.rejectReservation,
 );
 router.patch("/:id/ready", ctrl.markReady);
-router.patch("/:id/collected", ctrl.markCollected);
+// Seller enters the buyer's 6-digit code. There is intentionally NO
+// direct "/collected" route anymore - it would bypass verification.
+router.patch(
+  "/:id/verify-pickup",
+  apiLimiter,
+  validate(verifyPickupSchema),
+  ctrl.verifyPickup,
+);
 
 export default router;

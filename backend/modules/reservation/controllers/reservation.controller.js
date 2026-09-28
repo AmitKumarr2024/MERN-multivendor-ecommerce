@@ -78,6 +78,11 @@ export const markReady = wrap(async (req) => ({
   data: await svc.markReady(req.params.id, req.user._id),
 }));
 
-export const markCollected = wrap(async (req) => ({
-  data: await svc.markCollected(req.params.id, req.user._id),
+// Replaces the old markCollected - the ONLY way a reservation becomes "collected".
+export const verifyPickup = wrap(async (req) => ({
+  data: await svc.verifyPickupCode(
+    req.params.id,
+    req.user._id,
+    req.body.pickupCode,
+  ),
 }));

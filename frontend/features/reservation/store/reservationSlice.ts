@@ -7,6 +7,7 @@ import type {
   Reservation,
   ShopReservationSettingsPayload,
   ShopReservationStatus,
+  VerifyPickupPayload,
 } from "../types/reservation.types";
 
 function msg(e: unknown): string {
@@ -115,13 +116,16 @@ export const markReservationReady = createAsyncThunk<Reservation, string, Rej>(
   },
 );
 
-export const markReservationCollected = createAsyncThunk<
+// Replaces markReservationCollected. The backend is the only judge of
+// whether the code is correct - the client never compares anything.
+export const verifyPickupCode = createAsyncThunk<
   Reservation,
-  string,
+  VerifyPickupPayload,
   Rej
->("reservation/collected", async (id, { rejectWithValue }) => {
+>("reservation/verifyPickup", async ({ id, pickupCode }, { rejectWithValue }) => {
   try {
-    return (await api.patch(`/reservations/${id}/collected`)).data.data;
+    return (await api.patch(`/reservations/${id}/verify-pickup`, { pickupCode }))
+      .data.data;
   } catch (e) {
     return rejectWithValue(msg(e));
   }
@@ -164,7 +168,7 @@ export const updateShopReservationSettings = createAsyncThunk<
 );
 
 export const toggleProductReservation = createAsyncThunk<
-  { _id: string; reservationEnabled: boolean },
+  { _id: string; reservationEligible: boolean },
   { productId: string; enabled: boolean },
   Rej
 >(
@@ -172,10 +176,13 @@ export const toggleProductReservation = createAsyncThunk<
   async ({ productId, enabled }, { rejectWithValue }) => {
     try {
       const { data } = await api.patch(
-        `/products/${productId}/toggle-reservation`,
+        `/products/${productId}/reservation-eligibility`,
         { enabled },
       );
-      return { _id: data._id ?? productId, reservationEnabled: enabled };
+      return {
+        _id: data.data?._id ?? productId,
+        reservationEligible: enabled,
+      };
     } catch (e) {
       return rejectWithValue(msg(e));
     }
@@ -301,7 +308,7 @@ const reservationSlice = createSlice({
       confirmReservation,
       rejectReservation,
       markReservationReady,
-      markReservationCollected,
+      verifyPickupCode,
       cancelReservation,
     ].forEach((thunk) => {
       builder

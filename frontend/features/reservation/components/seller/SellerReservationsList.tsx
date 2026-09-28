@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/store/hooks";
 import {
     fetchShopReservations, confirmReservation, rejectReservation,
-    markReservationReady, markReservationCollected, cancelReservation,
+    markReservationReady, cancelReservation,
 } from "../../store/reservationSlice";
 import { selectShopReservations, selectShopReservationsLoading, selectReservationActionLoading } from "../../store/reservationSelectors";
 import ReservationStatusBadge from "../ReservationStatusBadge";
+import PickupVerificationPanel from "./PickupVerificationPanel";
 import type { ReservationStatus } from "../../types/reservation.types";
 
 const TABS: { value: ReservationStatus | "all"; label: string }[] = [
@@ -25,6 +26,7 @@ export default function SellerReservationsList({ shopId }: { shopId: string }) {
     const acting = useAppSelector(selectReservationActionLoading);
     const [tab, setTab] = useState<ReservationStatus | "all">("pending");
     const [rejectingId, setRejectingId] = useState<string | null>(null);
+    const [verifyingId, setVerifyingId] = useState<string | null>(null);
     const [reason, setReason] = useState("");
 
     useEffect(() => {
@@ -79,15 +81,22 @@ export default function SellerReservationsList({ shopId }: { shopId: string }) {
                                     <button onClick={() => dispatch(markReservationReady(r._id))} disabled={acting}
                                         className="mt-3 rounded-lg bg-accent px-3 py-1.5 text-xs font-semibold text-accent-foreground disabled:opacity-50">Mark ready for pickup</button>
                                 )}
-                                {r.status === "ready" && (
-                                    <button onClick={() => dispatch(markReservationCollected(r._id))} disabled={acting}
-                                        className="mt-3 rounded-lg bg-success-bg px-3 py-1.5 text-xs font-semibold text-success-text disabled:opacity-50">Mark collected</button>
+                                {r.status === "ready" && verifyingId !== r._id && (
+                                    <button onClick={() => setVerifyingId(r._id)} disabled={acting}
+                                        className="mt-3 rounded-lg bg-success-bg px-3 py-1.5 text-xs font-semibold text-success-text disabled:opacity-50">Verify Pickup</button>
                                 )}
                                 {["pending", "confirmed", "ready"].includes(r.status) && (
                                     <button onClick={() => dispatch(cancelReservation({ id: r._id, asSeller: true, reason: "Cancelled by seller" }))}
                                         disabled={acting} className="mt-3 ml-2 text-xs font-semibold text-danger-text hover:underline disabled:opacity-50">
                                         Cancel
                                     </button>
+                                )}
+
+                                {r.status === "ready" && verifyingId === r._id && (
+                                    <PickupVerificationPanel
+                                        reservationId={r._id}
+                                        onClose={() => setVerifyingId(null)}
+                                    />
                                 )}
 
                                 {rejectingId === r._id && (

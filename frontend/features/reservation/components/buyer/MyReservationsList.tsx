@@ -48,7 +48,27 @@ export default function MyReservationsList() {
 
                 {r.status === "pending" && <p className="mt-2 text-xs text-warning-text">Awaiting seller confirmation — expires {new Date(r.expiresAt).toLocaleString("en-IN")}.</p>}
                 {r.status === "confirmed" && r.pickupDeadline && <p className="mt-2 text-xs text-info-text">Confirmed — pick up before {new Date(r.pickupDeadline).toLocaleString("en-IN")}.</p>}
-                {r.status === "ready" && <p className="mt-2 text-xs text-success-text">Ready — head to the shop to collect it.</p>}
+                {r.status === "ready" && (
+                  <div className="mt-3 rounded-xl bg-success-bg p-3">
+                    <p className="text-xs font-semibold text-success-text">Ready for Pickup</p>
+                    {r.pickupCode ? (
+                      <>
+                        <p className="mt-1 text-[11px] text-success-text">Pickup Code</p>
+                        <p
+                          className="text-2xl font-bold tracking-[0.4em] text-success-text"
+                          aria-label={`Pickup code ${r.pickupCode.split("").join(" ")}`}
+                        >
+                          {r.pickupCode}
+                        </p>
+                        <p className="mt-1 text-[11px] text-success-text">
+                          Show this code to the seller when collecting your order. Don&apos;t share it with anyone else.
+                        </p>
+                      </>
+                    ) : (
+                      <p className="mt-1 text-xs text-success-text">Head to the shop to collect it.</p>
+                    )}
+                  </div>
+                )}
                 {r.status === "cancelled" && r.rejectionReason && <p className="mt-2 text-xs text-danger-text">Rejected: {r.rejectionReason}</p>}
 
                 {CANCELLABLE.includes(r.status) && (

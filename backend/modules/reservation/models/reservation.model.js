@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 const { Schema } = mongoose;
 
 // STATUS LIFECYCLE
-// pending -> confirmed -> ready -> collected      (happy path)
+// pending -> confirmed -> ready -> (verify pickup code) -> collected
 // pending -> cancelled                             (seller rejects, or buyer/seller cancels)
 // confirmed/ready -> cancelled                     (buyer/seller cancels before pickup)
-// pending -> expired                               (buyer never confirmed by seller in time)
+// pending -> expired                               (seller never confirmed in time)
 // confirmed/ready -> expired                        (buyer never picked up by pickupDeadline)
 const reservationSchema = new Schema(
   {
@@ -75,8 +75,27 @@ const reservationSchema = new Schema(
       maxlength: 300,
       default: null,
     },
+
+    // ---- Pickup verification ----
+    // The 6-digit code is NEVER stored. It is derived on demand as
+    // HMAC(secret, reservationId + pickupCodeIssuedAt), so a DB leak alone
+    // reveals nothing. pickupCodeIssuedAt is set once, when status -> ready.
+    pickupCodeIssuedAt: { type: Date, default: null },
+    // Brute-force guard (6 digits = only 1M combinations)
+    pickupFailedAttempts: { type: Number, default: 0, min: 0 },
+    pickupLockedUntil: { type: Date, default: null },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: {
+      // Internal security bookkeeping never leaves the server.
+      transform(_doc, ret) {
+        delete ret.pickupCodeIssuedAt;
+        delete ret.pickupFailedAttempts;
+        return ret;
+      },
+    },
+  },
 );
 
 reservationSchema.index({ shop: 1, status: 1, createdAt: -1 });

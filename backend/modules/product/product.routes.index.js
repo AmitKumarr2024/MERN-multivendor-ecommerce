@@ -34,8 +34,7 @@ import {
   updateVariantSchema,
 } from "../product.validation.js";
 import { toggleProductReservation } from "../../reservation/controllers/reservation.controller.js";
-import { toggleProductReservationSchema } from "../../reservation/reservation.validation.js";
-
+import { productReservationEligibilitySchema } from "../../reservation/reservation.validation.js";
 const router = express.Router();
 
 router.get("/", getAllProducts);
@@ -75,9 +74,9 @@ router.put(
 );
 router.delete("/:id/variants/:variantId", protect, deleteVariant);
 router.patch(
-  "/:id/toggle-reservation",
+  "/:id/reservation-eligibility",
   protect,
-  validate(toggleProductReservationSchema),
+  validate(productReservationEligibilitySchema),
   toggleProductReservation,
 );
 

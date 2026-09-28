@@ -87,7 +87,7 @@ const productSchema = new mongoose.Schema(
       type: Number,
       default: 0.5,
     },
-    reservationEnabled: { type: Boolean, default: false },
+    reservationEligible: { type: Boolean, default: true },
     reservedStock: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true },

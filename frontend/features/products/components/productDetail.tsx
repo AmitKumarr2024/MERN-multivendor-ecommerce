@@ -236,24 +236,24 @@ export default function ProductDetail({
         ? (selectedVariant?.stock ?? 0)
         : product.stock;
 
-    console.log("[Reservation Debug] ProductDetail", {
-        productId: product._id,
-        productName: product.name,
+    // console.log("[Reservation Debug] ProductDetail", {
+    //     productId: product._id,
+    //     productName: product.name,
 
-        shop: product.shop,
-        shopId:
-            typeof product.shop === "string"
-                ? product.shop
-                : product.shop?._id,
+    //     shop: product.shop,
+    //     shopId:
+    //         typeof product.shop === "string"
+    //             ? product.shop
+    //             : product.shop?._id,
 
-        productReservationEnabled: product.reservationEnabled,
+    //     productReservationEnabled: product.reservationEnabled,
 
-        hasVariants: product.hasVariants,
-        selectedVariantId,
-        currentStock,
+    //     hasVariants: product.hasVariants,
+    //     selectedVariantId,
+    //     currentStock,
 
-        fullProduct: product,
-    });
+    //     fullProduct: product,
+    // });
     const loginRedirect = `/login?redirect=${encodeURIComponent(
         `/products/${productId}`,
     )}`;
@@ -608,7 +608,8 @@ export default function ProductDetail({
                                         <ReserveForPickupButton
                                             shopId={typeof product.shop === "string" ? product.shop : product.shop._id}
                                             productId={product._id}
-                                            reservationEnabled={Boolean((product as any).reservationEnabled)}
+                                            reservationEligible={product.reservationEligible !== false}
+                                            productActive={product.isActive}
                                             variantId={selectedVariantId}
                                             maxQuantity={currentStock}
                                         />

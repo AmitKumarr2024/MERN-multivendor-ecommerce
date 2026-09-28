@@ -48,6 +48,10 @@ export interface Reservation {
   cancelReason: string | null;
   rejectionReason: string | null;
   createdAt: string;
+  /** Only present for the BUYER, and only while status === "ready". */
+  pickupCode?: string;
+  /** Set after too many wrong codes; seller can't verify until it passes. */
+  pickupLockedUntil?: string | null;
 }
 
 export interface PaginatedReservations {
@@ -61,6 +65,11 @@ export interface CreateReservationPayload {
   productId: string;
   variantId?: string | null;
   quantity: number;
+}
+
+export interface VerifyPickupPayload {
+  id: string;
+  pickupCode: string;
 }
 
 export interface ShopReservationSettingsPayload {

@@ -6,7 +6,94 @@ Paste this entire document at the start of a new chat to continue exactly where 
 
 Paste this entire document at the start of a new chat to continue exactly where I left off.
 
-**Last updated:** 2026-09-22. New module: **Seller Offers / Coupons (`modules/offer`)**.
+**Last updated:** 2026-09-28. New module: **Pickup Reservations (`modules/reservation`)** + pickup-code verification. Full suite green: **20 suites / 251 tests** (204 -> 251).
+
+---
+
+## 🆕 2026-09-28 SESSION — Pickup Reservations (backend built + tested ✅)
+
+**Concept**: buyer reserves an available product for in-store pickup; stock is HELD
+(not reduced) until the seller verifies a pickup code at handover.
+
+**Lifecycle**: pending → confirmed → ready → (verify pickup code) → collected.
+Also: cancelled, expired. Real stock is permanently reduced ONLY at verified collection.
+
+**Eligibility (final, opt-out model)**
+- `Shop.reservationsEnabled` = master switch (OFF ⇒ nothing reservable)
+- `Product.reservationEligible` (default `true`) = per-product EXCLUSION only
+- `Product.isActive` = marketplace visibility, never a reservation switch
+- Old `Product.reservationEnabled` (opt-in, default false) REMOVED. It caused the 400
+  "This product is not available for reservation". No data migration needed: the old
+  field was an unused default, the new field defaults to true for every product.
+- createReservation order: product exists+active → shop exists+active →
+  shop.reservationsEnabled → product.reservationEligible → variant → atomic hold.
+  Shop is always derived from the product, never from client input.
+
+**Stock safety**
+- `placeHold`: guarded atomic update on (stock - reservedStock). Variant path uses a
+  pipeline update with `{ updatePipeline: true }` — DO NOT remove that option.
+- `releaseHold` (cancel/reject/expire), `commitHold` (collected).
+- Lazy expiry on read (`expireDueForFilter`), no cron.
+
+**Pickup verification**
+- Code = HMAC-SHA256(`PICKUP_CODE_SECRET` || `JWT_SECRET`, `<reservationId>:<issuedAtMs>`)
+  → 6 digits. NEVER stored; recomputed on demand.
+- `markReady` sets `pickupCodeIssuedAt` once (code stable across fetches). Reservations
+  already "ready" before this feature get it lazily (`ensurePickupCodeIssued`).
+- Buyer sees `pickupCode` ONLY while status = ready (`toBuyerView`). Seller lists never
+  include it. `pickupCodeIssuedAt` / `pickupFailedAttempts` stripped in model `toJSON`.
+- `verifyPickupCode(id, sellerId, code)` is the ONLY path to "collected":
+  expire-check → ownership → status=ready → lock check → `timingSafeEqual` compare →
+  ATOMIC claim ready→collected (`findOneAndUpdate`, only one concurrent request wins) →
+  `commitHold` (claim rolled back on failure) → notification once.
+- Brute force: 5 wrong codes → `pickupLockedUntil` = +15 min (HTTP 429), plus `apiLimiter`.
+- REMOVED: `PATCH /api/reservations/:id/collected` and service `markCollected`
+  (they would have bypassed verification).
+
+**Reservation model fields added**: `pickupCodeIssuedAt`, `pickupFailedAttempts`, `pickupLockedUntil`.
+
+**Endpoints**
+| Method | Route | Access |
+| --- | --- | --- |
+| GET | `/api/shops/:shopId/reservations/status` | Public (shop settings only) |
+| GET | `/api/shops/:shopId/reservations` | Owner — list (`?status&page&limit`) |
+| PATCH | `/api/shops/:shopId/reservations/settings` | Owner |
+| POST | `/api/reservations` | Buyer — create |
+| GET | `/api/reservations/my` | Buyer — list (ready ones carry `pickupCode`) |
+| GET | `/api/reservations/:id` | Buyer, or owner with `?as=seller` |
+| PATCH | `/api/reservations/:id/confirm` `/reject` `/ready` | Owner |
+| PATCH | `/api/reservations/:id/verify-pickup` `{pickupCode}` | Owner — only way to "collected" |
+| PATCH | `/api/reservations/:id/cancel` | Buyer or owner |
+| PATCH | `/api/products/:id/reservation-eligibility` `{enabled}` | Owner of the product's shop |
+
+**Files**: `modules/reservation/{models,controllers,routes}`, `reservation.validation.js`
+(`verifyPickupSchema` = exactly 6 digits, `productReservationEligibilitySchema`),
+`services/reservation/reservation.service.js`, `tests/services/reservation.service.test.js`.
+Wired in `index.js`; `notification.model.js` enum has all `reservation_*` types.
+
+**Tests (green)**: opt-out default, exclusion/re-inclusion, other seller can't toggle,
+shop OFF, inactive product, concurrent oversell, happy path via verified pickup, code
+visibility (buyer/ready only, stable, no leak), invalid/malformed code changes nothing,
+non-ready states can't be collected, buyer + other seller can't verify, simultaneous
+verify = 1 decrement + 1 notification, lockout after 5 wrong codes, variant stock commit,
+lazy expiry.
+
+**Setup**: add `PICKUP_CODE_SECRET=<long random>` to `.env` (and `.env.example`).
+Changing it invalidates codes of currently-ready reservations.
+
+**Gotchas / open items**
+- `placeHold` variant path: an OLD variant lacking `reservedStock` makes `$subtract`
+  null and the hold fails. If seen: `{ $ifNull: ["$$v.reservedStock", 0] }`.
+- `createNotification({ meta })` is used by khata/staff/reservation but the `Notification`
+  schema has no `meta` field, so it is silently dropped (pre-existing).
+- `notification.service.js` and `sockets/emit.js` still contain debug `console.log`s
+  (📨 / ❌ io instance is null). Harmless but noisy in tests; remove when convenient.
+- No supertest (HTTP route) tests for reservation yet, only service tests.
+- ⚠️ EXISTING BUG (unrelated, unfixed): `updateOrderStatus` → `cancelled` doesn't restore
+  stock or reverse Khata; route it through `cancelOrder`.
+  
+
+ 2026-09-22. New module: **Seller Offers / Coupons (`modules/offer`)**.
 
 ---
 
